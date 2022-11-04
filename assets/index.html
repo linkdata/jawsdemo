@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	{{template "head.html" .}}
+</head>
+
+<body>
+	{{template "header.html" .}}
+	<div class="container">
+		<div id="jaws-alerts"></div>
+		{{$.A .G.CarsLinkID .G.CarsLinkText nil `href="/cars" class="btn btn-primary"`}}
+		<form autocomplete="off">
+			<div class="mb-3">
+				<label for="{{.G.InputTextID}}" class="form-label">Text</label>
+				{{$.Text .G.InputTextID .G.InputText .G.OnInputText `class="form-control"`}}
+			</div>
+			<div class="mb-3">
+				<textarea id="{{.G.InputTextAreaID}}" rows="4" cols="50">{{.G.InputTextArea}}</textarea>
+				{{$.OnInput .G.InputTextAreaID .G.OnInputTextArea}}
+			</div>
+			<div class="row mb-3">
+				<label for="{{.G.InputRangeID}}" class="col-sm-2 form-label">Range</label>
+				<div class="col-sm-10">
+					{{$.Range .G.InputRangeID (float64 .G.InputRange) .G.OnInputRange
+					`class="form-range align-bottom w-75"`}}
+					{{$.Span .G.InputRangeTextID (print .G.InputRange) nil ""}}
+				</div>
+			</div>
+			<div class="form-check mb-3">
+				{{$.Checkbox .G.InputCheckboxID .G.InputCheckbox .G.OnInputCheckbox `class="form-check-input"` }}
+				<label class="form-check-label" for="{{.G.InputCheckboxID}}">Checkbox</label>
+			</div>
+			<div class="mb-3">
+				<label for="{{.G.InputDateID}}" class="form-label">Date</label>
+				{{$.Date .G.InputDateID .G.InputDate .G.OnInputDate ""}}
+			</div>
+			<div class="form-check">
+				{{$.Radio .G.InputRadio1ID .G.InputRadio1 .G.OnInputRadio1 `class="form-check-input"`}}
+				<label class="form-check-label" for="{{.G.InputRadio1ID}}">Radio 1</label>
+			</div>
+			<div class="form-check">
+				{{$.Radio .G.InputRadio2ID .G.InputRadio2 .G.OnInputRadio2 `class="form-check-input"`}}
+				<label class="form-check-label" for="{{.G.InputRadio2ID}}">Radio 2</label>
+			</div>
+			<div class="mb-3">
+				<label for="{{.G.SelectPetID}}">Choose a pet:</label>
+				{{$.Select .G.SelectPetID .G.SelectPetOptions .G.OnSelectPet `class="form-select"`}}
+			</div>
+			{{$.Button .G.InputButtonID .G.InputButton .G.OnInputButton `class="btn btn-primary mt-3"`}}
+			{{$.OnEvent .G.SetInputButtonID .G.OnSetInputButton}}
+		</form>
+	</div>
+</body>
+
+</html>
