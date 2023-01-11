@@ -36,9 +36,11 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+		defer f.Close()
 		pprof.StartCPUProfile(f)
 		defer pprof.StopCPUProfile()
 	}
+
 	jw := jaws.New()
 	jawsboot.Setup(jw)
 	jw.Logger = log.Default()
@@ -73,20 +75,20 @@ func main() {
 	breakChan := make(chan os.Signal, 1)
 	signal.Notify(breakChan, os.Interrupt, syscall.SIGTERM)
 	go func() {
+		defer close(breakChan)
 		log.Print(e.Start(":8081"))
-		close(breakChan)
 	}()
-	<-breakChan
+
+	if sig, ok := <-breakChan; ok {
+		log.Print(sig)
+	}
 
 	if *memprofile != "" {
 		f, err := os.Create(*memprofile)
 		if err != nil {
 			log.Fatal(err)
 		}
+		defer f.Close()
 		pprof.WriteHeapProfile(f)
-		f.Close()
-		return
 	}
-
-	log.Print("goodbye")
 }
