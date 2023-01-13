@@ -54,7 +54,7 @@ func main() {
 	e.Renderer = &Template{templates: template.Must(template.New("").Funcs(jaws.FuncMap).ParseGlob("assets/*.html"))}
 	jawsecho.Setup(e, jw)
 	e.GET("/", func(c echo.Context) (err error) {
-		rq := jw.NewRequest(context.Background(), c.Request().RemoteAddr)
+		rq := jw.NewRequest(context.Background(), c.Request())
 		g.RLock()
 		defer g.RUnlock()
 		if err = c.Render(http.StatusOK, "index.html", NewUiState(rq, g)); err != nil {
@@ -63,7 +63,7 @@ func main() {
 		return
 	})
 	e.GET("/cars", func(c echo.Context) (err error) {
-		rq := jw.NewRequest(context.Background(), c.Request().RemoteAddr)
+		rq := jw.NewRequest(context.Background(), c.Request())
 		g.RLock()
 		defer g.RUnlock()
 		if err = c.Render(http.StatusOK, "cars.html", NewUiState(rq, g)); err != nil {
