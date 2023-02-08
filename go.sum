@@ -41,8 +41,8 @@ github.com/labstack/gommon v0.4.0 h1:y7cvthEAEbU0yHOf4axH8ZG2NH8knB9iNSoTO8dyIk8
 github.com/labstack/gommon v0.4.0/go.mod h1:uW6kP17uPlLJsD3ijUYn3/M5bAxtlZhMI6m3MFxTMTM=
 github.com/leodido/go-urn v1.2.0 h1:hpXL4XnriNwQ/ABnpepYM/1vCLWNDfUNts8dX3xTG6Y=
 github.com/leodido/go-urn v1.2.0/go.mod h1:+8+nEpDfqqsY+g338gtMEUOtuK+4dEMhiQEgxpxOKII=
-github.com/linkdata/jaws v0.8.0 h1:hoeLqybalLC40E7olIzJ9UyEYqOqIfCjcl9bLjrhAgA=
-github.com/linkdata/jaws v0.8.0/go.mod h1:335Lfm56NOcYZvcQy13e++a1tbdpCyLcJPEKqj7BMcU=
+github.com/linkdata/jaws v0.9.0 h1:O/mBwl6+8QNHO1OYhtOUYl8rCI5NSIfEt8EjQ4jZrDg=
+github.com/linkdata/jaws v0.9.0/go.mod h1:335Lfm56NOcYZvcQy13e++a1tbdpCyLcJPEKqj7BMcU=
 github.com/matryer/is v1.4.0 h1:sosSmIWwkYITGrxZ25ULNDeKiMNzFSr4V/eqBQP0PeE=
 github.com/matryer/is v1.4.0/go.mod h1:8I/i5uYgLzgsgEloJE1U6xx5HkBQpAZvepWuujKwMRU=
 github.com/mattn/go-colorable v0.1.11/go.mod h1:u5H1YNBxpqRaxsYJYSkiCWKzEfiAb1Gb520KVy5xxl4=
