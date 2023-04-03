@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/labstack/echo/v4 v4.10.0
-	github.com/linkdata/jaws v0.9.0
+	github.com/linkdata/jaws v0.10.0
 )
 
 // For debugging local copy of JaWS. Also set jaws version above to v0.0.0
