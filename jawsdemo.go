@@ -55,6 +55,10 @@ func main() {
 	jawsecho.Setup(e, jw)
 	e.GET("/", func(c echo.Context) (err error) {
 		rq := jw.NewRequest(context.Background(), c.Request())
+		if cookie := rq.EnsureSession(1, 60); cookie != nil {
+			c.SetCookie(cookie)
+			log.Println("new session", cookie.Value)
+		}
 		g.RLock()
 		defer g.RUnlock()
 		if err = c.Render(http.StatusOK, "index.html", NewUiState(rq, g)); err != nil {
@@ -64,6 +68,8 @@ func main() {
 	})
 	e.GET("/cars", func(c echo.Context) (err error) {
 		rq := jw.NewRequest(context.Background(), c.Request())
+		cookie := rq.SessionCookie()
+		log.Println("cars session", cookie.Value)
 		g.RLock()
 		defer g.RUnlock()
 		if err = c.Render(http.StatusOK, "cars.html", NewUiState(rq, g)); err != nil {

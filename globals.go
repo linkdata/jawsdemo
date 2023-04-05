@@ -5,14 +5,14 @@ import (
 	"math/rand"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
+	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
 )
 
 type Globals struct {
-	mu            sync.RWMutex
+	mu            deadlock.RWMutex
 	InputText     string
 	InputTextArea string
 	InputCheckbox bool
