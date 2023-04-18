@@ -15,7 +15,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/jawsboot"
-	"github.com/linkdata/jawsecho"
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
@@ -52,7 +51,10 @@ func main() {
 
 	e := echo.New()
 	e.Renderer = &Template{templates: template.Must(template.New("").Funcs(jaws.FuncMap).ParseGlob("assets/*.html"))}
-	jawsecho.Setup(e, jw)
+	e.GET("/jaws/*", func(c echo.Context) error {
+		jw.ServeHTTP(c.Response().Writer, c.Request())
+		return nil
+	})
 	e.GET("/", func(c echo.Context) (err error) {
 		rq := jw.NewRequest(context.Background(), c.Request())
 		if _, cookie := jw.EnsureSession(c.Request(), 1, 60); cookie != nil {

@@ -5,8 +5,7 @@ go 1.17
 require (
 	github.com/labstack/echo/v4 v4.10.2
 	github.com/linkdata/deadlock v0.4.0
-	github.com/linkdata/jaws v0.18.0
-	github.com/linkdata/jawsecho v1.0.0
+	github.com/linkdata/jaws v0.19.1
 )
 
 // For debugging local copy of JaWS. Also set jaws version above to v0.0.0
