@@ -15,7 +15,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/jawsboot"
-	"github.com/linkdata/jaws/jawsecho"
+	"github.com/linkdata/jawsecho"
 )
 
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
@@ -55,7 +55,7 @@ func main() {
 	jawsecho.Setup(e, jw)
 	e.GET("/", func(c echo.Context) (err error) {
 		rq := jw.NewRequest(context.Background(), c.Request())
-		if cookie := rq.EnsureSession(1, 60); cookie != nil {
+		if _, cookie := jw.EnsureSession(c.Request(), 1, 60); cookie != nil {
 			c.SetCookie(cookie)
 			log.Println("new session", cookie.Value)
 		}
@@ -68,7 +68,7 @@ func main() {
 	})
 	e.GET("/cars", func(c echo.Context) (err error) {
 		rq := jw.NewRequest(context.Background(), c.Request())
-		cookie := rq.SessionCookie()
+		cookie := rq.Session().Cookie()
 		log.Println("cars session", cookie.Value)
 		g.RLock()
 		defer g.RUnlock()
