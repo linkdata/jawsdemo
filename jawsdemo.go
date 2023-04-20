@@ -4,7 +4,6 @@ import (
 	"context"
 	"flag"
 	"html/template"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -12,7 +11,6 @@ import (
 	"runtime/pprof"
 	"syscall"
 
-	"github.com/labstack/echo/v4"
 	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/jawsboot"
 )
@@ -21,11 +19,20 @@ var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 var memprofile = flag.String("memprofile", "", "write memory profile to this file")
 
 type Template struct {
+	jw        *jaws.Jaws
+	g         *Globals
 	templates *template.Template
 }
 
-func (t *Template) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
-	return t.templates.ExecuteTemplate(w, name, data)
+func (t *Template) renderer(name string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		rq := t.jw.NewRequest(context.Background(), r)
+		t.g.RLock()
+		defer t.g.RUnlock()
+		if err := t.templates.ExecuteTemplate(w, name, NewUiState(rq, t.g)); err != nil {
+			log.Fatal(err)
+		}
+	}
 }
 
 func main() {
@@ -41,50 +48,29 @@ func main() {
 	}
 
 	jw := jaws.New()
-	jawsboot.Setup(jw)
 	jw.Logger = log.Default()
-	go jw.Serve()
+	jawsboot.Setup(jw)
 	defer jw.Close()
+	go jw.Serve()
 
 	g := NewGlobals()
 	go g.ClockFn(jw)
 
-	e := echo.New()
-	e.Renderer = &Template{templates: template.Must(template.New("").Funcs(jaws.FuncMap).ParseGlob("assets/*.html"))}
-	e.GET("/jaws/*", func(c echo.Context) error {
-		jw.ServeHTTP(c.Response().Writer, c.Request())
-		return nil
-	})
-	e.GET("/", func(c echo.Context) (err error) {
-		rq := jw.NewRequest(context.Background(), c.Request())
-		if _, cookie := jw.EnsureSession(c.Request(), 1, 60); cookie != nil {
-			c.SetCookie(cookie)
-			log.Println("new session", cookie.Value)
-		}
-		g.RLock()
-		defer g.RUnlock()
-		if err = c.Render(http.StatusOK, "index.html", NewUiState(rq, g)); err != nil {
-			log.Println(c.Request().RequestURI, err)
-		}
-		return
-	})
-	e.GET("/cars", func(c echo.Context) (err error) {
-		rq := jw.NewRequest(context.Background(), c.Request())
-		cookie := rq.Session().Cookie()
-		log.Println("cars session", cookie.Value)
-		g.RLock()
-		defer g.RUnlock()
-		if err = c.Render(http.StatusOK, "cars.html", NewUiState(rq, g)); err != nil {
-			log.Println(c.Request().RequestURI, err)
-		}
-		return
-	})
+	t := &Template{
+		jw:        jw,
+		g:         g,
+		templates: template.Must(template.New("").Funcs(jaws.FuncMap).ParseGlob("assets/*.html")),
+	}
+	http.DefaultServeMux.Handle("/jaws/", jw)
+	http.DefaultServeMux.HandleFunc("/", t.renderer("index.html"))
+	http.DefaultServeMux.HandleFunc("/cars", t.renderer("cars.html"))
 
 	breakChan := make(chan os.Signal, 1)
 	signal.Notify(breakChan, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		defer close(breakChan)
-		log.Print(e.Start(":8081"))
+		log.Print("listening on \"http://localhost:8081/\"")
+		log.Print(http.ListenAndServe("localhost:8081", nil))
 	}()
 
 	if sig, ok := <-breakChan; ok {
