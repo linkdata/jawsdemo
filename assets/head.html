@@ -1,3 +1,4 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-{{.GetHeadFooter}}
+<!-- $.HeadHTML calls UiState.Request.HeadHTML(), which returns the required HTML code to place in the HEAD section. -->
+{{$.HeadHTML}}

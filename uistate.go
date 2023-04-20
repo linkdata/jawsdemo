@@ -1,7 +1,6 @@
 package main
 
 import (
-	"html/template"
 	"runtime/debug"
 	"strings"
 
@@ -13,9 +12,12 @@ type UiState struct {
 	*jaws.Request
 }
 
-func (uis *UiState) GetHeadFooter() template.HTML {
-	return uis.HeadHTML()
-}
+func (uis *UiState) UiClock() jaws.Ui         { return &uiClock{uis.G} }
+func (uis *UiState) UiCarsLink() jaws.Ui      { return &uiCarsLink{uis.G} }
+func (uis *UiState) UiInputText() jaws.Ui     { return &uiInputText{uis.G} }
+func (uis *UiState) UiInputRange() jaws.Ui    { return &uiInputRange{uis.G} }
+func (uis *UiState) UiInputCheckbox() jaws.Ui { return &uiInputCheckbox{uis.G} }
+func (uis *UiState) UiInputDate() jaws.Ui     { return &uiInputDate{uis.G} }
 
 func (uis *UiState) Version() (v string) {
 	if bi, ok := debug.ReadBuildInfo(); ok {

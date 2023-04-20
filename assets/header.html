@@ -1,8 +1,14 @@
 <div class="row m-2 border rounded-pill border-secondary bg-light">
 	<div class="col col-10">
 		<a href="/" class="text-decoration-none text-body">
-			jawsdemo&nbsp;<span class="text-secondary">{{.Version}}</span>
+			jawsdemo&nbsp;<span class="text-secondary">{{$.Version}}</span>
 		</a>
 	</div>
-	{{$.Div .G.ClockID (html .G.ClockString) nil `class="col col-2 text-body text-end"`}}
+	<!--
+		$.Ui       calls invokes jaws.Request.Ui() via UiState.Request
+		$.UiClock  with the return value of UiState.UiClock() (which is *uiClock)
+		...        and zero or more HTML attribute strings
+		JaWS then calls uiClock.JawsUi(), which returns the HTML code to render.
+	-->
+	{{$.Ui $.UiClock `class="col col-2 text-body text-end"`}}
 </div>
