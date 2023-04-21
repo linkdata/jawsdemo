@@ -9,6 +9,9 @@
 	When executing the template, we provide an *UiState as it's data parameter.
 	The UiState, in turn, embeds a *jaws.Request without a member name, so it's
 	methods are exposed directly on the UiState.
+
+	You'll note that when we call those methods, we prefix the method with "$",
+	which is the template syntax for "use the top-level data parameter".
 -->
 
 <body>
@@ -47,7 +50,7 @@
 					.G.InputText here is an example of one such implementation.
 				-->
 				<label class="form-label">Text</label>
-				{{$.Ui $.G.InputText `class="form-control"`}}
+				{{$.Ui .G.InputText `class="form-control"`}}
 			</div>
 			<div class="mb-3">
 				<!--
@@ -67,15 +70,26 @@
 						JawsUi() that renders several and use an input event function
 						to them in synch.
 					-->
-					{{$.Ui $.UiInputRange `class="form-range align-bottom w-75"`}}
+					{{$.Ui .UiInputRange `class="form-range align-bottom w-75"`}}
 				</div>
 			</div>
 			<div class="form-check mb-3">
-				{{$.Ui $.UiInputCheckbox `class="form-check-input"`}}
+				{{$.Ui .UiInputCheckbox `class="form-check-input"`}}
 			</div>
 			<div class="mb-3">
-				{{$.Ui $.UiInputDate `class="form-label"`}}
+				{{$.Ui .UiInputDate `class="form-label"`}}
 			</div>
+			<!--
+				When using radio buttons, their JaWS ID must be in the form
+				"id/name", where "name" will be the value of the HTML "name"
+				attribute. All radiobuttons with the same "name" are mutually
+				exclusive and the client browser will send "input" events for
+				all the radiobuttons with the same "name" when one of them
+				is clicked.
+
+				Here we're using the uiInputRadio type to handle both data,
+				HTML rendering and events from the browser.
+			-->
 			{{$.Ui .G.InputRadio1 `class="form-check-input"`}}
 			{{$.Ui .G.InputRadio2 `class="form-check-input"`}}
 			<div class="mb-3">

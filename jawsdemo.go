@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"runtime/pprof"
 	"syscall"
+	"time"
 
 	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/jawsboot"
@@ -42,7 +43,22 @@ func main() {
 	mux.Handle("/jaws/", jw)  // ensure the JaWS routes are handled
 
 	g := NewGlobals() // "Globals" contains the data we want to render
-	go g.ClockFn(jw)  // spin up a goroutine to update the clock and cars button text
+
+	// spin up a goroutine to update the clock and cars button text
+	go func() {
+		t := time.NewTicker(time.Second)
+		defer t.Stop()
+		lastMin := -1
+		for range t.C {
+			if minute := time.Now().Minute(); minute != lastMin {
+				lastMin = minute
+				jw.SetInner(uiClockID, ClockString())
+			}
+			if (time.Now().Second() % 3) == 0 {
+				jw.SetInner(g.CarsLinkID(), g.CarsLinkText())
+			}
+		}
+	}()
 
 	// the renderer simplifies making http.HanderFunc functions for us
 	t := &renderer{

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"strings"
 	"time"
@@ -64,21 +63,6 @@ func (g *Globals) RUnlock() {
 	g.mu.RUnlock()
 }
 
-func (g *Globals) ClockFn(jw *jaws.Jaws) {
-	t := time.NewTicker(time.Second)
-	defer t.Stop()
-	lastMin := -1
-	for range t.C {
-		if minute := time.Now().Minute(); minute != lastMin {
-			lastMin = minute
-			jw.SetInner(g.ClockID(), g.ClockString())
-		}
-		if (time.Now().Second() % 3) == 0 {
-			jw.SetInner(g.CarsLinkID(), g.CarsLinkText())
-		}
-	}
-}
-
 func (g *Globals) SetInputButtonID() string {
 	return "setinputbutton"
 }
@@ -136,10 +120,6 @@ func (g *Globals) OnInputTextArea() jaws.InputTextFn {
 	}
 }
 
-func (g *Globals) InputTextID() string {
-	return "inputtext"
-}
-
 func (g *Globals) InputRangeID() string {
 	return "inputrange"
 }
@@ -174,14 +154,6 @@ func (g *Globals) OnInputDate() jaws.InputDateFn {
 		rq.SetDateValue(g.InputDateID(), val)
 		return
 	}
-}
-
-func (g *Globals) InputRadio1ID() string {
-	return "inputradio1/a"
-}
-
-func (g *Globals) InputRadio2ID() string {
-	return "inputradio2/a"
 }
 
 func (g *Globals) SelectPetID() string {
@@ -226,13 +198,4 @@ func (g *Globals) CarsLinkText() string {
 		return "Cars"
 	}
 	return "This is a boring link to car info."
-}
-
-func (g *Globals) ClockID() string {
-	return "clock"
-}
-
-func (g *Globals) ClockString() string {
-	now := time.Now()
-	return fmt.Sprintf("%02d:%02d", now.Hour(), now.Minute())
 }

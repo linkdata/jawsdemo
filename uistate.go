@@ -1,18 +1,35 @@
 package main
 
 import (
+	"fmt"
 	"runtime/debug"
 	"strings"
+	"time"
 
 	"github.com/linkdata/jaws"
 )
+
+const uiClockID = "clock"
 
 type UiState struct {
 	G *Globals
 	*jaws.Request
 }
 
-func (uis *UiState) Version() (v string) {
+func (uis *UiState) ClockID() (v string) {
+	return uiClockID
+}
+
+func ClockString() string {
+	now := time.Now()
+	return fmt.Sprintf("%02d:%02d", now.Hour(), now.Minute())
+}
+
+func (uis *UiState) ClockString() (v string) {
+	return ClockString()
+}
+
+func (uis *UiState) JawsVersion() (v string) {
 	if bi, ok := debug.ReadBuildInfo(); ok {
 		v = bi.Main.Version
 		for _, dep := range bi.Deps {
