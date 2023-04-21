@@ -27,3 +27,5 @@ func (ui *uiInputDate) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
 	return template.HTML(fmt.Sprintf(`<label for="%s" class="form-label">Date</label>`, ui.InputDateID())) +
 		rq.Date(ui.InputDateID(), ui.InputDate, ui.eventFn, attrs...)
 }
+
+func (uis *UiState) UiInputDate() jaws.Ui { return &uiInputDate{uis.G} }

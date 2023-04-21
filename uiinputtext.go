@@ -25,3 +25,5 @@ func (ui *uiInputText) eventFn(rq *jaws.Request, val string) error {
 func (ui *uiInputText) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
 	return rq.Text(ui.InputTextID(), html.EscapeString(ui.InputText), ui.eventFn, attrs...)
 }
+
+func (uis *UiState) UiInputText() jaws.Ui { return &uiInputText{uis.G} }

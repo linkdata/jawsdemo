@@ -20,10 +20,10 @@ func (ui *uiInputCheckbox) eventFn(rq *jaws.Request, val bool) (err error) {
 	return
 }
 
-// {{$.Checkbox .G.InputCheckboxID .G.InputCheckbox .G.OnInputCheckbox `class="form-check-input"` }}
-
 func (ui *uiInputCheckbox) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
 	return rq.Checkbox(ui.InputCheckboxID(), ui.InputCheckbox, ui.eventFn, attrs...) +
 		template.HTML(fmt.Sprintf(`<label class="form-check-label" for="%s">Checkbox</label>`, ui.InputCheckboxID()))
 
 }
+
+func (uis *UiState) UiInputCheckbox() jaws.Ui { return &uiInputCheckbox{uis.G} }

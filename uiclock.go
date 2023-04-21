@@ -12,3 +12,5 @@ type uiClock struct{ *Globals }
 func (ui *uiClock) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
 	return rq.Div(ui.ClockID(), html.EscapeString(ui.ClockString()), nil, attrs...)
 }
+
+func (uis *UiState) UiClock() jaws.Ui { return &uiClock{uis.G} }

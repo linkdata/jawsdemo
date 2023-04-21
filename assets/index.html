@@ -5,6 +5,12 @@
 	{{template "head.html" .}}
 </head>
 
+<!--
+	When executing the template, we provide an *UiState as it's data parameter.
+	The UiState, in turn, embeds a *jaws.Request without a member name, so it's
+	methods are exposed directly on the UiState.
+-->
+
 <body>
 	{{template "header.html" .}}
 	<div class="container">
@@ -12,20 +18,32 @@
 		<div id="jaws-alerts"></div>
 
 		<!--
-			$.Ui          calls invokes jaws.Request.Ui() via UiState.Request
-			$.UiCarsLink  with the return value of UiState.UiCarsLink() (which is *uiCarsLink)
-            ...           and zero or more HTML attribute strings
-			JaWS then calls uiCarsLink.JawsUi(), which returns the HTML code to render.
+			JaWS allows several ways to register a HTML element and render it's HTML code.
+			If you don't need to listen to events from the client browser, the following
+			call may be a good choice. 
 
-			For this simple element, you could also just use:
+			It calls jaws.Request.A() via UiState.Request. The "nil" argument here means
+			no events will be forwarded from the client.
 
-			  {{$.A .G.CarsLinkID .G.CarsLinkText nil `href="/cars" class="btn btn-primary"`}}
+			If you did want to forward events, and want to use this syntax, then that
+			argument would have to be a function returning a jaws.ClickFn function.
+			This is because the Go template package won't allow you to pass a function
+			as an argument; instead it will be invoked.
 		-->
-		{{$.Ui $.UiCarsLink `href="/cars" class="btn btn-primary"`}}
+		{{$.A .G.CarsLinkID .G.CarsLinkText nil `href="/cars" class="btn btn-primary"`}}
 
 		<form autocomplete="off">
 			<div class="mb-3">
-				<!-- 
+				<!--
+					If you prefer to move data references away from the HTML template
+					another option is to use jaws.Request.Ui(), which accepts an
+					object implementing the "jaws.Ui" interface and zero or more
+					strings (normally a list of HTML attributes).
+
+					This allows for building types for generic use, and then
+					use those types directly in your structures instead of the
+					primitive data types.
+
 					The label here could also be rendered by $.UiInputText, which
 					would remove the dependency on .G.InputTextID in the template.
 				-->

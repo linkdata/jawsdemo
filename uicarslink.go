@@ -14,3 +14,5 @@ type uiCarsLink struct{ *Globals }
 func (ui *uiCarsLink) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
 	return rq.A(ui.CarsLinkID(), html.EscapeString(ui.CarsLinkText()), nil, attrs...)
 }
+
+func (uis *UiState) UiCarsLink() jaws.Ui { return &uiCarsLink{uis.G} }

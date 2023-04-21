@@ -23,12 +23,9 @@ func (ui *uiInputRange) eventFn(rq *jaws.Request, floatval float64) error {
 	return nil
 }
 
-/*
-	{{$.Range .G.InputRangeID (float64 .G.InputRange) .G.OnInputRange `class="form-range align-bottom w-75"`}}
-	{{$.Span .G.InputRangeTextID (print .G.InputRange) nil ""}}
-*/
-
 func (ui *uiInputRange) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
 	return rq.Range(ui.InputRangeID(), float64(ui.InputRange), ui.eventFn, attrs...) +
 		rq.Span(ui.InputRangeTextID(), strconv.Itoa(ui.InputRange), nil)
 }
+
+func (uis *UiState) UiInputRange() jaws.Ui { return &uiInputRange{uis.G} }
