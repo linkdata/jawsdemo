@@ -9,5 +9,3 @@ require (
 
 // For debugging local copy of JaWS. Also set jaws version above to v0.0.0
 // replace github.com/linkdata/jaws => ../jaws
-
-require github.com/klauspost/compress v1.16.5 // indirect
