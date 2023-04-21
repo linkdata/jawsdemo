@@ -17,8 +17,8 @@ type Globals struct {
 	InputRadio2   *uiInputRadio
 	InputDate     time.Time
 	InputRange    int
-	InputButton   string
-	SelectPet     string
+	InputButton   *uiInputButton
+	SelectPet     *uiSelectPet
 	Cars          []*Car
 }
 
@@ -27,7 +27,8 @@ func NewGlobals() *Globals {
 		InputText:   newUiInputText("inputtext", ""),
 		InputRadio1: newUiInputRadio("inputradio1/a", "Radio 1", false),
 		InputRadio2: newUiInputRadio("inputradio2/a", "Radio 2", false),
-		InputButton: "Meh",
+		InputButton: newUiInputButton(uiInputButtonID, "Meh"),
+		SelectPet:   newUiSelectPet("selectpet"),
 		Cars: []*Car{
 			{
 				VIN:       "JH4DB1671PS002584",
@@ -70,17 +71,17 @@ func (g *Globals) OnSetInputButton() jaws.EventFn {
 	return func(rq *jaws.Request, id, evt, val string) error {
 		if evt == "trigger" {
 			g.mu.RLock()
-			isWoo := strings.HasPrefix(g.InputButton, "Woo")
+			isWoo := strings.HasPrefix(g.InputButton.get(), "Woo")
 			g.mu.RUnlock()
 			if isWoo {
-				rq.RemoveAttr(g.InputButtonID(), "disabled")
+				rq.RemoveAttr(uiInputButtonID, "disabled")
 			} else {
-				rq.SetAttr(g.InputButtonID(), "disabled", "")
+				rq.SetAttr(uiInputButtonID, "disabled", "")
 			}
 			g.mu.Lock()
 			defer g.mu.Unlock()
-			g.InputButton = val
-			rq.Jaws.SetInner(g.InputButtonID(), g.InputButton)
+			g.InputButton.set(val)
+			rq.Jaws.SetInner(uiInputButtonID, g.InputButton.get())
 		}
 		return nil
 	}
@@ -88,21 +89,6 @@ func (g *Globals) OnSetInputButton() jaws.EventFn {
 
 func (g *Globals) InputButtonID() string {
 	return "inputbutton"
-}
-
-func (g *Globals) OnInputButton() jaws.ClickFn {
-	return func(rq *jaws.Request) error {
-		g.mu.Lock()
-		defer g.mu.Unlock()
-		if g.InputButton != "Bar" {
-			g.InputButton = "Bar"
-		} else {
-			rq.Alert("info", "Foo?")
-			g.InputButton = "<strong>Foo</strong>"
-		}
-		rq.Jaws.SetInner(g.InputButtonID(), g.InputButton)
-		return nil
-	}
 }
 
 func (g *Globals) InputTextAreaID() string {
@@ -143,30 +129,4 @@ func (g *Globals) OnInputDate() jaws.InputDateFn {
 		rq.SetDateValue(g.InputDateID(), val)
 		return
 	}
-}
-
-func (g *Globals) SelectPetID() string {
-	return "selectpet"
-}
-
-func (g *Globals) OnSelectPet() jaws.InputTextFn {
-	return func(rq *jaws.Request, val string) (err error) {
-		g.mu.Lock()
-		defer g.mu.Unlock()
-		g.SelectPet = val
-		rq.SetTextValue(g.SelectPetID(), val)
-		return
-	}
-}
-
-func (g *Globals) SelectPetOptions() (sol *jaws.NamedBoolArray) {
-	sol = jaws.NewNamedBoolArray()
-	sol.Add("", "--Please choose an option--")
-	sol.Add("dog", "Dog")
-	sol.Add("cat", "Cat")
-	sol.Add("hamster", "Hamster")
-	sol.Add("parrot", "Parrot")
-	sol.Add("spider", "Spider")
-	sol.Check(g.SelectPet)
-	return
 }
