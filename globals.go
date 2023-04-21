@@ -13,7 +13,7 @@ import (
 
 type Globals struct {
 	mu            deadlock.RWMutex
-	InputText     string
+	InputText     *UiInputText
 	InputTextArea string
 	InputCheckbox bool
 	InputRadio1   bool
@@ -27,6 +27,7 @@ type Globals struct {
 
 func NewGlobals() *Globals {
 	return &Globals{
+		InputText:   NewUiInputText("inputtext", ""),
 		InputButton: "Meh",
 		Cars: []*Car{
 			{
@@ -136,16 +137,6 @@ func (g *Globals) OnInputTextArea() jaws.InputTextFn {
 
 func (g *Globals) InputTextID() string {
 	return "inputtext"
-}
-
-func (g *Globals) OnInputText() jaws.InputTextFn {
-	return func(rq *jaws.Request, val string) error {
-		g.mu.Lock()
-		defer g.mu.Unlock()
-		g.InputText = val
-		rq.SetTextValue(g.InputTextID(), val)
-		return nil
-	}
 }
 
 func (g *Globals) InputRangeID() string {

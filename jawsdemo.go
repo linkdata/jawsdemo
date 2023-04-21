@@ -33,10 +33,10 @@ func main() {
 
 	jw := jaws.New()           // create a default JaWS instance
 	defer jw.Close()           // ensure we clean up
-	go jw.Serve()              // start the JaWS processing loop
 	jw.CookieName = "jawsdemo" // optionally set a session cookie name
 	jw.Logger = log.Default()  // optionally set the logger to use
 	jawsboot.Setup(jw)         // optionally enable the included Bootstrap support
+	go jw.Serve()              // start the JaWS processing loop
 
 	mux := http.NewServeMux() // create a ServeMux to do routing
 	mux.Handle("/jaws/", jw)  // ensure the JaWS routes are handled
@@ -50,8 +50,9 @@ func main() {
 		g:  g,
 		t:  template.Must(template.New("").Funcs(jaws.FuncMap).ParseGlob("assets/*.html")),
 	}
-	mux.HandleFunc("/", t.makeHandler("index.html"))
+	mux.Handle("/favicon.ico", http.NotFoundHandler())
 	mux.HandleFunc("/cars", t.makeHandler("cars.html"))
+	mux.HandleFunc("/", t.makeHandler("index.html"))
 
 	// handle CTRL-C and start listening
 	breakChan := make(chan os.Signal, 1)

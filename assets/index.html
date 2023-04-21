@@ -44,11 +44,10 @@
 					use those types directly in your structures instead of the
 					primitive data types.
 
-					The label here could also be rendered by $.UiInputText, which
-					would remove the dependency on .G.InputTextID in the template.
+					.G.InputText here is an example of one such implementation.
 				-->
-				<label for="{{.G.InputTextID}}" class="form-label">Text</label>
-				{{$.Ui $.UiInputText `class="form-control"`}}
+				<label class="form-label">Text</label>
+				{{$.Ui $.G.InputText `class="form-control"`}}
 			</div>
 			<div class="mb-3">
 				<!--
