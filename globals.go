@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"strconv"
 	"strings"
 	"time"
 
@@ -13,11 +12,11 @@ import (
 
 type Globals struct {
 	mu            deadlock.RWMutex
-	InputText     *UiInputText
+	InputText     *uiInputText
 	InputTextArea string
 	InputCheckbox bool
-	InputRadio1   bool
-	InputRadio2   bool
+	InputRadio1   *uiInputRadio
+	InputRadio2   *uiInputRadio
 	InputDate     time.Time
 	InputRange    int
 	InputButton   string
@@ -27,7 +26,9 @@ type Globals struct {
 
 func NewGlobals() *Globals {
 	return &Globals{
-		InputText:   NewUiInputText("inputtext", ""),
+		InputText:   newUiInputText("inputtext", ""),
+		InputRadio1: newUiInputRadio("inputradio1/a", "Radio 1", false),
+		InputRadio2: newUiInputRadio("inputradio2/a", "Radio 2", false),
 		InputButton: "Meh",
 		Cars: []*Car{
 			{
@@ -147,17 +148,6 @@ func (g *Globals) InputRangeTextID() string {
 	return "inputrangetext"
 }
 
-func (g *Globals) OnInputRange() jaws.InputFloatFn {
-	return func(rq *jaws.Request, val float64) (err error) {
-		g.mu.Lock()
-		defer g.mu.Unlock()
-		g.InputRange = int(val)
-		rq.SetFloatValue(g.InputRangeID(), val)
-		rq.Jaws.SetInner(g.InputRangeTextID(), strconv.Itoa(g.InputRange))
-		return
-	}
-}
-
 func (g *Globals) InputCheckboxID() string {
 	return "inputcheckbox"
 }
@@ -190,30 +180,8 @@ func (g *Globals) InputRadio1ID() string {
 	return "inputradio1/a"
 }
 
-func (g *Globals) OnInputRadio1() jaws.InputBoolFn {
-	return func(rq *jaws.Request, val bool) (err error) {
-		g.mu.Lock()
-		defer g.mu.Unlock()
-		g.InputRadio1 = val
-		g.InputRadio2 = !val
-		rq.SetBoolValue(g.InputRadio1ID(), val)
-		return
-	}
-}
-
 func (g *Globals) InputRadio2ID() string {
 	return "inputradio2/a"
-}
-
-func (g *Globals) OnInputRadio2() jaws.InputBoolFn {
-	return func(rq *jaws.Request, val bool) (err error) {
-		g.mu.Lock()
-		defer g.mu.Unlock()
-		g.InputRadio1 = !val
-		g.InputRadio2 = val
-		rq.SetBoolValue(g.InputRadio2ID(), val)
-		return
-	}
 }
 
 func (g *Globals) SelectPetID() string {

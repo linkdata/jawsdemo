@@ -8,21 +8,21 @@ import (
 	"github.com/linkdata/jaws"
 )
 
-type UiInputText struct {
+type uiInputText struct {
 	jid  string
 	mu   deadlock.RWMutex // protects following
 	data string
 }
 
-func NewUiInputText(jid, data string) *UiInputText {
-	return &UiInputText{
+func newUiInputText(jid, data string) *uiInputText {
+	return &uiInputText{
 		jid:  jid,
 		data: data,
 	}
 }
 
 // eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *UiInputText) eventFn(rq *jaws.Request, val string) error {
+func (ui *uiInputText) eventFn(rq *jaws.Request, val string) error {
 	ui.mu.Lock()
 	defer ui.mu.Unlock()
 	// it's usually a good idea to ensure that the value is actually changed before doing work
@@ -34,7 +34,7 @@ func (ui *UiInputText) eventFn(rq *jaws.Request, val string) error {
 	return nil
 }
 
-func (ui *UiInputText) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
+func (ui *uiInputText) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
 	ui.mu.RLock()
 	data := ui.data
 	ui.mu.RUnlock()

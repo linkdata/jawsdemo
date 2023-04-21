@@ -48,7 +48,7 @@ func main() {
 	t := &renderer{
 		jw: jw,
 		g:  g,
-		t:  template.Must(template.New("").Funcs(jaws.FuncMap).ParseGlob("assets/*.html")),
+		t:  template.Must(template.New("").ParseGlob("assets/*.html")),
 	}
 	mux.Handle("/favicon.ico", http.NotFoundHandler())
 	mux.HandleFunc("/cars", t.makeHandler("cars.html"))

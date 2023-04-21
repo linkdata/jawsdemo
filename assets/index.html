@@ -76,14 +76,8 @@
 			<div class="mb-3">
 				{{$.Ui $.UiInputDate `class="form-label"`}}
 			</div>
-			<div class="form-check">
-				{{$.Radio .G.InputRadio1ID .G.InputRadio1 .G.OnInputRadio1 `class="form-check-input"`}}
-				<label class="form-check-label" for="{{.G.InputRadio1ID}}">Radio 1</label>
-			</div>
-			<div class="form-check">
-				{{$.Radio .G.InputRadio2ID .G.InputRadio2 .G.OnInputRadio2 `class="form-check-input"`}}
-				<label class="form-check-label" for="{{.G.InputRadio2ID}}">Radio 2</label>
-			</div>
+			{{$.Ui .G.InputRadio1 `class="form-check-input"`}}
+			{{$.Ui .G.InputRadio2 `class="form-check-input"`}}
 			<div class="mb-3">
 				<label for="{{.G.SelectPetID}}">Choose a pet:</label>
 				{{$.Select .G.SelectPetID .G.SelectPetOptions .G.OnSelectPet `class="form-select"`}}
