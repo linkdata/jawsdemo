@@ -4,26 +4,35 @@ import (
 	"fmt"
 	"html/template"
 
+	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
 )
 
-type uiInputCheckbox struct{ *Globals }
+type uiInputCheckbox struct {
+	jid  string
+	mu   deadlock.RWMutex // protects following
+	data bool
+}
+
+func newUiInputCheckbox(jid string) *uiInputCheckbox {
+	return &uiInputCheckbox{jid: jid}
+}
 
 // eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
 func (ui *uiInputCheckbox) eventFn(rq *jaws.Request, val bool) (err error) {
 	ui.mu.Lock()
 	defer ui.mu.Unlock()
-	if ui.InputCheckbox != val {
-		ui.InputCheckbox = val
-		rq.SetBoolValue(ui.InputCheckboxID(), val)
+	if ui.data != val {
+		ui.data = val
+		rq.SetBoolValue(ui.jid, val)
 	}
 	return
 }
 
 func (ui *uiInputCheckbox) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
-	return rq.Checkbox(ui.InputCheckboxID(), ui.InputCheckbox, ui.eventFn, attrs...) +
-		template.HTML(fmt.Sprintf(`<label class="form-check-label" for="%s">Checkbox</label>`, ui.InputCheckboxID()))
-
+	ui.mu.RLock()
+	data := ui.data
+	ui.mu.RUnlock()
+	return rq.Checkbox(ui.jid, data, ui.eventFn, attrs...) +
+		template.HTML(fmt.Sprintf(`<label class="form-check-label" for="%s">Checkbox</label>`, ui.jid))
 }
-
-func (uis *UiState) UiInputCheckbox() jaws.Ui { return &uiInputCheckbox{uis.G} }

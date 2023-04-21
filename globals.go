@@ -2,7 +2,6 @@ package main
 
 import (
 	"strings"
-	"time"
 
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
@@ -12,11 +11,11 @@ type Globals struct {
 	mu            deadlock.RWMutex
 	InputText     *uiInputText
 	InputTextArea string
-	InputCheckbox bool
+	InputCheckbox *uiInputCheckbox
 	InputRadio1   *uiInputRadio
 	InputRadio2   *uiInputRadio
-	InputDate     time.Time
-	InputRange    int
+	InputDate     *uiInputDate
+	InputRange    *uiInputRange
 	InputButton   *uiInputButton
 	SelectPet     *uiSelectPet
 	Cars          []*Car
@@ -24,11 +23,14 @@ type Globals struct {
 
 func NewGlobals() *Globals {
 	return &Globals{
-		InputText:   newUiInputText("inputtext", ""),
-		InputRadio1: newUiInputRadio("inputradio1/a", "Radio 1", false),
-		InputRadio2: newUiInputRadio("inputradio2/a", "Radio 2", false),
-		InputButton: newUiInputButton(uiInputButtonID, "Meh"),
-		SelectPet:   newUiSelectPet("selectpet"),
+		InputText:     newUiInputText("inputtext", ""),
+		InputCheckbox: newUiInputCheckbox("checkbox"),
+		InputRadio1:   newUiInputRadio("inputradio1/a", "Radio 1", false),
+		InputRadio2:   newUiInputRadio("inputradio2/a", "Radio 2", false),
+		InputDate:     newUiInputDate("inputdate"),
+		InputRange:    newUiInputRange("inputrange"),
+		InputButton:   newUiInputButton(uiInputButtonID, "Meh"),
+		SelectPet:     newUiSelectPet("selectpet"),
 		Cars: []*Car{
 			{
 				VIN:       "JH4DB1671PS002584",
@@ -87,10 +89,6 @@ func (g *Globals) OnSetInputButton() jaws.EventFn {
 	}
 }
 
-func (g *Globals) InputButtonID() string {
-	return "inputbutton"
-}
-
 func (g *Globals) InputTextAreaID() string {
 	return "inputtextarea"
 }
@@ -115,18 +113,4 @@ func (g *Globals) InputRangeTextID() string {
 
 func (g *Globals) InputCheckboxID() string {
 	return "inputcheckbox"
-}
-
-func (g *Globals) InputDateID() string {
-	return "inputdate"
-}
-
-func (g *Globals) OnInputDate() jaws.InputDateFn {
-	return func(rq *jaws.Request, val time.Time) (err error) {
-		g.mu.Lock()
-		defer g.mu.Unlock()
-		g.InputDate = val
-		rq.SetDateValue(g.InputDateID(), val)
-		return
-	}
 }
