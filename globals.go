@@ -110,7 +110,3 @@ func (g *Globals) InputRangeID() string {
 func (g *Globals) InputRangeTextID() string {
 	return "inputrangetext"
 }
-
-func (g *Globals) InputCheckboxID() string {
-	return "inputcheckbox"
-}
