@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math/rand"
 	"strings"
 	"time"
 
@@ -132,16 +131,6 @@ func (g *Globals) InputCheckboxID() string {
 	return "inputcheckbox"
 }
 
-func (g *Globals) OnInputCheckbox() jaws.InputBoolFn {
-	return func(rq *jaws.Request, val bool) (err error) {
-		g.mu.Lock()
-		defer g.mu.Unlock()
-		g.InputCheckbox = val
-		rq.SetBoolValue(g.InputCheckboxID(), val)
-		return
-	}
-}
-
 func (g *Globals) InputDateID() string {
 	return "inputdate"
 }
@@ -180,22 +169,4 @@ func (g *Globals) SelectPetOptions() (sol *jaws.NamedBoolArray) {
 	sol.Add("spider", "Spider")
 	sol.Check(g.SelectPet)
 	return
-}
-
-func (g *Globals) CarsLinkID() string {
-	return "cars"
-}
-
-func (g *Globals) CarsLinkText() string {
-	switch rand.Intn(5) {
-	case 0:
-		return "Check out these cars!"
-	case 1:
-		return "Did you know VIN numbers are encoded?"
-	case 2:
-		return "DO NOT CLICK HERE!"
-	case 3:
-		return "Cars"
-	}
-	return "This is a boring link to car info."
 }

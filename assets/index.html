@@ -23,7 +23,7 @@
 		<!--
 			JaWS allows several ways to register a HTML element and render it's HTML code.
 			If you don't need to listen to events from the client browser, the following
-			call may be a good choice. 
+			method may be a good choice. 
 
 			It calls jaws.Request.A() via UiState.Request. The "nil" argument here means
 			no events will be forwarded from the client.
@@ -33,7 +33,7 @@
 			This is because the Go template package won't allow you to pass a function
 			as an argument; instead it will be invoked.
 		-->
-		{{$.A .G.CarsLinkID .G.CarsLinkText nil `href="/cars" class="btn btn-primary"`}}
+		{{$.A .CarsLinkID .CarsLinkText nil `href="/cars" class="btn btn-primary"`}}
 
 		<form autocomplete="off">
 			<div class="mb-3">

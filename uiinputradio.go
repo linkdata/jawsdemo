@@ -23,19 +23,6 @@ func newUiInputRadio(jid, name string, data bool) *uiInputRadio {
 	}
 }
 
-func (ui *uiInputRadio) Get() (val bool) {
-	ui.mu.RLock()
-	val = ui.data
-	ui.mu.RUnlock()
-	return
-}
-
-func (ui *uiInputRadio) Set(val bool) {
-	ui.mu.Lock()
-	ui.data = val
-	ui.mu.Unlock()
-}
-
 // eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
 func (ui *uiInputRadio) eventFn(rq *jaws.Request, val bool) error {
 	ui.mu.Lock()

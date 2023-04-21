@@ -55,7 +55,7 @@ func main() {
 				jw.SetInner(uiClockID, ClockString())
 			}
 			if (time.Now().Second() % 3) == 0 {
-				jw.SetInner(g.CarsLinkID(), g.CarsLinkText())
+				jw.SetInner(uiCarsLinkID, CarsLinkText())
 			}
 		}
 	}()
