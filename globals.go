@@ -106,7 +106,3 @@ func (g *Globals) OnInputTextArea() jaws.InputTextFn {
 func (g *Globals) InputRangeID() string {
 	return "inputrange"
 }
-
-func (g *Globals) InputRangeTextID() string {
-	return "inputrangetext"
-}
