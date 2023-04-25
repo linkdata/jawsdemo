@@ -8,29 +8,30 @@ import (
 )
 
 type Globals struct {
-	mu            deadlock.RWMutex
-	InputText     *uiInputText
-	InputTextArea string
-	InputCheckbox *uiInputCheckbox
-	InputRadio1   *uiInputRadio
-	InputRadio2   *uiInputRadio
-	InputDate     *uiInputDate
-	InputRange    *uiInputRange
-	InputButton   *uiInputButton
-	SelectPet     *uiSelectPet
-	Cars          []*Car
+	mu              deadlock.RWMutex
+	InputText       *uiInputText
+	InputTextArea   string
+	InputCheckbox   *uiInputCheckbox
+	InputRadioGroup *uiInputRadioGroup
+	InputDate       *uiInputDate
+	InputRange      *uiInputRange
+	InputButton     *uiInputButton
+	SelectPet       *uiSelectPet
+	Cars            []*Car
 }
 
 func NewGlobals() *Globals {
+	nba := jaws.NewNamedBoolArray("radiogroup")
+	nba.Add("1", "Radio 1")
+	nba.Add("2", "Radio 2")
 	return &Globals{
-		InputText:     newUiInputText("inputtext", ""),
-		InputCheckbox: newUiInputCheckbox("checkbox"),
-		InputRadio1:   newUiInputRadio("inputradio1/a", "Radio 1", false),
-		InputRadio2:   newUiInputRadio("inputradio2/a", "Radio 2", false),
-		InputDate:     newUiInputDate("inputdate"),
-		InputRange:    newUiInputRange("inputrange"),
-		InputButton:   newUiInputButton(uiInputButtonID, "Meh"),
-		SelectPet:     newUiSelectPet("selectpet"),
+		InputText:       newUiInputText("inputtext", ""),
+		InputCheckbox:   newUiInputCheckbox("checkbox"),
+		InputRadioGroup: newUiInputRadioGroup(nba),
+		InputDate:       newUiInputDate("inputdate"),
+		InputRange:      newUiInputRange("inputrange"),
+		InputButton:     newUiInputButton(uiInputButtonID, "Meh"),
+		SelectPet:       newUiSelectPet("selectpet"),
 		Cars: []*Car{
 			{
 				VIN:       "JH4DB1671PS002584",

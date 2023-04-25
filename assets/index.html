@@ -80,18 +80,10 @@
 				{{$.Ui .G.InputDate `class="form-label"`}}
 			</div>
 			<!--
-				When using radio buttons, their JaWS ID must be in the form
-				"id/name", where "name" will be the value of the HTML "name"
-				attribute. All radiobuttons with the same "name" are mutually
-				exclusive and the client browser will send "input" events for
-				all the radiobuttons with the same "name" when one of them
-				is clicked.
-
 				Here we're using the uiInputRadio type to handle both data,
 				HTML rendering and events from the browser.
 			-->
-			{{$.Ui .G.InputRadio1 `class="form-check-input"`}}
-			{{$.Ui .G.InputRadio2 `class="form-check-input"`}}
+			{{$.Ui .G.InputRadioGroup `class="form-check-input"`}}
 			<div class="mb-3">
 				{{$.Ui .G.SelectPet `class="form-select"`}}
 			</div>
