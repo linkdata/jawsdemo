@@ -7,20 +7,16 @@ import (
 )
 
 type uiInputRadioGroup struct {
-	nba *jaws.NamedBoolArray
+	*jaws.NamedBoolArray
 }
 
 func newUiInputRadioGroup(nba *jaws.NamedBoolArray) *uiInputRadioGroup {
-	return &uiInputRadioGroup{
-		nba: nba,
-	}
+	return &uiInputRadioGroup{nba}
 }
 
-func (ui *uiInputRadioGroup) JawsRadioGroupData() *jaws.NamedBoolArray {
-	return ui.nba
-}
-
+// JawsRadioGroupData has a default implementation in jaws.NamedBoolArray
+// and so does JawsRadioGroupHandler, but we override it here to print the state.
 func (ui *uiInputRadioGroup) JawsRadioGroupHandler(rq *jaws.Request, boolName string) error {
-	log.Println("uiInputRadioGroup:", ui.nba)
+	log.Println("uiInputRadioGroup:", ui.NamedBoolArray)
 	return nil
 }
