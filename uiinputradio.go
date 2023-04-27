@@ -1,7 +1,7 @@
 package main
 
 import (
-	"html/template"
+	"log"
 
 	"github.com/linkdata/jaws"
 )
@@ -16,14 +16,11 @@ func newUiInputRadioGroup(nba *jaws.NamedBoolArray) *uiInputRadioGroup {
 	}
 }
 
-// eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiInputRadioGroup) eventFn(rq *jaws.Request, val string) error {
-	ui.nba.SetOnly(val)
-	rq.SetBoolValue(ui.nba.JidOf(val), true)
-	return nil
+func (ui *uiInputRadioGroup) JawsRadioGroupData() *jaws.NamedBoolArray {
+	return ui.nba
 }
 
-func (ui *uiInputRadioGroup) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
-	// `<div class="form-check">%s<label class="form-check-label" for="%s">%s</label></div>`
-	return rq.LabeledRadioGroup(ui.nba, ui.eventFn, attrs, []string{`class="form-check-label"`})
+func (ui *uiInputRadioGroup) JawsRadioGroupHandler(rq *jaws.Request, boolName string) error {
+	log.Println("uiInputRadioGroup:", ui.nba)
+	return nil
 }

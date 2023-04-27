@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 
 	"github.com/linkdata/jaws"
@@ -34,8 +33,5 @@ func (ui *uiSelectPet) eventFn(rq *jaws.Request, val string) error {
 }
 
 func (ui *uiSelectPet) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
-	return template.HTML(fmt.Sprintf(`<label for="%s">Choose a pet:</label>%s`,
-		ui.nba.Jid,
-		rq.Select(ui.nba, ui.eventFn, attrs...),
-	))
+	return rq.Select(ui.nba, ui.eventFn, attrs...)
 }
