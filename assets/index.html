@@ -80,19 +80,35 @@
 				{{$.Ui .G.InputDate `class="form-label"`}}
 			</div>
 			<!--
-				When using radio buttons, their JaWS ID must be in the form
-				"id/name", where "name" will be the value of the HTML "name"
-				attribute. All radiobuttons with the same "name" are mutually
-				exclusive and the client browser will send "input" events for
-				all the radiobuttons with the same "name" when one of them
-				is clicked.
+				Radio buttons require special handling because selecting
+				one in a group of several de-selects all the others, and
+				keeping this in sync with the server and other browsers
+				takes care.
 
-				Here we're using the uiInputRadio type to handle both data,
-				HTML rendering and events from the browser.
+				You can either handle this yourself using Request.Radio(),
+				using the boolean event functions for the individual radio
+				buttons and coordinating in your server, or use the
+				Request.RadioGroup(). Here, we will use the latter.
+
+				RadioGroup() requires an object implementing jaws.RadioGrouper
+				and returns a slice of jaws.Radio, which we use to render the HTML
+				entities with the Radio() and Label() methods.
 			-->
-			{{$.Ui .G.InputRadio1 `class="form-check-input"`}}
-			{{$.Ui .G.InputRadio2 `class="form-check-input"`}}
+			{{range $.RadioGroup .G.InputRadioGroup1}}
+				<div class="form-check">
+				{{.Radio `class="form-check-input"`}}
+				{{.Label `class="form-check-label"`}}
+				</div>
+			{{end}}
+			{{range $.RadioGroup .G.InputRadioGroup2}}
+				<div class="form-check">
+				{{.Radio `class="form-check-input"`}}
+				{{.Label `class="form-check-label"`}}
+				</div>
+			{{end}}
+
 			<div class="mb-3">
+				<label>Choose a pet:</label>
 				{{$.Ui .G.SelectPet `class="form-select"`}}
 			</div>
 			{{$.Ui .G.InputButton `class="btn btn-primary mt-3"`}}
