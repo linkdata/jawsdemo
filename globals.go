@@ -5,6 +5,7 @@ import (
 
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/what"
 )
 
 type Globals struct {
@@ -72,8 +73,8 @@ func (g *Globals) SetInputButtonID() string {
 }
 
 func (g *Globals) OnSetInputButton() jaws.EventFn {
-	return func(rq *jaws.Request, id, evt, val string) error {
-		if evt == "trigger" {
+	return func(rq *jaws.Request, evt what.What, id, val string) error {
+		if evt == what.Trigger {
 			g.mu.RLock()
 			isWoo := strings.HasPrefix(g.InputButton.get(), "Woo")
 			g.mu.RUnlock()
