@@ -36,6 +36,8 @@ github.com/linkdata/deadlock v0.4.0 h1:OM4Vqn5LinkHiCy9IqcA5aJ7zKU1kv5XhC7kiW4Lc
 github.com/linkdata/deadlock v0.4.0/go.mod h1:MvI1hZGGcTghOKTcL6lATkgXkVVIOwHZ62l1Y0xprUI=
 github.com/linkdata/jaws v0.24.0 h1:OCITULMlzOtgVAEUcoY8nfPI4FFliLvx5bd74XUwksI=
 github.com/linkdata/jaws v0.24.0/go.mod h1:BzEn4CKlsPJgGY+n+BXZkdix0P8BpvlE4WQk84uJHEY=
+github.com/linkdata/jaws v0.28.0 h1:h0R7ULEjWB4kWnE/hRZG3xX0ozdZTCKcOhnMdmtUwiU=
+github.com/linkdata/jaws v0.28.0/go.mod h1:BzEn4CKlsPJgGY+n+BXZkdix0P8BpvlE4WQk84uJHEY=
 github.com/matryer/is v1.4.1 h1:55ehd8zaGABKLXQUe2awZ99BD/PTc2ls+KV/dXphgEQ=
 github.com/matryer/is v1.4.1/go.mod h1:8I/i5uYgLzgsgEloJE1U6xx5HkBQpAZvepWuujKwMRU=
 github.com/mattn/go-isatty v0.0.12/go.mod h1:cbi8OIDigv2wuxKPP5vlRcQ1OAZbq2CE4Kysco4FUpU=
