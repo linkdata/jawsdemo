@@ -24,7 +24,7 @@ func newUiSelectPet(jid string) *uiSelectPet {
 }
 
 // eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiSelectPet) eventFn(rq *jaws.Request, val string) error {
+func (ui *uiSelectPet) eventFn(rq *jaws.Request, jid, val string) error {
 	if val != ui.nba.Get() {
 		ui.nba.SetOnly(val)
 		rq.SetTextValue(ui.nba.Jid, val)

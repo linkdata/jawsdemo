@@ -67,7 +67,7 @@ func (uis *UiState) JawsVersion() (v string) {
 }
 
 func (uis *UiState) OnMystical() jaws.ClickFn {
-	return func(rq *jaws.Request) error {
+	return func(rq *jaws.Request, jid string) error {
 		rq.Trigger("setinputbutton", "Wooooo....")
 		return nil
 	}

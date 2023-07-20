@@ -97,7 +97,7 @@ func (g *Globals) InputTextAreaID() string {
 }
 
 func (g *Globals) OnInputTextArea() jaws.InputTextFn {
-	return func(rq *jaws.Request, val string) error {
+	return func(rq *jaws.Request, jid, val string) error {
 		g.mu.Lock()
 		defer g.mu.Unlock()
 		g.InputTextArea = val

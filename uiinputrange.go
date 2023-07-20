@@ -19,7 +19,7 @@ func newUiInputRange(jid string) *uiInputRange {
 }
 
 // eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiInputRange) eventFn(rq *jaws.Request, floatval float64) error {
+func (ui *uiInputRange) eventFn(rq *jaws.Request, jid string, floatval float64) error {
 	ui.mu.Lock()
 	defer ui.mu.Unlock()
 	val := int(floatval)

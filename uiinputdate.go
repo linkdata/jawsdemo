@@ -20,7 +20,7 @@ func newUiInputDate(jid string) *uiInputDate {
 }
 
 // eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiInputDate) eventFn(rq *jaws.Request, val time.Time) error {
+func (ui *uiInputDate) eventFn(rq *jaws.Request, jid string, val time.Time) error {
 	ui.mu.Lock()
 	defer ui.mu.Unlock()
 	// it's usually a good idea to ensure that the value is actually changed before doing work

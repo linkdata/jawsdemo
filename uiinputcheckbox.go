@@ -19,7 +19,7 @@ func newUiInputCheckbox(jid string) *uiInputCheckbox {
 }
 
 // eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiInputCheckbox) eventFn(rq *jaws.Request, val bool) (err error) {
+func (ui *uiInputCheckbox) eventFn(rq *jaws.Request, jid string, val bool) (err error) {
 	ui.mu.Lock()
 	defer ui.mu.Unlock()
 	if ui.data != val {

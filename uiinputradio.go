@@ -16,7 +16,7 @@ func newUiInputRadioGroup(nba *jaws.NamedBoolArray) *uiInputRadioGroup {
 
 // JawsRadioGroupData has a default implementation in jaws.NamedBoolArray
 // and so does JawsRadioGroupHandler, but we override it here to print the state.
-func (ui *uiInputRadioGroup) JawsRadioGroupHandler(rq *jaws.Request, boolName string) error {
+func (ui *uiInputRadioGroup) JawsRadioGroupHandler(rq *jaws.Request, jid, boolName string) error {
 	log.Println("uiInputRadioGroup:", ui.NamedBoolArray)
 	return nil
 }

@@ -22,7 +22,7 @@ func newUiInputText(jid, data string) *uiInputText {
 }
 
 // eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiInputText) eventFn(rq *jaws.Request, val string) error {
+func (ui *uiInputText) eventFn(rq *jaws.Request, jid string, val string) error {
 	ui.mu.Lock()
 	defer ui.mu.Unlock()
 	// it's usually a good idea to ensure that the value is actually changed before doing work

@@ -36,7 +36,7 @@ func (ui *uiInputButton) set(data string) {
 }
 
 // eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiInputButton) eventFn(rq *jaws.Request) error {
+func (ui *uiInputButton) eventFn(rq *jaws.Request, jid string) error {
 	ui.mu.Lock()
 	defer ui.mu.Unlock()
 	if ui.data != "Bar" {
