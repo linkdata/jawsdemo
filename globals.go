@@ -10,7 +10,7 @@ import (
 
 type Globals struct {
 	mu               deadlock.RWMutex
-	InputText        *uiInputText
+	InputText        jaws.UI
 	InputTextArea    string
 	InputCheckbox    *uiInputCheckbox
 	InputRadioGroup1 *uiInputRadioGroup

@@ -1,42 +1,36 @@
 package main
 
 import (
-	"html"
-	"html/template"
-
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
 )
 
 type uiInputText struct {
-	jid  string
 	mu   deadlock.RWMutex // protects following
 	data string
 }
 
-func newUiInputText(jid, data string) *uiInputText {
-	return &uiInputText{
-		jid:  jid,
-		data: data,
-	}
+func newUiInputText(jid, data string) jaws.UI {
+	return jaws.NewUiText(jaws.ProcessTags(jid), &uiInputText{data: data})
 }
 
-// eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiInputText) eventFn(rq *jaws.Request, jid string, val string) error {
-	ui.mu.Lock()
-	defer ui.mu.Unlock()
-	// it's usually a good idea to ensure that the value is actually changed before doing work
-	if ui.data != val {
-		ui.data = val
-		// sends the changed text to all *other* Requests.
-		rq.SetTextValue(ui.jid, val)
-	}
-	return nil
-}
-
-func (ui *uiInputText) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
+func (ui *uiInputText) JawsGet(e *jaws.Element) (val interface{}) {
 	ui.mu.RLock()
-	data := ui.data
+	val = ui.data
 	ui.mu.RUnlock()
-	return rq.Text(ui.jid, html.EscapeString(data), ui.eventFn, attrs...)
+	return
+}
+
+func (ui *uiInputText) JawsSet(e *jaws.Element, val interface{}) (err error) {
+	if s, ok := val.(string); ok {
+		ui.mu.Lock()
+		ui.data = s
+		ui.mu.Unlock()
+		for _, tag := range e.Ui.JawsTags(e.Request) {
+			for _, elem := range e.Request.GetElements(tag) {
+				e.Jaws.SetValue(elem.Jid, s)
+			}
+		}
+	}
+	return
 }

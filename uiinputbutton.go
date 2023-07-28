@@ -53,5 +53,5 @@ func (ui *uiInputButton) JawsUi(rq *jaws.Request, attrs ...string) template.HTML
 	ui.mu.RLock()
 	data := ui.data
 	ui.mu.RUnlock()
-	return rq.Button(ui.jid, data, ui.eventFn, attrs...)
+	return rq.Button(ui.jid, data, []interface{}{ui.eventFn, attrs})
 }

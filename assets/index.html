@@ -25,23 +25,36 @@
 			If you don't need to listen to events from the client browser, the following
 			method may be a good choice. 
 
-			It calls jaws.Request.A() via UiState.Request. The "nil" argument here means
-			no events will be forwarded from the client.
+			It calls jaws.Request.A() via UiState.Request. Two parameters are required,
+			plus a variable number of optional parameters.
+			
+			The first parameter is the tags you want to associate with the UI element.
+			Tags can be anything (interface{}), but we treat some types special.
+			Here, we just call CarsLinkID and use it's return value.
 
-			If you did want to forward events, and want to use this syntax, then that
-			argument would have to be a function returning a jaws.ClickFn function.
-			This is because the Go template package won't allow you to pass a function
-			as an argument; instead it will be invoked.
+			If a string is given, it is split on spaces into multiple tags.
+			For a slice of strings, we iterate over them and again split on spaces.
+			A slice of interface{} will have all it's contents as tags.
+
+			If no tag is provided (nil or an empty string), a unique string tag is
+			generated for you.
+
+			The second parameter is the HTML code to display inside the <a> element.
+			Here we call CarsLinkText and have it return it.
+
+			Finally, we provide a string with HTML attributes as the optional
+			parameters. The optional parameters can contain other things as well,
+			but strings are expected to be HTML attributes.
 		-->
-		{{$.A .CarsLinkID .CarsLinkText nil `href="/cars" class="btn btn-primary"`}}
+		{{$.A .CarsLinkID .CarsLinkText `href="/cars" class="btn btn-primary"`}}
 
 		<form autocomplete="off">
 			<div class="mb-3">
 				<!--
 					If you prefer to move data references away from the HTML template
-					another option is to use jaws.Request.Ui(), which accepts an
-					object implementing the "jaws.Ui" interface and zero or more
-					strings (normally a list of HTML attributes).
+					another option is to use jaws.Request.UI(), which accepts an
+					object implementing the `jaws.UI` interface and zero or more
+					data objects (normally a list of HTML attributes).
 
 					This allows for building types for generic use, and then
 					use those types directly in your structures instead of the
@@ -50,7 +63,7 @@
 					.G.InputText here is an example of one such implementation.
 				-->
 				<label class="form-label">Text</label>
-				{{$.Ui .G.InputText `class="form-control"`}}
+				{{$.UI .G.InputText `class="form-control"`}}
 			</div>
 			<div class="mb-3">
 				<!--

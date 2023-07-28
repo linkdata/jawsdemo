@@ -33,6 +33,6 @@ func (ui *uiInputCheckbox) JawsUi(rq *jaws.Request, attrs ...string) template.HT
 	ui.mu.RLock()
 	data := ui.data
 	ui.mu.RUnlock()
-	return rq.Checkbox(ui.jid, data, ui.eventFn, attrs...) +
+	return rq.Checkbox(ui.jid, data, []interface{}{ui.eventFn, attrs}) +
 		template.HTML(fmt.Sprintf(`<label class="form-check-label" for="%s">Checkbox</label>`, ui.jid))
 }

@@ -33,5 +33,5 @@ func (ui *uiSelectPet) eventFn(rq *jaws.Request, jid, val string) error {
 }
 
 func (ui *uiSelectPet) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
-	return rq.Select(ui.nba, ui.eventFn, attrs...)
+	return rq.Select(ui.nba.Jid, ui.nba, []interface{}{ui.eventFn, attrs}...)
 }

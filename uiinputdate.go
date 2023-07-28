@@ -37,5 +37,5 @@ func (ui *uiInputDate) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
 	data := ui.data
 	ui.mu.RUnlock()
 	return template.HTML(fmt.Sprintf(`<label for="%s" class="form-label">Date</label>`, ui.jid)) +
-		rq.Date(ui.jid, data, ui.eventFn, attrs...)
+		rq.Date(ui.jid, data, []interface{}{ui.eventFn, attrs})
 }

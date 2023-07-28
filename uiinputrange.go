@@ -32,6 +32,6 @@ func (ui *uiInputRange) eventFn(rq *jaws.Request, jid string, floatval float64) 
 }
 
 func (ui *uiInputRange) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
-	return rq.Range(ui.jid, float64(ui.data), ui.eventFn, attrs...) +
+	return rq.Range(ui.jid, float64(ui.data), []interface{}{ui.eventFn, attrs}...) +
 		rq.Span(ui.jid+"-text", strconv.Itoa(ui.data), nil)
 }
