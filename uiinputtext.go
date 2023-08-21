@@ -26,9 +26,9 @@ func (ui *uiInputText) JawsSet(e *jaws.Element, val interface{}) (err error) {
 		ui.mu.Lock()
 		ui.data = s
 		ui.mu.Unlock()
-		for _, tag := range e.Ui.JawsTags(e.Request) {
-			for _, elem := range e.Request.GetElements(tag) {
-				e.Jaws.SetValue(elem.Jid, s)
+		for _, tag := range e.UI().JawsTags(e.Request()) {
+			for _, elem := range e.Request().GetElements(tag) {
+				e.Request().Jaws.SetValue(elem.Jid(), s)
 			}
 		}
 	}
