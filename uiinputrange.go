@@ -2,36 +2,67 @@ package main
 
 import (
 	"html/template"
+	"io"
 	"strconv"
 
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/what"
 )
 
 type uiInputRange struct {
-	jid  string
-	mu   deadlock.RWMutex // protects following
-	data int
+	mu      deadlock.Mutex
+	data    float64
+	uiRange *jaws.UiRange
 }
 
-func newUiInputRange(jid string) *uiInputRange {
-	return &uiInputRange{jid: jid}
+func newUiInputRange(jid string) (ui *uiInputRange) {
+	ui = &uiInputRange{}
+	ui.uiRange = jaws.NewUiRange([]interface{}{jid}, ui)
+	return
 }
 
-// eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiInputRange) eventFn(rq *jaws.Request, jid string, floatval float64) error {
+func (ui *uiInputRange) JawsGet(e *jaws.Element) (val interface{}) {
 	ui.mu.Lock()
-	defer ui.mu.Unlock()
-	val := int(floatval)
-	if ui.data != val {
-		ui.data = val
-		rq.SetFloatValue(ui.jid, floatval)
-		rq.Jaws.SetInner(ui.jid+"-text", strconv.Itoa(ui.data))
-	}
-	return nil
+	val = ui.data
+	ui.mu.Unlock()
+	return
+
+}
+func (ui *uiInputRange) JawsSet(e *jaws.Element, val interface{}) (changed bool) {
+	ui.mu.Lock()
+	changed = val != ui.data
+	ui.data = val.(float64)
+	ui.mu.Unlock()
+	return
 }
 
-func (ui *uiInputRange) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
-	return rq.Range(ui.jid, float64(ui.data), []interface{}{ui.eventFn, attrs}...) +
-		rq.Span(ui.jid+"-text", strconv.Itoa(ui.data), nil)
+func (ui *uiInputRange) JawsInner(e *jaws.Element) (s template.HTML) {
+	ui.mu.Lock()
+	s = template.HTML(ui.formatSpan())
+	ui.mu.Unlock()
+	return
+}
+
+func (ui *uiInputRange) formatSpan() string {
+	return strconv.FormatFloat(ui.data, 'f', 1, 64)
+}
+
+func (ui *uiInputRange) JawsCreate(rq *jaws.Request, data []interface{}) (elem *jaws.Element, err error) {
+	return rq.NewElement(nil, ui.uiRange, data), nil
+}
+
+func (ui *uiInputRange) JawsRender(e *jaws.Element, w io.Writer) (err error) {
+	return ui.uiRange.JawsRender(e, w)
+}
+
+func (ui *uiInputRange) JawsUpdate(e *jaws.Element) (err error) {
+	if err = ui.uiRange.JawsUpdate(e); err == nil {
+		e.Request().Jaws.Update([]interface{}{ui})
+	}
+	return
+}
+
+func (ui *uiInputRange) JawsEvent(e *jaws.Element, wht what.What, val string) (err error) {
+	return ui.uiRange.JawsEvent(e, wht, val)
 }

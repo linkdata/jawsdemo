@@ -29,68 +29,66 @@
 			plus a variable number of optional parameters.
 			
 			The first parameter is the tags you want to associate with the UI element.
-			Tags can be anything (interface{}), but we treat some types special.
-			Here, we just call CarsLinkID and use it's return value.
+			Tags can be anything (interface{}), but we treat some types special:
 
 			If a string is given, it is split on spaces into multiple tags.
 			For a slice of strings, we iterate over them and again split on spaces.
-			A slice of interface{} will have all it's contents as tags.
+			A slice of interface{} will have all it's elements as tags.
 
-			If no tag is provided (nil or an empty string), a unique string tag is
-			generated for you.
+			Here, we just call CarsLinkID and use it's return value. We can use tags
+			to modify a set of HTML elements - the sample program uses this tag
+			to change the <a> tag's inner HTML dynamically.
 
 			The second parameter is the HTML code to display inside the <a> element.
 			Here we call CarsLinkText and have it return it.
 
 			Finally, we provide a string with HTML attributes as the optional
 			parameters. The optional parameters can contain other things as well,
-			but strings are expected to be HTML attributes.
+			but strings are copied into the HTML closing tag as-is.
 		-->
 		{{$.A .CarsLinkID .CarsLinkText `href="/cars" class="btn btn-primary"`}}
 
 		<form autocomplete="off">
+			<!--
+				JaWS Request objects have helper functions to allow easy data
+				binding between your application and it's web UI.
+
+				The first parameter is the tag item, as above. We pass nil here
+				because we don't need to update these programatically using tags.
+				
+				The second parameter is a jaws.ValueProxy or a `*atomic.Value`
+				(which will get wrapped with a jaws.AtomicValueProxy).
+			-->
 			<div class="mb-3">
-				<!--
-					If you prefer to move data references away from the HTML template
-					another option is to use jaws.Request.UI(), which accepts an
-					object implementing the `jaws.UI` interface and zero or more
-					data objects (normally a list of HTML attributes).
-
-					This allows for building types for generic use, and then
-					use those types directly in your structures instead of the
-					primitive data types.
-
-					.G.InputText here is an example of one such implementation.
-				-->
 				<label class="form-label">Text</label>
-				{{$.UI .G.InputText `class="form-control"`}}
+				{{$.Text nil .G.InputText `class="form-control"`}}
+			</div>
+			<div class="form-check mb-3">
+				{{$.Checkbox nil .G.InputCheckbox `class="form-check-input"`}}
+				<label class="form-check-label">Checkbox</label>
+			</div>
+			<div class="mb-3">
+				<label class="form-label">Date</label>
+				{{$.Date nil .G.InputDate}}
 			</div>
 			<div class="mb-3">
 				<!--
 					If jaws.Request doesn't have a helper function for a HTML tag, you can still
-					use it. Here, we use Request.OnInput() to have JaWS call the function returned by
-					OnInputTextArea() when the textarea data changes.
+					use it with JaWS automation. Here, we use Request.Register() with an event 
+					function parameter to have JaWS call the function returned by OnInputTextArea()
+					when the textarea data changes.
+
+					That function then uses the tag returned from .G.InputTextAreaID to distribute the
+					entered text to other Requests.
 				-->
-				<textarea jid="{{.G.InputTextAreaID}}" rows="4" cols="50">{{.G.InputTextArea}}</textarea>
-				{{$.OnInput .G.InputTextAreaID .G.OnInputTextArea}}
+				<textarea jid="{{$.Register .G.InputTextAreaID .G.OnInputTextArea}}" rows="4" cols="50">{{.G.InputTextArea}}</textarea>
 			</div>
 			<div class="row mb-3">
-				<label for="{{.G.InputRangeID}}" class="col-sm-2 form-label">Range</label>
+				<label class="col-sm-2 form-label">Range</label>
 				<div class="col-sm-10">
-					<!--
-						Previous UI elements have consisted of only one HTML element,
-						but this one shows that you can of course return HTML from
-						JawsUi() that renders several and use an input event function
-						to them in synch.
-					-->
-					{{$.Ui .G.InputRange `class="form-range align-bottom w-75"`}}
+					{{$.Range "linkedrange" .G.InputRange `class="form-range align-bottom w-75"`}}
+					{{$.Span "linkedrange" .G.InputRange}}
 				</div>
-			</div>
-			<div class="form-check mb-3">
-				{{$.Ui .G.InputCheckbox `class="form-check-input"`}}
-			</div>
-			<div class="mb-3">
-				{{$.Ui .G.InputDate `class="form-label"`}}
 			</div>
 			<!--
 				Radio buttons require special handling because selecting

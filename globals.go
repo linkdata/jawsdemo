@@ -2,6 +2,8 @@ package main
 
 import (
 	"strings"
+	"sync/atomic"
+	"time"
 
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
@@ -10,28 +12,28 @@ import (
 
 type Globals struct {
 	mu               deadlock.RWMutex
-	InputText        jaws.UI
+	InputText        *atomic.Value
 	InputTextArea    string
-	InputCheckbox    *uiInputCheckbox
+	InputCheckbox    *atomic.Value
 	InputRadioGroup1 *uiInputRadioGroup
 	InputRadioGroup2 *uiInputRadioGroup
-	InputDate        *uiInputDate
-	InputRange       *uiInputRange
+	InputDate        *atomic.Value
+	InputRange       *atomic.Value
 	InputButton      *uiInputButton
 	SelectPet        *uiSelectPet
 	Cars             []*Car
 }
 
 func NewGlobals() *Globals {
-	return &Globals{
-		InputText:     newUiInputText("inputtext", ""),
-		InputCheckbox: newUiInputCheckbox("checkbox"),
+	g := &Globals{
+		InputText:     &atomic.Value{},
+		InputCheckbox: &atomic.Value{},
 		InputRadioGroup1: newUiInputRadioGroup(
 			jaws.NewNamedBoolArray("radiogroup1").Add("1", "Radio 1.1").Add("2", "Radio 1.2")),
 		InputRadioGroup2: newUiInputRadioGroup(
 			jaws.NewNamedBoolArray("radiogroup2").Add("1", "Radio 2.1").Add("2", "Radio 2.2")),
-		InputDate:   newUiInputDate("inputdate"),
-		InputRange:  newUiInputRange("inputrange"),
+		InputDate:   &atomic.Value{},
+		InputRange:  &atomic.Value{},
 		InputButton: newUiInputButton(uiInputButtonID, "Meh"),
 		SelectPet:   newUiSelectPet("selectpet"),
 		Cars: []*Car{
@@ -58,6 +60,11 @@ func NewGlobals() *Globals {
 			},
 		},
 	}
+	g.InputText.Store("")
+	g.InputCheckbox.Store(false)
+	g.InputDate.Store(time.Now())
+	g.InputRange.Store(0.0)
+	return g
 }
 
 func (g *Globals) RLock() {

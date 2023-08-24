@@ -1,10 +1,6 @@
 package main
 
-import (
-	"github.com/linkdata/deadlock"
-	"github.com/linkdata/jaws"
-)
-
+/*
 type uiInputText struct {
 	mu   deadlock.RWMutex // protects following
 	data string
@@ -34,3 +30,4 @@ func (ui *uiInputText) JawsSet(e *jaws.Element, val interface{}) (err error) {
 	}
 	return
 }
+*/
