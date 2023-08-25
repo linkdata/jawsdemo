@@ -29,6 +29,7 @@
 			plus a variable number of optional parameters.
 			
 			The first parameter is the tags you want to associate with the UI element.
+			Tags are used when letting JaWS know which Elements need to be updated.
 			Tags can be anything (interface{}), but we treat some types special:
 
 			If a string is given, it is split on spaces into multiple tags.
@@ -54,7 +55,9 @@
 				binding between your application and it's web UI.
 
 				The first parameter is the tag item, as above. We pass nil here
-				because we don't need to update these programatically using tags.
+				because we don't need to update these programatically using tags,
+				and JaWS automatically adds the ValueProxy as a tag for input
+				Elements.
 				
 				The second parameter is a jaws.ValueProxy or a `*atomic.Value`
 				(which will get wrapped with a jaws.AtomicValueProxy).
@@ -86,8 +89,21 @@
 			<div class="row mb-3">
 				<label class="col-sm-2 form-label">Range</label>
 				<div class="col-sm-10">
-					{{$.Range "linkedrange" .G.InputRange `class="form-range align-bottom w-75"`}}
-					{{$.Span "linkedrange" .G.InputRange}}
+					<!-- 
+						JaWS tags are used to logically link JaWS Elements together. When a
+						Element.UpdateOther(tags) or Jaws.Update(tags) call is made, all 
+						Elemets with one or more of the given tags have their JawsUpdate()
+						method called.
+
+						Here, both UI Elements share the same *atomic.Value for their data,
+						and JaWS will automatically add those as tags. So when the Range
+						gets modified, the Span is updated to match.
+
+						Since we don't need any custom tags, we just pass nil for the
+						first parameter.
+					-->
+					{{$.Range nil .G.InputRange `class="form-range align-bottom w-75"`}}
+					{{$.Span nil .G.InputRange}}
 				</div>
 			</div>
 			<!--
