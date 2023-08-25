@@ -54,25 +54,23 @@
 				JaWS Request objects have helper functions to allow easy data
 				binding between your application and it's web UI.
 
-				The first parameter is the tag item, as above. We pass nil here
-				because we don't need to update these programatically using tags,
-				and JaWS automatically adds the ValueProxy as a tag for input
-				Elements.
-				
-				The second parameter is a jaws.ValueProxy or a `*atomic.Value`
+P				The parameter is a jaws.ValueProxy or a `*atomic.Value`
 				(which will get wrapped with a jaws.AtomicValueProxy).
+
+				For input elements, JaWS adds the ValueProxy as a tag.
+				You can add more tags if needed.
 			-->
 			<div class="mb-3">
 				<label class="form-label">Text</label>
-				{{$.Text nil .G.InputText `class="form-control"`}}
+				{{$.Text .G.InputText `class="form-control"`}}
 			</div>
 			<div class="form-check mb-3">
-				{{$.Checkbox nil .G.InputCheckbox `class="form-check-input"`}}
+				{{$.Checkbox .G.InputCheckbox `class="form-check-input"`}}
 				<label class="form-check-label">Checkbox</label>
 			</div>
 			<div class="mb-3">
 				<label class="form-label">Date</label>
-				{{$.Date nil .G.InputDate}}
+				{{$.Date .G.InputDate}}
 			</div>
 			<div class="mb-3">
 				<!--
@@ -98,12 +96,9 @@
 						Here, both UI Elements share the same *atomic.Value for their data,
 						and JaWS will automatically add those as tags. So when the Range
 						gets modified, the Span is updated to match.
-
-						Since we don't need any custom tags, we just pass nil for the
-						first parameter.
 					-->
-					{{$.Range nil .G.InputRange `class="form-range align-bottom w-75"`}}
-					{{$.Span nil .G.InputRange}}
+					{{$.Range .G.InputRange `class="form-range align-bottom w-75"`}}
+					{{$.Span .G.InputRange}}
 				</div>
 			</div>
 			<!--
