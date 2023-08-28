@@ -82,7 +82,7 @@ P				The parameter is a jaws.ValueProxy or a `*atomic.Value`
 					That function then uses the tag returned from .G.InputTextAreaID to distribute the
 					entered text to other Requests.
 				-->
-				<textarea jid="{{$.Register .G.InputTextAreaID .G.OnInputTextArea}}" rows="4" cols="50">{{.G.InputTextArea}}</textarea>
+				<textarea jid="{{$.Register ($.Tags .G.InputTextAreaID) .G.OnInputTextArea}}" rows="4" cols="50">{{.G.InputTextArea}}</textarea>
 			</div>
 			<div class="row mb-3">
 				<label class="col-sm-2 form-label">Range</label>
