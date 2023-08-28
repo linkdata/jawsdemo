@@ -15,27 +15,25 @@ type Globals struct {
 	InputText        *atomic.Value
 	InputTextArea    string
 	InputCheckbox    *atomic.Value
-	InputRadioGroup1 *uiInputRadioGroup
-	InputRadioGroup2 *uiInputRadioGroup
+	InputRadioGroup1 *jaws.NamedBoolArray
+	InputRadioGroup2 *jaws.NamedBoolArray
 	InputDate        *atomic.Value
 	InputRange       *atomic.Value
 	InputButton      *uiInputButton
-	SelectPet        *uiSelectPet
+	SelectPet        *jaws.NamedBoolArray
 	Cars             []*Car
 }
 
 func NewGlobals() *Globals {
 	g := &Globals{
-		InputText:     &atomic.Value{},
-		InputCheckbox: &atomic.Value{},
-		InputRadioGroup1: newUiInputRadioGroup(
-			jaws.NewNamedBoolArray("radiogroup1").Add("1", "Radio 1.1").Add("2", "Radio 1.2")),
-		InputRadioGroup2: newUiInputRadioGroup(
-			jaws.NewNamedBoolArray("radiogroup2").Add("1", "Radio 2.1").Add("2", "Radio 2.2")),
-		InputDate:   &atomic.Value{},
-		InputRange:  &atomic.Value{},
-		InputButton: newUiInputButton(uiInputButtonID, "Meh"),
-		SelectPet:   newUiSelectPet("selectpet"),
+		InputText:        &atomic.Value{},
+		InputCheckbox:    &atomic.Value{},
+		InputRadioGroup1: jaws.NewNamedBoolArray().Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
+		InputRadioGroup2: jaws.NewNamedBoolArray().Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
+		InputDate:        &atomic.Value{},
+		InputRange:       &atomic.Value{},
+		InputButton:      newUiInputButton(uiInputButtonID, "Meh"),
+		SelectPet:        newUiSelectPet(),
 		Cars: []*Car{
 			{
 				VIN:       "JH4DB1671PS002584",
