@@ -4,6 +4,7 @@ import (
 	"flag"
 	"html/template"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
@@ -52,10 +53,23 @@ func main() {
 		for range t.C {
 			if minute := time.Now().Minute(); minute != lastMin {
 				lastMin = minute
-				jw.SetInner(uiClockID, ClockString())
+				g.ClockString.Store(ClockString())
+				jw.Update([]interface{}{g.ClockString})
 			}
 			if (time.Now().Second() % 3) == 0 {
-				jw.SetInner(uiCarsLinkID, CarsLinkText())
+				switch rand.Intn(5) {
+				case 0:
+					g.CarsLink.Store("Check out these cars!")
+				case 1:
+					g.CarsLink.Store("Did you know VIN numbers are encoded?")
+				case 2:
+					g.CarsLink.Store("DO NOT CLICK HERE!")
+				case 3:
+					g.CarsLink.Store("Cars")
+				default:
+					g.CarsLink.Store("This is a boring link to car info.")
+				}
+				jw.Update([]interface{}{g.CarsLink})
 			}
 		}
 	}()

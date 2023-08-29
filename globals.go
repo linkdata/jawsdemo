@@ -19,9 +19,11 @@ type Globals struct {
 	InputRadioGroup2 *jaws.NamedBoolArray
 	InputDate        *atomic.Value
 	InputRange       *atomic.Value
-	InputButton      *uiInputButton
+	InputButton      *atomic.Value
 	SelectPet        *jaws.NamedBoolArray
 	Cars             []*Car
+	ClockString      *atomic.Value
+	CarsLink         *atomic.Value
 }
 
 func NewGlobals() *Globals {
@@ -32,8 +34,10 @@ func NewGlobals() *Globals {
 		InputRadioGroup2: jaws.NewNamedBoolArray().Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
 		InputDate:        &atomic.Value{},
 		InputRange:       &atomic.Value{},
-		InputButton:      newUiInputButton(uiInputButtonID, "Meh"),
+		InputButton:      &atomic.Value{},
 		SelectPet:        newUiSelectPet(),
+		ClockString:      &atomic.Value{},
+		CarsLink:         &atomic.Value{},
 		Cars: []*Car{
 			{
 				VIN:       "JH4DB1671PS002584",
@@ -62,6 +66,9 @@ func NewGlobals() *Globals {
 	g.InputCheckbox.Store(false)
 	g.InputDate.Store(time.Now())
 	g.InputRange.Store(0.0)
+	g.InputButton.Store("Meh")
+	g.ClockString.Store("")
+	g.CarsLink.Store("...")
 	return g
 }
 
@@ -81,17 +88,17 @@ func (g *Globals) OnSetInputButton() jaws.EventFn {
 	return func(rq *jaws.Request, evt what.What, id, val string) error {
 		if evt == what.Trigger {
 			g.mu.RLock()
-			isWoo := strings.HasPrefix(g.InputButton.get(), "Woo")
+			isWoo := strings.HasPrefix(g.InputButton.Load().(string), "Woo")
 			g.mu.RUnlock()
 			if isWoo {
-				rq.RemoveAttr(uiInputButtonID, "disabled")
+				rq.RemoveAttr(g.InputButton, "disabled")
 			} else {
-				rq.SetAttr(uiInputButtonID, "disabled", "")
+				rq.SetAttr(g.InputButton, "disabled", "")
 			}
 			g.mu.Lock()
 			defer g.mu.Unlock()
-			g.InputButton.set(val)
-			rq.Jaws.SetInner(uiInputButtonID, g.InputButton.get())
+			g.InputButton.Store(val)
+			rq.Jaws.Update([]interface{}{g.InputButton})
 		}
 		return nil
 	}

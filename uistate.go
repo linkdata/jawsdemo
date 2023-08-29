@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
 	"runtime/debug"
 	"strings"
 	"time"
@@ -10,15 +9,9 @@ import (
 	"github.com/linkdata/jaws"
 )
 
-const uiClockID = "clock"
-
 type UiState struct {
 	G *Globals
 	*jaws.Request
-}
-
-func (uis *UiState) ClockID() (v string) {
-	return uiClockID
 }
 
 func ClockString() string {
@@ -30,28 +23,7 @@ func (uis *UiState) ClockString() (v string) {
 	return ClockString()
 }
 
-const uiCarsLinkID = "cars"
-
-func (*UiState) CarsLinkID() string {
-	return uiCarsLinkID
-}
-
-func CarsLinkText() string {
-	switch rand.Intn(5) {
-	case 0:
-		return "Check out these cars!"
-	case 1:
-		return "Did you know VIN numbers are encoded?"
-	case 2:
-		return "DO NOT CLICK HERE!"
-	case 3:
-		return "Cars"
-	}
-	return "This is a boring link to car info."
-}
-
-func (*UiState) CarsLinkText() string {
-	return CarsLinkText()
+func RandomizeCarsLink() {
 }
 
 func (uis *UiState) JawsVersion() (v string) {

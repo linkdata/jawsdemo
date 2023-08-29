@@ -47,7 +47,7 @@
 			parameters. The optional parameters can contain other things as well,
 			but strings are copied into the HTML closing tag as-is.
 		-->
-		{{$.A ($.Tags .CarsLinkID) ($.Inner .CarsLinkText) `href="/cars" class="btn btn-primary"`}}
+		{{$.A .G.CarsLink `href="/cars" class="btn btn-primary"`}}
 
 		<form autocomplete="off">
 			<!--
@@ -133,7 +133,7 @@ P				The parameter is a jaws.ValueProxy or a `*atomic.Value`
 				<label>Choose a pet:</label>
 				{{$.Select .G.SelectPet `class="form-select"`}}
 			</div>
-			{{$.Ui .G.InputButton `class="btn btn-primary mt-3"`}}
+			{{$.Button .G.InputButton `class="btn btn-primary mt-3"`}}
 
 			<!--
 				What this does is left as an exercise to the reader.
