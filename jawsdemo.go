@@ -19,6 +19,7 @@ import (
 var listenaddr = flag.String("listenaddr", "localhost:8081", "address to listen on")
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 var memprofile = flag.String("memprofile", "", "write memory profile to this file")
+var globals = NewGlobals()
 
 func main() {
 	flag.Parse()
@@ -43,8 +44,6 @@ func main() {
 	mux := http.NewServeMux() // create a ServeMux to do routing
 	mux.Handle("/jaws/", jw)  // ensure the JaWS routes are handled
 
-	g := NewGlobals() // "Globals" contains the data we want to render
-
 	// spin up a goroutine to update the clock and cars button text
 	go func() {
 		t := time.NewTicker(time.Second)
@@ -53,23 +52,23 @@ func main() {
 		for range t.C {
 			if minute := time.Now().Minute(); minute != lastMin {
 				lastMin = minute
-				g.ClockString.Store(ClockString())
-				jw.Update([]interface{}{g.ClockString})
+				globals.ClockString.Store(ClockString())
+				jw.Update([]interface{}{globals.ClockString})
 			}
 			if (time.Now().Second() % 3) == 0 {
 				switch rand.Intn(5) {
 				case 0:
-					g.CarsLink.Store("Check out these cars!")
+					globals.CarsLink.Store("Check out these cars!")
 				case 1:
-					g.CarsLink.Store("Did you know VIN numbers are encoded?")
+					globals.CarsLink.Store("Did you know VIN numbers are encoded?")
 				case 2:
-					g.CarsLink.Store("DO NOT CLICK HERE!")
+					globals.CarsLink.Store("DO NOT CLICK HERE!")
 				case 3:
-					g.CarsLink.Store("Cars")
+					globals.CarsLink.Store("Cars")
 				default:
-					g.CarsLink.Store("This is a boring link to car info.")
+					globals.CarsLink.Store("This is a boring link to car info.")
 				}
-				jw.Update([]interface{}{g.CarsLink})
+				jw.Update([]interface{}{globals.CarsLink})
 			}
 		}
 	}()
@@ -77,7 +76,7 @@ func main() {
 	// the renderer simplifies making http.HanderFunc functions for us
 	t := &renderer{
 		jw: jw,
-		g:  g,
+		g:  globals,
 		t:  template.Must(template.New("").ParseGlob("assets/*.html")),
 	}
 	mux.Handle("/favicon.ico", http.NotFoundHandler())

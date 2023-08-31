@@ -37,7 +37,17 @@ func (c *Car) RemoveButton() jaws.ClickFn {
 
 func (c *Car) UpButtonFn() jaws.ClickFn {
 	return func(rq *jaws.Request, jid string) error {
-		rq.Jaws.Insert("carlist", c.VIN, "<tr><td>Meh</td></tr>")
+		for i, oc := range globals.Cars {
+			if i > 0 && oc == c {
+				globals.Cars[i], globals.Cars[i-1] = globals.Cars[i-1], globals.Cars[i]
+				break
+			}
+		}
+		var tags []interface{}
+		for _, oc := range globals.Cars {
+			tags = append(tags, oc)
+		}
+		rq.Jaws.Order(tags...)
 		return nil
 	}
 }

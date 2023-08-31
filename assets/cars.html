@@ -19,9 +19,9 @@
 					<th scope="col">Condition</th>
 				</tr>
 			</thead>
-			<tbody jid="{{$.Register ($.Tags `carlist`)}}">
+			<tbody id="{{$.Register ($.Tags `carlist`)}}">
 				{{range .G.Cars}}
-				<tr jid="{{$.Register ($.Tags .VIN)}}">
+				<tr id="{{$.Register .}}">
 					<td scope="row">
 						{{$.Button "&uarr;" .UpButtonFn `class="badge rounded-pill bg-secondary"`}}
 						{{$.Button "x" .RemoveButton `class="badge rounded-pill bg-secondary"`}}

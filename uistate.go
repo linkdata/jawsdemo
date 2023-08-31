@@ -23,9 +23,6 @@ func (uis *UiState) ClockString() (v string) {
 	return ClockString()
 }
 
-func RandomizeCarsLink() {
-}
-
 func (uis *UiState) JawsVersion() (v string) {
 	if bi, ok := debug.ReadBuildInfo(); ok {
 		v = bi.Main.Version
