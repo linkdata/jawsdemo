@@ -23,7 +23,7 @@
 				{{range .G.Cars}}
 				<tr jid="{{$.Register ($.Tags .VIN)}}">
 					<td scope="row">
-						{{$.Button "&uarr;" .InsertButton `class="badge rounded-pill bg-secondary"`}}
+						{{$.Button "&uarr;" .UpButtonFn `class="badge rounded-pill bg-secondary"`}}
 						{{$.Button "x" .RemoveButton `class="badge rounded-pill bg-secondary"`}}
 						{{$.Button "&darr;" .AppendButton `class="badge rounded-pill bg-secondary"`}}
 						{{.VIN}}

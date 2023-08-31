@@ -35,7 +35,7 @@ func (c *Car) RemoveButton() jaws.ClickFn {
 	}
 }
 
-func (c *Car) InsertButton() jaws.ClickFn {
+func (c *Car) UpButtonFn() jaws.ClickFn {
 	return func(rq *jaws.Request, jid string) error {
 		rq.Jaws.Insert("carlist", c.VIN, "<tr><td>Meh</td></tr>")
 		return nil
