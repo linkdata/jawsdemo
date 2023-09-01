@@ -2,76 +2,81 @@ package main
 
 import (
 	"errors"
-	"strconv"
+	"math/rand"
+	"sync/atomic"
 
 	"github.com/linkdata/jaws"
 )
+
+type CarList struct {
+	Cars []*Car
+}
 
 type Car struct {
 	VIN       string
 	Make      string
 	Model     string
 	Year      int
-	Condition int
+	condition atomic.Value
 }
 
-func (c *Car) ConditionID() string {
-	return c.VIN + ".cond"
-}
-
-func (c *Car) conditionDec(rq *jaws.Request, jid string) error {
-	if c.Condition < 1 {
-		return errors.New("condition too low")
+func (c *Car) Condition() *atomic.Value {
+	if c.condition.Load() == nil {
+		c.condition.Store(rand.Intn(100))
 	}
-	c.Condition--
-	rq.Jaws.SetInner(c.ConditionID(), strconv.Itoa(c.Condition))
-	return nil
+	return &c.condition
 }
 
-func (c *Car) RemoveButton() jaws.ClickFn {
-	return func(rq *jaws.Request, jid string) error {
-		rq.Jaws.Remove(c.VIN)
-		return nil
-	}
-}
-
-func (c *Car) UpButtonFn() jaws.ClickFn {
-	return func(rq *jaws.Request, jid string) error {
+func (c *Car) JawsClick(e *jaws.Element, name string) error {
+	switch name {
+	case "up":
 		for i, oc := range globals.Cars {
 			if i > 0 && oc == c {
 				globals.Cars[i], globals.Cars[i-1] = globals.Cars[i-1], globals.Cars[i]
 				break
 			}
 		}
-		var tags []interface{}
+	case "remove":
+		var nl []*Car
 		for _, oc := range globals.Cars {
-			tags = append(tags, oc)
+			if oc != c {
+				nl = append(nl, oc)
+			}
 		}
-		rq.Jaws.Order(tags...)
+		globals.Cars = nl
+		e.Request().Jaws.Remove(c)
+		return nil
+	case "down":
+		for i, oc := range globals.Cars {
+			if i < len(globals.Cars)-1 && oc == c {
+				globals.Cars[i], globals.Cars[i+1] = globals.Cars[i+1], globals.Cars[i]
+				break
+			}
+		}
+	case "+":
+		oldVal := c.condition.Load().(int)
+		if oldVal > 99 {
+			return errors.New("condition too high")
+		}
+		if c.condition.CompareAndSwap(oldVal, oldVal+1) {
+			e.Request().Jaws.Update([]interface{}{c.Condition()})
+		}
+		return nil
+	case "-":
+		oldVal := c.condition.Load().(int)
+		if oldVal < 1 {
+			return errors.New("condition too low")
+		}
+		if c.condition.CompareAndSwap(oldVal, oldVal-1) {
+			e.Request().Jaws.Update([]interface{}{c.Condition()})
+		}
 		return nil
 	}
-}
-
-func (c *Car) AppendButton() jaws.ClickFn {
-	return func(rq *jaws.Request, jid string) error {
-		rq.Jaws.Append("carlist", "<tr><td>Foo</td></tr>")
-		return nil
+	var tags []interface{}
+	tags = append(tags, "carlist")
+	for _, oc := range globals.Cars {
+		tags = append(tags, oc)
 	}
-}
-
-func (c *Car) ConditionDec() jaws.ClickFn {
-	return c.conditionDec
-}
-
-func (c *Car) conditionInc(rq *jaws.Request, jid string) error {
-	if c.Condition > 99 {
-		return errors.New("condition too high")
-	}
-	c.Condition++
-	rq.Jaws.SetInner(c.ConditionID(), strconv.Itoa(c.Condition))
+	e.Request().Jaws.Order(tags...)
 	return nil
-}
-
-func (c *Car) ConditionInc() jaws.ClickFn {
-	return c.conditionInc
 }
