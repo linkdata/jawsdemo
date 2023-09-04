@@ -30,29 +30,13 @@ func (c *Car) Condition() *atomic.Value {
 func (c *Car) JawsClick(e *jaws.Element, name string) error {
 	switch name {
 	case "up":
-		for i, oc := range globals.Cars {
-			if i > 0 && oc == c {
-				globals.Cars[i], globals.Cars[i-1] = globals.Cars[i-1], globals.Cars[i]
-				break
-			}
-		}
+		jaws.ListMove(globals.Cars, c, -1)
+	case "down":
+		jaws.ListMove(globals.Cars, c, 1)
 	case "remove":
-		var nl []*Car
-		for _, oc := range globals.Cars {
-			if oc != c {
-				nl = append(nl, oc)
-			}
-		}
-		globals.Cars = nl
+		globals.Cars = jaws.ListRemove(globals.Cars, c)
 		e.Jaws().Remove(c)
 		return nil
-	case "down":
-		for i, oc := range globals.Cars {
-			if i < len(globals.Cars)-1 && oc == c {
-				globals.Cars[i], globals.Cars[i+1] = globals.Cars[i+1], globals.Cars[i]
-				break
-			}
-		}
 	case "+":
 		oldVal := c.condition.Load().(int)
 		if oldVal > 99 {
@@ -72,10 +56,6 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 		}
 		return nil
 	}
-	var tags []interface{}
-	for _, oc := range globals.Cars {
-		tags = append(tags, oc)
-	}
-	e.Jaws().Order("carlist", tags)
+	jaws.ListOrder(globals.Cars, e.Jaws())
 	return nil
 }
