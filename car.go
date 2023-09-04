@@ -44,7 +44,7 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 			}
 		}
 		globals.Cars = nl
-		e.Request().Jaws.Remove(c)
+		e.Jaws().Remove(c)
 		return nil
 	case "down":
 		for i, oc := range globals.Cars {
@@ -59,7 +59,7 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 			return errors.New("condition too high")
 		}
 		if c.condition.CompareAndSwap(oldVal, oldVal+1) {
-			e.Request().Jaws.Update(c.Condition())
+			e.Jaws().Update(c.Condition())
 		}
 		return nil
 	case "-":
@@ -68,7 +68,7 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 			return errors.New("condition too low")
 		}
 		if c.condition.CompareAndSwap(oldVal, oldVal-1) {
-			e.Request().Jaws.Update(c.Condition())
+			e.Jaws().Update(c.Condition())
 		}
 		return nil
 	}
@@ -76,6 +76,6 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 	for _, oc := range globals.Cars {
 		tags = append(tags, oc)
 	}
-	e.Request().Jaws.Order("carlist", tags)
+	e.Jaws().Order("carlist", tags)
 	return nil
 }
