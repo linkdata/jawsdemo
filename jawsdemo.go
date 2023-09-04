@@ -53,7 +53,7 @@ func main() {
 			if minute := time.Now().Minute(); minute != lastMin {
 				lastMin = minute
 				globals.ClockString.Store(ClockString())
-				jw.Update([]interface{}{globals.ClockString})
+				jw.Update(globals.ClockString)
 			}
 			if (time.Now().Second() % 3) == 0 {
 				switch rand.Intn(5) {
@@ -68,7 +68,7 @@ func main() {
 				default:
 					globals.CarsLink.Store("This is a boring link to car info.")
 				}
-				jw.Update([]interface{}{globals.CarsLink})
+				jw.Update(globals.CarsLink)
 			}
 		}
 	}()
