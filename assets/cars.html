@@ -25,7 +25,7 @@
 			<tbody>
 				{{range .G.Cars}}
 				<!--
-					When calling a template, we use the Request.With() to pass both
+					When calling a template, we use Request.With() to pass both
 					the Request and a value for the initial dot.
 				-->
 				{{template "car_row.html" ($.With .)}}
