@@ -34,10 +34,14 @@ func main() {
 		defer pprof.StopCPUProfile()
 	}
 
+	// parse our templates
+	templates := template.Must(template.New("").ParseGlob("assets/*.html"))
+
 	jw := jaws.New()           // create a default JaWS instance
 	defer jw.Close()           // ensure we clean up
 	jw.CookieName = "jawsdemo" // optionally set a session cookie name
 	jw.Logger = log.Default()  // optionally set the logger to use
+	jw.Template = templates    // optionally let JaWS know about our templates
 	jawsboot.Setup(jw)         // optionally enable the included Bootstrap support
 	go jw.Serve()              // start the JaWS processing loop
 
@@ -77,7 +81,6 @@ func main() {
 	t := &renderer{
 		jw: jw,
 		g:  globals,
-		t:  template.Must(template.New("").ParseGlob("assets/*.html")),
 	}
 	mux.Handle("/favicon.ico", http.NotFoundHandler())
 	mux.HandleFunc("/cars", t.makeHandler("cars.html"))

@@ -20,45 +20,11 @@
 				</tr>
 			</thead>
 			<!--
-				The list of cars can be reordered. Re-ordering HTML elements with JaWS require you
-				to have a parent element that contains all the child elements you want to order.
-
-				Here, we register the table body as an element with the tag "carlist".
+				The list of cars can be reordered.
 			-->
 			<tbody>
 				{{range .G.Cars}}
-				<!--
-					We register each Car as it's own element using the actual *Car as the tag.
-				-->
-				<tr id="{{$.Register .}}">
-					<td scope="row">
-						<!--
-							Buttons send click events up the DOM tree, with a parameter
-							containing the 'name' attribute if present, or the inner HTML
-							if there is no name attribute.
-
-							So these button click events get delivered to *Car.JawsClick().
-						-->
-						{{$.Button "&uarr;" `class="badge rounded-pill bg-secondary" name="up"`}}
-						{{$.Button "x" `class="badge rounded-pill bg-secondary" name="remove"`}}
-						{{$.Button "&darr;" `class="badge rounded-pill bg-secondary" name="down"`}}
-						{{.VIN}}
-					</td>
-					<td>{{.Make}}</td>
-					<td>{{.Model}}</td>
-					<td>{{.Year}}</td>
-					<td>
-						<div class="btn-group btn-group-sm" role="group">
-							<!--
-								If a button doesn't have a name attribute,
-								it's inner HTML is used instead when sending events.
-							-->
-							{{$.Button "-" `class="btn btn-outline-secondary"`}}
-							{{$.Button "+" `class="btn btn-outline-secondary"`}}
-						</div>
-						{{$.Span .Condition}}
-					</td>
-				</tr>
+				{{template "car_row.html" ($.With .)}}
 				{{end}}
 			</tbody>
 		</table>
