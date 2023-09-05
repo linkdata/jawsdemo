@@ -1,7 +1,14 @@
 <!--
-	We register each Car as it's own element using the actual *Car as the tag.
+	In a template, we use the jaws.With{} structure created by
+	Request.With to split out the dot value while keeping '$'
+	referring to the Request.
 -->
 {{with .Dot}}
+<!--
+	We register each Car as it's own element using the actual *Car as the tag
+	in order to be able to process all the different buttons acting on a *Car
+	in the same place.
+-->
 <tr id="{{$.Register .}}">
 	<td scope="row">
 		<!--
