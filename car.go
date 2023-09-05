@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"io"
 	"math/rand"
 	"sync/atomic"
 
@@ -19,20 +18,6 @@ type Car struct {
 	Model     string
 	Year      int
 	condition atomic.Value
-}
-
-func (c *Car) JawsTags(rq *jaws.Request) (tags []interface{}) {
-	// Return any extra tags as needed, will be added to the jaws.Element
-	// in addition to tags specified as parameters in the template.
-	return nil
-}
-
-func (c *Car) JawsRender(e *jaws.Element, w io.Writer) (err error) {
-	return e.Jaws.Template.ExecuteTemplate(w, "car_row.html", e.With(c))
-}
-
-func (c *Car) JawsUpdate(e *jaws.Element) (err error) {
-	return
 }
 
 func (c *Car) JawsClick(e *jaws.Element, name string) error {
