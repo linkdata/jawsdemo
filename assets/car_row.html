@@ -4,38 +4,31 @@
 	referring to the Request.
 -->
 {{with .Dot}}
-<!--
-	We register each Car as it's own element using the actual *Car as the tag
-	in order to be able to process all the different buttons acting on a *Car
-	in the same place.
--->
-<tr id="{{$.Register .}}">
-	<td scope="row">
-		<!--
-			Buttons send click events up the DOM tree, with a parameter
-			containing the 'name' attribute if present, or the inner HTML
-			if there is no name attribute.
+<td scope="row">
+	<!--
+		Buttons send click events up the DOM tree, with a parameter
+		containing the 'name' attribute if present, or the inner HTML
+		if there is no name attribute.
 
-			So these button click events get delivered to *Car.JawsClick().
+		So these button click events get delivered to *Car.JawsClick().
+	-->
+	{{$.Button "&uarr;" `class="badge rounded-pill bg-secondary" name="up"`}}
+	{{$.Button "x" `class="badge rounded-pill bg-secondary" name="remove"`}}
+	{{$.Button "&darr;" `class="badge rounded-pill bg-secondary" name="down"`}}
+	{{.VIN}}
+</td>
+<td>{{.Make}}</td>
+<td>{{.Model}}</td>
+<td>{{.Year}}</td>
+<td>
+	<div class="btn-group btn-group-sm" role="group">
+		<!--
+			If a button doesn't have a name attribute,
+			it's inner HTML is used instead when sending events.
 		-->
-		{{$.Button "&uarr;" `class="badge rounded-pill bg-secondary" name="up"`}}
-		{{$.Button "x" `class="badge rounded-pill bg-secondary" name="remove"`}}
-		{{$.Button "&darr;" `class="badge rounded-pill bg-secondary" name="down"`}}
-		{{.VIN}}
-	</td>
-	<td>{{.Make}}</td>
-	<td>{{.Model}}</td>
-	<td>{{.Year}}</td>
-	<td>
-		<div class="btn-group btn-group-sm" role="group">
-			<!--
-				If a button doesn't have a name attribute,
-				it's inner HTML is used instead when sending events.
-			-->
-			{{$.Button "-" `class="btn btn-outline-secondary"`}}
-			{{$.Button "+" `class="btn btn-outline-secondary"`}}
-		</div>
-		{{$.Span .Condition}}
-	</td>
-</tr>
+		{{$.Button "-" `class="btn btn-outline-secondary"`}}
+		{{$.Button "+" `class="btn btn-outline-secondary"`}}
+	</div>
+	{{$.Span .Condition}}
+</td>
 {{end}}
