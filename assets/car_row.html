@@ -31,4 +31,9 @@
 	</div>
 	{{$.Span .Condition}}
 </td>
+{{else}}
+<!-- we have no *Car so show a row to add a new car -->
+<td scope="row">
+	{{$.Button "+" `class="badge rounded-pill bg-secondary"`}}
+</td>
 {{end}}

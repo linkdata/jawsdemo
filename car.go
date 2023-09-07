@@ -10,11 +10,11 @@ import (
 
 type CarsTable struct{}
 
-func (CarsTable) JawsTags(rq *jaws.Request, inTags []interface{}) []interface{} {
+func (ct *CarsTable) JawsTags(rq *jaws.Request, inTags []interface{}) []interface{} {
 	for _, c := range globals.Cars {
 		inTags = append(inTags, c)
 	}
-	return inTags
+	return append(inTags, nil) // the "add new car" row
 }
 
 type Car struct {
