@@ -8,8 +8,13 @@ import (
 	"github.com/linkdata/jaws"
 )
 
-type CarList struct {
-	Cars []*Car
+type CarsTable struct{}
+
+func (CarsTable) JawsTags(rq *jaws.Request, inTags []interface{}) []interface{} {
+	for _, c := range globals.Cars {
+		inTags = append(inTags, c)
+	}
+	return inTags
 }
 
 type Car struct {

@@ -133,7 +133,46 @@ P				The parameter is a jaws.ValueProxy or a `*atomic.Value`
 				<label>Choose a pet:</label>
 				{{$.Select .G.SelectPet `class="form-select"`}}
 			</div>
-			{{$.Button .G.InputButton `class="btn btn-primary mt-3"`}}
+			{{$.Button .G.InputButton `class="btn btn-primary m-3"`}}
+
+			<!--
+				This table of cars can be reordered using the buttons, but since we 
+				iterate over .G.Cars manually using 'range', JaWS won't be able to
+				add or remove rows to the table. For that, see "cars.html".
+			-->
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">VIN</th>
+						<th scope="col">Make</th>
+						<th scope="col">Model</th>
+						<th scope="col">Year</th>
+						<th scope="col">Condition</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{range .G.Cars}}
+					<!--
+						Using Request.Template() here with a string giving the
+						template name requires us to set the Jaws.Template variable
+						so the Request can use Template.Lookup() to resolve the name.
+						We could also pass a *template.Template directly instead.
+
+						When using a Request.Template as inner HTML, Request.With() is used
+						to make a jaws.With{} for the data parameter to the template
+						in order to allow passing both a *Request and a dot value to
+						the template.
+
+						So when parsing "car_row.html", "$.Dot" will be the pointer
+						to the current car, and "$" will be the Request.
+
+						Request.Template() adds both the dot value (here a *Car)
+						and the *template.Template as JaWS tags.
+					-->
+					{{$.Tr ($.Template "car_row.html"  .)}}
+					{{end}}
+				</tbody>
+			</table>
 
 			<!--
 				What this does is left as an exercise to the reader.

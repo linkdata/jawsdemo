@@ -24,6 +24,7 @@ type Globals struct {
 	Cars             []*Car
 	ClockString      *atomic.Value
 	CarsLink         *atomic.Value
+	CarsTable        CarsTable
 }
 
 func NewGlobals() *Globals {

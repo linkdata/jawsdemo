@@ -9,11 +9,6 @@
 	{{template "header.html" .}}
 	<div class="container">
 		<div id="jaws-alerts"></div>
-		<!--
-			This table of cars can be reordered using tags, but since we 
-			iterate over .G.Cars manually using 'range', JaWS won't be able to
-			keep the list of table rows automatically in synch with the data.
-		-->
 		<table class="table">
 			<thead>
 				<tr>
@@ -24,28 +19,7 @@
 					<th scope="col">Condition</th>
 				</tr>
 			</thead>
-			<tbody>
-				{{range .G.Cars}}
-				<!--
-					Using Request.Template() here with a string giving the
-					template name requires us to set the Jaws.Template variable
-					so the Request can use Template.Lookup() to resolve the name.
-					We could also pass a *template.Template directly instead.
-
-					When using a template as inner HTML, Request.With() is used
-					to make a jaws.With{} for the data parameter to the template
-					in order to allow passing both a *Request and a dot value to
-					the template.
-
-					So when parsing "car_row.html", "$.Dot" will be the pointer
-					to the current car, and "$" will be the Request.
-
-					Request.Template() adds both the dot value (here a *Car)
-					and the *template.Template as JaWS tags.
-				-->
-				{{$.Tr ($.Template "car_row.html" ($.With .))}}
-				{{end}}
-			</tbody>
+			{{$.Tbody .G.CarsTable "car_row.html"}}
 		</table>
 		{{$.Button "Mystical" .OnMystical}}
 	</div>
