@@ -158,12 +158,7 @@ P				The parameter is a jaws.ValueProxy or a `*atomic.Value`
 						so the Request can use Template.Lookup() to resolve the name.
 						We could also pass a *template.Template directly instead.
 
-						When using a Request.Template to render a template,
-						Request.With() is used to make a jaws.With{} for the data 
-						parameter to the template in order to allow passing both an 
-						*Element and a dot value.
-
-						So when parsing "car_row.html", "$.Dot" will be the pointer
+						When parsing "car_row.html", "$.Dot" will be the pointer
 						to the current car, and "$" will be the *Element, which is
 						also a *Request.
 
