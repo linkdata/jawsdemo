@@ -1,7 +1,7 @@
 <!--
-	In a template, we use the jaws.With{} structure created by
-	Request.With() to split out the dot value while keeping '$'
-	referring to the *Element (which includes the *Request).
+	In a template called by JaWS, the data parameter is a jaws.With{} structure.
+	This contains both the *Element being rendered and the data value passed
+	to Request.Template(), which is accessible as '$.Dot'.
 
 	It's required to set the HTML id of the outermost HTML tag
 	to the value of '$.Jid'.
