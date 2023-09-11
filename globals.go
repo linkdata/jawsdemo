@@ -96,7 +96,7 @@ func (g *Globals) OnSetInputButton() jaws.EventFn {
 			g.mu.Lock()
 			defer g.mu.Unlock()
 			g.InputButton.Store(val)
-			rq.Jaws.Update(g.InputButton)
+			rq.Jaws.Dirty(g.InputButton)
 		}
 		return nil
 	}

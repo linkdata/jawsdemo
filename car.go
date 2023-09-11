@@ -49,7 +49,7 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 			return errors.New("condition too high")
 		}
 		if c.condition.CompareAndSwap(oldVal, oldVal+1) {
-			e.Jaws.Update(c.Condition())
+			e.Jaws.Dirty(c.Condition())
 		}
 		return nil
 	case "-":
@@ -58,7 +58,7 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 			return errors.New("condition too low")
 		}
 		if c.condition.CompareAndSwap(oldVal, oldVal-1) {
-			e.Jaws.Update(c.Condition())
+			e.Jaws.Dirty(c.Condition())
 		}
 		return nil
 	}
