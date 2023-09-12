@@ -34,8 +34,6 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 		jaws.ListMove(globals.Cars, c, 1)
 	case "remove":
 		globals.Cars = jaws.ListRemove(globals.Cars, c)
-		e.Jaws.Remove(c)
-		return nil
 	case "+":
 		oldVal := c.condition.Load().(int)
 		if oldVal > 99 {
