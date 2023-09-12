@@ -10,13 +10,6 @@ import (
 
 type CarsTable struct{}
 
-func (ct *CarsTable) JawsTags(rq *jaws.Request, inTags []interface{}) []interface{} {
-	for _, c := range globals.Cars {
-		inTags = append(inTags, c)
-	}
-	return append(inTags, nil) // the "add new car" row
-}
-
 func (ct *CarsTable) JawsContains(rq *jaws.Request) (tl []jaws.Template) {
 	for _, c := range globals.Cars {
 		tl = append(tl, rq.NewTemplate("car_row.html", c))
@@ -62,7 +55,7 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 		}
 		return nil
 	}
-	jaws.ListOrder(globals.Cars, e.Jaws)
+	e.Jaws.Dirty(globals.CarsTable)
 	return nil
 }
 
