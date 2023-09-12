@@ -17,7 +17,7 @@ func (ct *CarsTable) JawsTags(rq *jaws.Request, inTags []interface{}) []interfac
 	return append(inTags, nil) // the "add new car" row
 }
 
-func (ct *CarsTable) JawsTemplates(rq *jaws.Request, tl []jaws.Template) []jaws.Template {
+func (ct *CarsTable) JawsContains(rq *jaws.Request) (tl []jaws.Template) {
 	for _, c := range globals.Cars {
 		tl = append(tl, rq.NewTemplate("car_row.html", c))
 	}
