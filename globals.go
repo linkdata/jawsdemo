@@ -39,7 +39,6 @@ func NewGlobals() *Globals {
 		SelectPet:        newUiSelectPet(),
 		ClockString:      &atomic.Value{},
 		CarsLink:         &atomic.Value{},
-		CarsTable:        &CarsTable{},
 		Cars: []*Car{
 			{
 				VIN:   "JH4DB1671PS002584",
