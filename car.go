@@ -34,6 +34,9 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 		jaws.ListMove(globals.Cars, c, 1)
 	case "remove":
 		globals.Cars = jaws.ListRemove(globals.Cars, c)
+		// the list on index.html doesn't use $.Container,
+		// so we need to remove manually
+		e.Jaws.Remove(e.NewTemplate("car_row.html", c))
 	case "+":
 		oldVal := c.condition.Load().(int)
 		if oldVal > 99 {
@@ -53,7 +56,17 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 		}
 		return nil
 	}
+
+	// cars.html uses $.Container, so all we need to do is mark it dirty
 	e.Jaws.Dirty(globals.CarsTable)
+
+	// the list on index.html doesn't use $.Container,
+	// so we need to reorder that manually
+	var ordering []interface{}
+	for _, t := range globals.CarsTable.JawsContains(e.Request) {
+		ordering = append(ordering, t)
+	}
+	e.Jaws.Order(ordering)
 	return nil
 }
 
