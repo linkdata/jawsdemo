@@ -10,11 +10,11 @@ import (
 
 type CarsTable struct{}
 
-func (ct *CarsTable) JawsContains(rq *jaws.Request) (tl []jaws.Template) {
+func (ct *CarsTable) JawsContains(rq *jaws.Request) (tl []jaws.UI) {
 	for _, c := range globals.Cars {
-		tl = append(tl, rq.NewTemplate("car_row.html", c))
+		tl = append(tl, rq.MakeTemplate("car_row.html", c))
 	}
-	tl = append(tl, rq.NewTemplate("car_row.html", nil))
+	tl = append(tl, rq.MakeTemplate("car_row.html", nil))
 	return tl
 }
 
@@ -36,7 +36,7 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 		globals.Cars = jaws.ListRemove(globals.Cars, c)
 		// the list on index.html doesn't use $.Container,
 		// so we need to remove manually
-		e.Jaws.Remove(e.NewTemplate("car_row.html", c))
+		// e.Jaws.Remove(e.MakeTemplate("car_row.html", c))
 	case "+":
 		oldVal := c.condition.Load().(int)
 		if oldVal > 99 {
@@ -62,11 +62,11 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 
 	// the list on index.html doesn't use $.Container,
 	// so we need to reorder that manually
-	var ordering []interface{}
+	/*var ordering []interface{}
 	for _, t := range globals.CarsTable.JawsContains(e.Request) {
 		ordering = append(ordering, t)
 	}
-	e.Jaws.Order(ordering)
+	e.Jaws.Order(ordering)*/
 	return nil
 }
 
