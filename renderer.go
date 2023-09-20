@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"log"
 	"net/http"
 
@@ -19,7 +18,7 @@ func (rndr *renderer) makeHandler(name string) http.HandlerFunc {
 		// elements registered during the template rendering, and
 		// prepares JaWS to accept the incoming WebSocket call for
 		// this request.
-		rq := rndr.jw.NewRequest(context.Background(), r)
+		rq := rndr.jw.NewRequest(r)
 
 		rndr.g.RLock()
 		defer rndr.g.RUnlock()

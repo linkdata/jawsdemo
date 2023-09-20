@@ -10,15 +10,21 @@
 	{{with .Dot}}
 	<td scope="row">
 		<!--
-			Buttons send click events up the DOM tree, with a parameter
-			containing the 'name' attribute if present, or the inner HTML
-			if there is no name attribute.
-
-			So these button click events get delivered to *Car.JawsClick().
+			We take advantage of knowing which URL is being rendered here
+			to conditionally render the buttons only for the "/cars" path.
 		-->
-		{{$.Button "&uarr;" `class="badge rounded-pill bg-secondary" name="up"`}}
-		{{$.Button "x" `class="badge rounded-pill bg-secondary" name="remove"`}}
-		{{$.Button "&darr;" `class="badge rounded-pill bg-secondary" name="down"`}}
+		{{if eq $.Request.Initial.URL.Path "/cars"}}
+			<!--
+				Buttons send click events up the DOM tree, with a parameter
+				containing the 'name' attribute if present, or the inner HTML
+				if there is no name attribute.
+
+				So these button click events get delivered to *Car.JawsClick().
+			-->
+			{{$.Button "&uarr;" `class="badge rounded-pill bg-secondary" name="up"`}}
+			{{$.Button "x" `class="badge rounded-pill bg-secondary" name="remove"`}}
+			{{$.Button "&darr;" `class="badge rounded-pill bg-secondary" name="down"`}}
+		{{end}}
 		{{.VIN}}
 	</td>
 	<td>{{.Make}}</td>
