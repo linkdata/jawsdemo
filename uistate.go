@@ -1,10 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"runtime/debug"
 	"strings"
-	"time"
 
 	"github.com/linkdata/jaws"
 )
@@ -14,13 +12,8 @@ type UiState struct {
 	*jaws.Request
 }
 
-func ClockString() string {
-	now := time.Now()
-	return fmt.Sprintf("%02d:%02d", now.Hour(), now.Minute())
-}
-
-func (uis *UiState) ClockString() (v string) {
-	return ClockString()
+func (uis *UiState) Clock() jaws.HtmlGetter {
+	return uiClock{}
 }
 
 func (uis *UiState) JawsVersion() (v string) {

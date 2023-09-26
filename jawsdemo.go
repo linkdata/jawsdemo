@@ -52,13 +52,8 @@ func main() {
 	go func() {
 		t := time.NewTicker(time.Second)
 		defer t.Stop()
-		lastMin := -1
 		for range t.C {
-			if minute := time.Now().Minute(); minute != lastMin {
-				lastMin = minute
-				globals.ClockString.Store(ClockString())
-				jw.Dirty(globals.ClockString)
-			}
+			jw.Dirty(uiClock{})
 			if (time.Now().Second() % 3) == 0 {
 				switch rand.Intn(5) {
 				case 0:
