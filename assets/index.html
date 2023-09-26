@@ -85,13 +85,12 @@ P				The parameter is a jaws.ValueProxy or a `*atomic.Value`
 				<div class="col-sm-10">
 					<!-- 
 						JaWS tags are used to logically link JaWS Elements together. When a
-						Element.DirtyOthers(tags) or Jaws.Dirty(tags) call is made, all 
-						Elemets with one or more of the given tags have their JawsUpdate()
-						method called.
+						Jaws.Dirty(tags) call is made, all Elements with one or more of the
+						given tags have their JawsUpdate() method called eventually.
 
-						Here, both UI Elements share the same *atomic.Value for their data,
-						and JaWS will automatically add those as tags. So when the Range
-						gets modified, the Span is updated to match.
+						Here, both UI Elements share the same uiInputRange{} for their data,
+						and JaWS will automatically add that as a tag. So when the Range
+						gets modified, the custom span is updated automatically.
 					-->
 					{{$.Range .G.InputRange `class="form-range align-bottom w-75"`}}
 					{{$.UI .G.InputRange}}
