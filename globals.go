@@ -18,7 +18,7 @@ type Globals struct {
 	InputRadioGroup1 *jaws.NamedBoolArray
 	InputRadioGroup2 *jaws.NamedBoolArray
 	InputDate        *atomic.Value
-	InputRange       *atomic.Value
+	inputRange       int
 	InputButton      *atomic.Value
 	SelectPet        *jaws.NamedBoolArray
 	Cars             []*Car
@@ -33,7 +33,6 @@ func NewGlobals() *Globals {
 		InputRadioGroup1: jaws.NewNamedBoolArray().Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
 		InputRadioGroup2: jaws.NewNamedBoolArray().Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
 		InputDate:        &atomic.Value{},
-		InputRange:       &atomic.Value{},
 		InputButton:      &atomic.Value{},
 		SelectPet:        newUiSelectPet(),
 		ClockString:      &atomic.Value{},
@@ -62,7 +61,6 @@ func NewGlobals() *Globals {
 	g.inputTextArea = "The quick brown fox jumps over the lazy dog"
 	g.InputCheckbox.Store(false)
 	g.InputDate.Store(time.Now())
-	g.InputRange.Store(0.0)
 	g.InputButton.Store("Meh")
 	g.ClockString.Store("")
 	g.CarsLink.Store("...")
