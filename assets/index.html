@@ -75,14 +75,10 @@ P				The parameter is a jaws.ValueProxy or a `*atomic.Value`
 			<div class="mb-3">
 				<!--
 					If jaws.Request doesn't have a helper function for a HTML tag, you can still
-					use it with JaWS automation. Here, we use Request.Register() with an event 
-					function parameter to have JaWS call the function returned by OnInputTextArea()
-					when the textarea data changes.
-
-					That function then uses the tag returned from .G.InputTextAreaID to distribute the
-					entered text to other Requests.
+					use it with JaWS automation. Here, we use Request.Register() with a
+					jaws.StringSetter as parameter.
 				-->
-				<textarea id="{{$.Register .G.InputTextAreaID .G.OnInputTextArea}}" rows="4" cols="50">{{.G.InputTextArea}}</textarea>
+				<textarea id="{{$.Register .G.InputTextArea}}" rows="4" cols="50"></textarea>
 			</div>
 			<div class="row mb-3">
 				<label class="col-sm-2 form-label">Range</label>

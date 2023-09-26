@@ -20,8 +20,6 @@ func (rndr *renderer) makeHandler(name string) http.HandlerFunc {
 		// this request.
 		rq := rndr.jw.NewRequest(r)
 
-		rndr.g.RLock()
-		defer rndr.g.RUnlock()
 		if err := rndr.jw.Template.ExecuteTemplate(w, name, NewUiState(rq, rndr.g)); err != nil {
 			log.Fatal(err)
 		}
