@@ -78,9 +78,9 @@ func (g *Globals) OnSetInputButton() jaws.EventFn {
 			isWoo := strings.HasPrefix(g.InputButton.Load().(string), "Woo")
 			g.mu.RUnlock()
 			if isWoo {
-				rq.RemoveAttr(g.InputButton, "disabled")
+				rq.Jaws.RemoveAttr(g.InputButton.Load().(string), "disabled")
 			} else {
-				rq.SetAttr(g.InputButton, "disabled", "")
+				rq.Jaws.SetAttr(g.InputButton.Load().(string), "disabled", "")
 			}
 			g.mu.Lock()
 			defer g.mu.Unlock()
