@@ -10,7 +10,7 @@ import (
 
 type uiClock struct{}
 
-func (uiClock) JawsGetHtml(e *jaws.Element) template.HTML {
+func (uiClock) JawsGetHtml(rq *jaws.Request) template.HTML {
 	now := time.Now()
 	flash := "&nbsp;"
 	if now.Second()%2 == 0 {
