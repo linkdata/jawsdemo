@@ -18,19 +18,19 @@ func (ui uiInputRange) JawsRender(e *jaws.Element, w io.Writer, params []interfa
 	e.Jaws.Dirty(ui)
 }
 
-func (ui uiInputRange) JawsUpdate(u jaws.Updater) {
+func (ui uiInputRange) JawsUpdate(e *jaws.Element) {
 	ui.mu.RLock()
 	val := ui.inputRange
 	ui.mu.RUnlock()
 	switch {
 	case val < 50:
-		u.SetAttr("style", "color:red")
+		e.SetAttr("style", "color:red")
 	case ui.inputRange < 90:
-		u.RemoveAttr("style")
+		e.RemoveAttr("style")
 	default:
-		u.SetAttr("style", "color:green")
+		e.SetAttr("style", "color:green")
 	}
-	jaws.NewUiSpan(ui).JawsUpdate(u)
+	jaws.NewUiSpan(ui).JawsUpdate(e)
 }
 
 func (ui uiInputRange) JawsGetHtml(e *jaws.Element) (v template.HTML) {
