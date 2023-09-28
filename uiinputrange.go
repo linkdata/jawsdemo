@@ -33,21 +33,21 @@ func (ui uiInputRange) JawsUpdate(e *jaws.Element) {
 	jaws.NewUiSpan(ui).JawsUpdate(e)
 }
 
-func (ui uiInputRange) JawsGetHtml(rq *jaws.Request) (v template.HTML) {
+func (ui uiInputRange) JawsGetHtml(e *jaws.Element) (v template.HTML) {
 	ui.mu.RLock()
 	v = template.HTML(fmt.Sprint(ui.inputRange))
 	ui.mu.RUnlock()
 	return
 }
 
-func (ui uiInputRange) JawsGetFloat(rq *jaws.Request) (v float64) {
+func (ui uiInputRange) JawsGetFloat(e *jaws.Element) (v float64) {
 	ui.mu.RLock()
 	v = float64(ui.inputRange)
 	ui.mu.RUnlock()
 	return
 }
 
-func (ui uiInputRange) JawsSetFloat(rq *jaws.Request, v float64) (err error) {
+func (ui uiInputRange) JawsSetFloat(e *jaws.Element, v float64) (err error) {
 	ui.mu.Lock()
 	ui.inputRange = int(v)
 	ui.mu.Unlock()

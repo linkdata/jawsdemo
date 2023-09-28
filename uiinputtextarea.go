@@ -6,14 +6,14 @@ import (
 
 type uiInputTextArea struct{ *Globals }
 
-func (ui uiInputTextArea) JawsGetString(rq *jaws.Request) (v string) {
+func (ui uiInputTextArea) JawsGetString(e *jaws.Element) (v string) {
 	ui.mu.RLock()
 	v = ui.inputTextArea
 	ui.mu.RUnlock()
 	return
 }
 
-func (ui uiInputTextArea) JawsSetString(rq *jaws.Request, v string) (err error) {
+func (ui uiInputTextArea) JawsSetString(e *jaws.Element, v string) (err error) {
 	ui.mu.Lock()
 	ui.inputTextArea = v
 	ui.mu.Unlock()
