@@ -16,6 +16,15 @@ func (ui uiInputText) JawsGetString(e *jaws.Element) (v string) {
 }
 
 func (ui uiInputText) JawsSetString(e *jaws.Element, v string) (err error) {
+	ui.SelectPet.ReadLocked(func(nbl []*jaws.NamedBool) {
+		for _, nb := range nbl {
+			if nb.Name() == v {
+				ui.SelectPet.Set(v, true)
+				e.Jaws.Dirty(ui.SelectPet)
+				break
+			}
+		}
+	})
 	ui.mu.Lock()
 	if v == "fail" {
 		err = fmt.Errorf("whaddayamean, fail?")
