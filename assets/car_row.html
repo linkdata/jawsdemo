@@ -1,12 +1,13 @@
 <!--
 	In a template called by JaWS, the data parameter is a jaws.With{} structure.
 	This contains both the *Element being rendered and the data value passed
-	to Request.Template(), which is accessible as '$.Dot'.
+	to Request.Template(), which is accessible as '$.Dot', as well as a string
+	containing any extra attributes passed in '$.Attrs'.
 
 	It's required to set the HTML id of the outermost HTML tag
 	to the value of '$.Jid'.
 -->
-<tr id="{{$.Jid}}">
+<tr id="{{$.Jid}}" {{$.Attrs}}>
 	{{with .Dot}}
 	<td scope="row">
 		<!--
