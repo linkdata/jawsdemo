@@ -20,7 +20,7 @@ func (ui uiInputText) JawsSetString(e *jaws.Element, v string) (err error) {
 		for _, nb := range nbl {
 			if nb.Name() == v {
 				ui.SelectPet.Set(v, true)
-				e.Jaws.Dirty(ui.SelectPet)
+				e.Dirty(ui.SelectPet)
 				break
 			}
 		}

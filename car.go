@@ -22,7 +22,7 @@ func (ct *CarsTable) JawsClick(e *jaws.Element, name string) error {
 	switch name {
 	case "add":
 		AddRandomCar()
-		e.Jaws.Dirty(globals.CarsTable)
+		e.Dirty(globals.CarsTable)
 	}
 	return nil
 }
@@ -71,7 +71,7 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 			return errors.New("condition too high")
 		}
 		if c.condition.CompareAndSwap(oldVal, oldVal+1) {
-			e.Jaws.Dirty(c.Condition())
+			e.Dirty(c.Condition())
 		}
 		return nil
 	case "-":
@@ -80,12 +80,12 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 			return errors.New("condition too low")
 		}
 		if c.condition.CompareAndSwap(oldVal, oldVal-1) {
-			e.Jaws.Dirty(c.Condition())
+			e.Dirty(c.Condition())
 		}
 		return nil
 	}
 
-	e.Jaws.Dirty(globals.CarsTable)
+	e.Dirty(globals.CarsTable)
 	return nil
 }
 

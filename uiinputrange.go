@@ -15,7 +15,7 @@ var _ jaws.FloatGetter = (*uiInputRange)(nil) // statically ensure we implement 
 
 func (ui uiInputRange) JawsRender(e *jaws.Element, w io.Writer, params []interface{}) {
 	jaws.NewUiSpan(ui).JawsRender(e, w, params)
-	e.Jaws.Dirty(ui)
+	e.Dirty(ui)
 }
 
 func (ui uiInputRange) JawsUpdate(e *jaws.Element) {
