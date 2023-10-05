@@ -12,7 +12,7 @@ type Globals struct {
 	mu               deadlock.RWMutex
 	inputText        string
 	inputTextArea    string
-	InputCheckbox    *atomic.Value
+	inputCheckbox    bool
 	InputRadioGroup1 *jaws.NamedBoolArray
 	InputRadioGroup2 *jaws.NamedBoolArray
 	InputDate        *atomic.Value
@@ -27,7 +27,6 @@ type Globals struct {
 
 func NewGlobals() *Globals {
 	g := &Globals{
-		InputCheckbox:    &atomic.Value{},
 		InputRadioGroup1: jaws.NewNamedBoolArray().Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
 		InputRadioGroup2: jaws.NewNamedBoolArray().Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
 		InputDate:        &atomic.Value{},
@@ -57,7 +56,6 @@ func NewGlobals() *Globals {
 		},
 	}
 	g.inputTextArea = "The quick brown fox jumps over the lazy dog"
-	g.InputCheckbox.Store(false)
 	g.InputDate.Store(time.Now())
 	g.InputButton.Store("Meh")
 	g.ClockString.Store("")
