@@ -54,11 +54,8 @@
 				JaWS Request objects have helper functions to allow easy data
 				binding between your application and it's web UI.
 
-P				The parameter is a jaws.ValueProxy or a `*atomic.Value`
-				(which will get wrapped with a jaws.AtomicValueProxy).
-
-				For input elements, JaWS adds the ValueProxy as a tag.
-				You can add more tags if needed.
+				They take a jaws.[Type]Getter or jaws.[Type]Setter of the
+				appropriate type: "String", "Html", "Bool", "Float" or "Time".
 			-->
 			<div class="mb-3">
 				<label class="form-label">Text</label>

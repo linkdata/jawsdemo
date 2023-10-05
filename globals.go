@@ -1,7 +1,6 @@
 package main
 
 import (
-	"sync/atomic"
 	"time"
 
 	"github.com/linkdata/deadlock"
@@ -15,13 +14,12 @@ type Globals struct {
 	inputCheckbox    bool
 	InputRadioGroup1 *jaws.NamedBoolArray
 	InputRadioGroup2 *jaws.NamedBoolArray
-	InputDate        *atomic.Value
+	inputDate        time.Time
 	inputRange       int
-	InputButton      *atomic.Value
+	inputButton      string
 	SelectPet        *jaws.NamedBoolArray
 	Cars             []*Car
-	ClockString      *atomic.Value
-	CarsLink         *atomic.Value
+	carsLink         string
 	CarsTable        *CarsTable
 }
 
@@ -29,37 +27,35 @@ func NewGlobals() *Globals {
 	g := &Globals{
 		InputRadioGroup1: jaws.NewNamedBoolArray().Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
 		InputRadioGroup2: jaws.NewNamedBoolArray().Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
-		InputDate:        &atomic.Value{},
-		InputButton:      &atomic.Value{},
+		inputDate:        time.Now(),
+		inputButton:      "meh",
 		SelectPet:        newUiSelectPet(),
-		ClockString:      &atomic.Value{},
-		CarsLink:         &atomic.Value{},
+		carsLink:         "...",
 		Cars: []*Car{
 			{
-				VIN:   "JH4DB1671PS002584",
-				Year:  1993,
-				Make:  "Acura",
-				Model: "Integra",
+				VIN:       "JH4DB1671PS002584",
+				Year:      1993,
+				Make:      "Acura",
+				Model:     "Integra",
+				condition: 12,
 			},
 			{
-				VIN:   "KM8JT3AC2DU583865",
-				Year:  2013,
-				Make:  "Hyundai",
-				Model: "Tucson",
+				VIN:       "KM8JT3AC2DU583865",
+				Year:      2013,
+				Make:      "Hyundai",
+				Model:     "Tucson",
+				condition: 97,
 			},
 			{
-				VIN:   "1D4GP24R75B188657",
-				Year:  2005,
-				Make:  "Dodge",
-				Model: "Grand Caravan",
+				VIN:       "1D4GP24R75B188657",
+				Year:      2005,
+				Make:      "Dodge",
+				Model:     "Grand Caravan",
+				condition: 67,
 			},
 		},
 	}
 	g.inputTextArea = "The quick brown fox jumps over the lazy dog"
-	g.InputDate.Store(time.Now())
-	g.InputButton.Store("Meh")
-	g.ClockString.Store("")
-	g.CarsLink.Store("...")
 	return g
 }
 
@@ -68,13 +64,13 @@ var _ jaws.ClickHandler = (*Globals)(nil)
 func (g *Globals) JawsClick(e *jaws.Element, name string) error {
 	g.mu.Lock()
 	defer g.mu.Unlock()
-	if g.InputButton.Load().(string) == "Meh" {
-		g.InputButton.Store("Woo")
-		e.Jaws.SetAttr(g.InputButton, "disabled", "")
+	if g.inputButton == "Meh" {
+		g.inputButton = "Woo"
+		e.Jaws.SetAttr(g.inputButton, "disabled", "")
 	} else {
-		g.InputButton.Store("Meh")
-		e.Jaws.RemoveAttr(g.InputButton, "disabled")
+		g.inputButton = "Meh"
+		e.Jaws.RemoveAttr(g.inputButton, "disabled")
 	}
-	e.Request.Dirty(g.InputButton)
+	e.Request.Dirty(g.InputButton())
 	return nil
 }

@@ -55,19 +55,21 @@ func main() {
 		for range t.C {
 			jw.Dirty(uiClock{})
 			if (time.Now().Second() % 3) == 0 {
+				globals.mu.Lock()
 				switch rand.Intn(5) {
 				case 0:
-					globals.CarsLink.Store("Check out these cars!")
+					globals.carsLink = "Check out these cars!"
 				case 1:
-					globals.CarsLink.Store("Did you know VIN numbers are encoded?")
+					globals.carsLink = "Did you know VIN numbers are encoded?"
 				case 2:
-					globals.CarsLink.Store("DO NOT CLICK HERE!")
+					globals.carsLink = "DO NOT CLICK HERE!"
 				case 3:
-					globals.CarsLink.Store("Cars")
+					globals.carsLink = "Cars"
 				default:
-					globals.CarsLink.Store("This is a boring link to car info.")
+					globals.carsLink = "This is a boring link to car info."
 				}
-				jw.Dirty(globals.CarsLink)
+				globals.mu.Unlock()
+				jw.Dirty(globals.CarsLink())
 			}
 		}
 	}()

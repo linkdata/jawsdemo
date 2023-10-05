@@ -2,9 +2,11 @@ package main
 
 import (
 	"errors"
+	"fmt"
+	"html/template"
 	"math/rand"
-	"sync/atomic"
 
+	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
 )
 
@@ -32,7 +34,8 @@ type Car struct {
 	Make      string
 	Model     string
 	Year      int
-	condition atomic.Value
+	mu        deadlock.RWMutex
+	condition int
 }
 
 var carMakes = []string{"Dodge", "Hyundai", "Acura", "Volvo", "Saab", "Lada", "Mazda"}
@@ -49,10 +52,11 @@ func AddRandomCar() {
 		}
 	}
 	car := &Car{
-		VIN:   string(vin),
-		Make:  carMakes[rand.Intn(len(carMakes))],
-		Model: carModels[rand.Intn(len(carModels))],
-		Year:  1970 + rand.Intn(30),
+		VIN:       string(vin),
+		Make:      carMakes[rand.Intn(len(carMakes))],
+		Model:     carModels[rand.Intn(len(carModels))],
+		Year:      1970 + rand.Intn(30),
+		condition: 30 + rand.Intn(70),
 	}
 	globals.Cars = append(globals.Cars, car)
 }
@@ -66,22 +70,22 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 	case "remove":
 		globals.Cars = jaws.ListRemove(globals.Cars, c)
 	case "+":
-		oldVal := c.condition.Load().(int)
-		if oldVal > 99 {
+		c.mu.Lock()
+		defer c.mu.Unlock()
+		if c.condition > 99 {
 			return errors.New("condition too high")
 		}
-		if c.condition.CompareAndSwap(oldVal, oldVal+1) {
-			e.Dirty(c.Condition())
-		}
+		c.condition++
+		e.Dirty(c.Condition())
 		return nil
 	case "-":
-		oldVal := c.condition.Load().(int)
-		if oldVal < 1 {
+		c.mu.Lock()
+		defer c.mu.Unlock()
+		if c.condition < 1 {
 			return errors.New("condition too low")
 		}
-		if c.condition.CompareAndSwap(oldVal, oldVal-1) {
-			e.Dirty(c.Condition())
-		}
+		c.condition--
+		e.Dirty(c.Condition())
 		return nil
 	}
 
@@ -89,9 +93,29 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 	return nil
 }
 
-func (c *Car) Condition() *atomic.Value {
-	if c.condition.Load() == nil {
-		c.condition.Store(rand.Intn(100))
-	}
-	return &c.condition
+type uiCondition struct{ *Car }
+
+func (ui uiCondition) JawsGetFloat(e *jaws.Element) (v float64) {
+	ui.mu.RLock()
+	v = float64(ui.condition)
+	ui.mu.RUnlock()
+	return
+}
+
+func (ui uiCondition) JawsGetHtml(e *jaws.Element) (v template.HTML) {
+	ui.mu.RLock()
+	v = template.HTML(fmt.Sprint(ui.condition))
+	ui.mu.RUnlock()
+	return
+}
+
+func (ui uiCondition) JawsSetFloat(e *jaws.Element, v float64) error {
+	ui.mu.Lock()
+	ui.condition = int(v)
+	ui.mu.Unlock()
+	return nil
+}
+
+func (c *Car) Condition() jaws.FloatSetter {
+	return uiCondition{c}
 }
