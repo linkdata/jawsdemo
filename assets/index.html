@@ -88,10 +88,11 @@
 
 						Here, both UI Elements share the same uiInputRange{} for their data,
 						and JaWS will automatically add that as a tag. So when the Range
-						gets modified, the custom span is updated automatically.
+						gets modified, the Span can set it's attributes and value in the
+						uiInputRange.JawsGetHtml() method.
 					-->
 					{{$.Range .G.InputRange `class="form-range align-bottom w-75"`}}
-					{{$.UI .G.InputRange}}
+					{{$.Span .G.InputRange}}
 				</div>
 			</div>
 			<!--
