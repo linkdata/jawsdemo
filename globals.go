@@ -1,13 +1,11 @@
 package main
 
 import (
-	"strings"
 	"sync/atomic"
 	"time"
 
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
-	"github.com/linkdata/jaws/what"
 )
 
 type Globals struct {
@@ -67,30 +65,18 @@ func NewGlobals() *Globals {
 	return g
 }
 
-func (g *Globals) SetInputButtonID() string {
-	return "setinputbutton"
-}
+var _ jaws.ClickHandler = (*Globals)(nil)
 
-func (g *Globals) OnSetInputButton() jaws.EventFn {
-	return func(rq *jaws.Request, evt what.What, id, val string) error {
-		if evt == what.Trigger {
-			g.mu.RLock()
-			isWoo := strings.HasPrefix(g.InputButton.Load().(string), "Woo")
-			g.mu.RUnlock()
-			if isWoo {
-				rq.Jaws.RemoveAttr(g.InputButton.Load().(string), "disabled")
-			} else {
-				rq.Jaws.SetAttr(g.InputButton.Load().(string), "disabled", "")
-			}
-			g.mu.Lock()
-			defer g.mu.Unlock()
-			g.InputButton.Store(val)
-			rq.Dirty(g.InputButton)
-		}
-		return nil
+func (g *Globals) JawsClick(e *jaws.Element, name string) error {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	if g.InputButton.Load().(string) == "Meh" {
+		g.InputButton.Store("Woo")
+		e.Jaws.SetAttr(g.InputButton, "disabled", "")
+	} else {
+		g.InputButton.Store("Meh")
+		e.Jaws.RemoveAttr(g.InputButton, "disabled")
 	}
-}
-
-func (g *Globals) InputRangeID() string {
-	return "inputrange"
+	e.Request.Dirty(g.InputButton)
+	return nil
 }

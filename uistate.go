@@ -28,13 +28,6 @@ func (uis *UiState) JawsVersion() (v string) {
 	return
 }
 
-func (uis *UiState) OnMystical() jaws.ClickFn {
-	return func(rq *jaws.Request, jid string) error {
-		rq.Trigger("setinputbutton", "Wooooo....")
-		return nil
-	}
-}
-
 func NewUiState(rq *jaws.Request, g *Globals) *UiState {
 	uis := &UiState{
 		G:       g,
