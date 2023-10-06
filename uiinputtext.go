@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/linkdata/jaws"
 )
@@ -20,8 +21,13 @@ func (ui uiInputText) JawsSetString(e *jaws.Element, v string) (err error) {
 		e.Dirty(ui.SelectPet)
 	}
 	ui.mu.Lock()
-	if v == "fail" {
-		err = fmt.Errorf("whaddayamean, fail?")
+	if strings.HasPrefix(v, "fail") {
+		if v == "fail" {
+			err = fmt.Errorf("whaddayamean, fail?")
+		} else {
+			// try using cut'n'paste or just holding down 'l'
+			ui.inputText = "well, if you insist..."
+		}
 	} else {
 		ui.inputText = v
 	}
