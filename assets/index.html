@@ -71,12 +71,7 @@
 				{{$.Date .G.InputDate}}
 			</div>
 			<div class="mb-3">
-				<!--
-					If jaws.Request doesn't have a helper function for a HTML tag, you can still
-					use it with JaWS automation. Here, we use Request.Register() with a
-					jaws.StringSetter as parameter.
-				-->
-				<textarea id="{{$.Register .G.InputTextArea}}" rows="4" cols="50"></textarea>
+				{{$.Textarea .G.InputTextArea `rows="4" cols="50"`}}
 			</div>
 			<div class="row mb-3">
 				<label class="col-sm-2 form-label">Range</label>

@@ -17,6 +17,7 @@ func (ui uiInputTextArea) JawsSetString(e *jaws.Element, v string) (err error) {
 	ui.mu.Lock()
 	ui.inputTextArea = v
 	ui.mu.Unlock()
+	e.Dirty(ui)
 	return
 }
 
