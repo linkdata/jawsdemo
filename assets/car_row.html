@@ -1,0 +1,53 @@
+<!--
+	In a template called by JaWS, the data parameter is a jaws.With{} structure.
+	This contains both the *Element being rendered and the data value passed
+	to Request.Template(), which is accessible as '$.Dot', as well as a string
+	containing any extra attributes passed in '$.Attrs'.
+
+	It's required to set the HTML id of the outermost HTML tag
+	to the value of '$.Jid'.
+-->
+<tr id="{{$.Jid}}" {{$.Attrs}}>
+	{{with .Dot}}
+	<td scope="row">
+		<!--
+			We take advantage of knowing which URL is being rendered here
+			to conditionally render the buttons only for the "/cars" path.
+		-->
+		{{if eq $.Request.Initial.URL.Path "/cars"}}
+			<!--
+				Buttons send click events up the DOM tree, with a parameter
+				containing the 'name' attribute if present, or the inner HTML
+				if there is no name attribute.
+
+				So these button click events get delivered to *Car.JawsClick().
+			-->
+			{{$.Button "&uarr;" `class="badge rounded-pill bg-secondary" name="up"`}}
+			{{$.Button "x" `class="badge rounded-pill bg-secondary" name="remove"`}}
+			{{$.Button "&darr;" `class="badge rounded-pill bg-secondary" name="down"`}}
+		{{end}}
+		{{.VIN}}
+	</td>
+	<td>{{.Make}}</td>
+	<td>{{.Model}}</td>
+	<td>{{.Year}}</td>
+	<td>
+		{{if eq $.Request.Initial.URL.Path "/cars"}}
+			<div class="btn-group btn-group-sm" role="group">
+				<!--
+					If a button doesn't have a name attribute,
+					it's inner HTML is used instead when sending events.
+				-->
+				{{$.Button "-" `class="btn btn-outline-secondary"`}}
+				{{$.Button "+" `class="btn btn-outline-secondary"`}}
+			</div>
+		{{end}}
+		{{$.Span .Condition}}
+	</td>
+	{{else}}
+	<!-- we have no *Car so show a row to add a new car -->
+	<td scope="row">
+		{{$.Button "+" `class="badge rounded-pill bg-secondary" name="add"`}}
+	</td>
+	{{end}}
+</tr>

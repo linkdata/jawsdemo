@@ -19,34 +19,9 @@
 					<th scope="col">Condition</th>
 				</tr>
 			</thead>
-			<tbody jid="{{$.Register `carlist`}}">
-				{{range .G.Cars}}
-				<tr jid="{{$.Register .VIN}}">
-					<td scope="row">
-						{{$.Button "" "&uarr;" .InsertButton `class="badge rounded-pill bg-secondary"`}}
-						{{$.Button "" "x" .RemoveButton `class="badge rounded-pill bg-secondary"`}}
-						{{$.Button "" "&darr;" .AppendButton `class="badge rounded-pill bg-secondary"`}}
-						{{.VIN}}
-					</td>
-					<td>{{.Make}}</td>
-					<td>{{.Model}}</td>
-					<td>{{.Year}}</td>
-					<td>
-						<div class="btn-group btn-group-sm" role="group">
-							<!--
-								we don't need explicit ID's for these buttons, but JaWS
-								will autogenerate some unique ones to support the callbacks
-							-->
-							{{$.Button "" "-" .ConditionDec `class="btn btn-outline-secondary"`}}
-							{{$.Button "" "+" .ConditionInc `class="btn btn-outline-secondary"`}}
-						</div>
-						{{$.Span .ConditionID (print .Condition) nil ""}}
-					</td>
-				</tr>
-				{{end}}
-			</tbody>
+			{{$.Tbody .G.CarsTable}}
 		</table>
-		{{$.Button "" "Mystical" .OnMystical ""}}
+		{{$.Button "Mystical" .G}}
 	</div>
 </body>
 

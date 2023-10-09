@@ -1,37 +1,46 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
-	"strconv"
 
-	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
 )
 
-type uiInputRange struct {
-	jid  string
-	mu   deadlock.RWMutex // protects following
-	data int
-}
+type uiInputRange struct{ *Globals }
 
-func newUiInputRange(jid string) *uiInputRange {
-	return &uiInputRange{jid: jid}
-}
+var _ jaws.FloatGetter = (*uiInputRange)(nil) // statically ensure we implement this interface
+var _ jaws.HtmlGetter = (*uiInputRange)(nil)  // statically ensure we implement this interface
 
-// eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiInputRange) eventFn(rq *jaws.Request, jid string, floatval float64) error {
-	ui.mu.Lock()
-	defer ui.mu.Unlock()
-	val := int(floatval)
-	if ui.data != val {
-		ui.data = val
-		rq.SetFloatValue(ui.jid, floatval)
-		rq.Jaws.SetInner(ui.jid+"-text", strconv.Itoa(ui.data))
+func (ui uiInputRange) JawsGetHtml(e *jaws.Element) (v template.HTML) {
+	ui.mu.RLock()
+	switch {
+	case ui.inputRange < 50:
+		e.SetAttr("style", "color:red")
+	case ui.inputRange < 90:
+		e.RemoveAttr("style")
+	default:
+		e.SetAttr("style", "color:green")
 	}
-	return nil
+	v = template.HTML(fmt.Sprint(ui.inputRange))
+	ui.mu.RUnlock()
+	return
 }
 
-func (ui *uiInputRange) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
-	return rq.Range(ui.jid, float64(ui.data), ui.eventFn, attrs...) +
-		rq.Span(ui.jid+"-text", strconv.Itoa(ui.data), nil)
+func (ui uiInputRange) JawsGetFloat(e *jaws.Element) (v float64) {
+	ui.mu.RLock()
+	v = float64(ui.inputRange)
+	ui.mu.RUnlock()
+	return
+}
+
+func (ui uiInputRange) JawsSetFloat(e *jaws.Element, v float64) (err error) {
+	ui.mu.Lock()
+	ui.inputRange = int(v)
+	ui.mu.Unlock()
+	return
+}
+
+func (g *Globals) InputRange() interface{} {
+	return uiInputRange{g}
 }

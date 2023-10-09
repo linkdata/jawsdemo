@@ -2,66 +2,120 @@ package main
 
 import (
 	"errors"
-	"strconv"
+	"fmt"
+	"html/template"
+	"math/rand"
 
+	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
 )
+
+type CarsTable struct{}
+
+func (ct *CarsTable) JawsContains(rq *jaws.Request) (tl []jaws.UI) {
+	for _, c := range globals.Cars {
+		tl = append(tl, rq.MakeTemplate("car_row.html", c))
+	}
+	tl = append(tl, rq.MakeTemplate("car_row.html", nil))
+	return tl
+}
+
+func (ct *CarsTable) JawsClick(e *jaws.Element, name string) error {
+	switch name {
+	case "add":
+		AddRandomCar()
+		e.Dirty(globals.CarsTable)
+	}
+	return nil
+}
 
 type Car struct {
 	VIN       string
 	Make      string
 	Model     string
 	Year      int
-	Condition int
+	mu        deadlock.RWMutex
+	condition int
 }
 
-func (c *Car) ConditionID() string {
-	return c.VIN + ".cond"
-}
+var carMakes = []string{"Dodge", "Hyundai", "Acura", "Volvo", "Saab", "Lada", "Mazda"}
+var carModels = []string{"Sedan", "Coupe", "SUV", "Truck", "Cabriolet"}
 
-func (c *Car) conditionDec(rq *jaws.Request, jid string) error {
-	if c.Condition < 1 {
-		return errors.New("condition too low")
+func AddRandomCar() {
+	var vin []byte
+	for i := 0; i < 17; i++ {
+		n := byte(rand.Intn(26 + 10))
+		if n < 10 {
+			vin = append(vin, '0'+n)
+		} else {
+			vin = append(vin, 'A'+(n-10))
+		}
 	}
-	c.Condition--
-	rq.Jaws.SetInner(c.ConditionID(), strconv.Itoa(c.Condition))
+	car := &Car{
+		VIN:       string(vin),
+		Make:      carMakes[rand.Intn(len(carMakes))],
+		Model:     carModels[rand.Intn(len(carModels))],
+		Year:      1970 + rand.Intn(30),
+		condition: 30 + rand.Intn(70),
+	}
+	globals.Cars = append(globals.Cars, car)
+}
+
+func (c *Car) JawsClick(e *jaws.Element, name string) error {
+	switch name {
+	case "up":
+		jaws.ListMove(globals.Cars, c, -1)
+	case "down":
+		jaws.ListMove(globals.Cars, c, 1)
+	case "remove":
+		globals.Cars = jaws.ListRemove(globals.Cars, c)
+	case "+":
+		c.mu.Lock()
+		defer c.mu.Unlock()
+		if c.condition > 99 {
+			return errors.New("condition too high")
+		}
+		c.condition++
+		e.Dirty(c.Condition())
+		return nil
+	case "-":
+		c.mu.Lock()
+		defer c.mu.Unlock()
+		if c.condition < 1 {
+			return errors.New("condition too low")
+		}
+		c.condition--
+		e.Dirty(c.Condition())
+		return nil
+	}
+
+	e.Dirty(globals.CarsTable)
 	return nil
 }
 
-func (c *Car) RemoveButton() jaws.ClickFn {
-	return func(rq *jaws.Request, jid string) error {
-		rq.Jaws.Remove(c.VIN)
-		return nil
-	}
+type uiCondition struct{ *Car }
+
+func (ui uiCondition) JawsGetFloat(e *jaws.Element) (v float64) {
+	ui.mu.RLock()
+	v = float64(ui.condition)
+	ui.mu.RUnlock()
+	return
 }
 
-func (c *Car) InsertButton() jaws.ClickFn {
-	return func(rq *jaws.Request, jid string) error {
-		rq.Jaws.Insert("carlist", c.VIN, "<tr><td>Meh</td></tr>")
-		return nil
-	}
+func (ui uiCondition) JawsGetHtml(e *jaws.Element) (v template.HTML) {
+	ui.mu.RLock()
+	v = template.HTML(fmt.Sprint(ui.condition))
+	ui.mu.RUnlock()
+	return
 }
 
-func (c *Car) AppendButton() jaws.ClickFn {
-	return func(rq *jaws.Request, jid string) error {
-		rq.Jaws.Append("carlist", "<tr><td>Foo</td></tr>")
-		return nil
-	}
-}
-
-func (c *Car) ConditionDec() jaws.ClickFn {
-	return c.conditionDec
-}
-
-func (c *Car) conditionInc(rq *jaws.Request, jid string) error {
-	if c.Condition > 99 {
-		return errors.New("condition too high")
-	}
-	c.Condition++
-	rq.Jaws.SetInner(c.ConditionID(), strconv.Itoa(c.Condition))
+func (ui uiCondition) JawsSetFloat(e *jaws.Element, v float64) error {
+	ui.mu.Lock()
+	ui.condition = int(v)
+	ui.mu.Unlock()
 	return nil
 }
 
-func (c *Car) ConditionInc() jaws.ClickFn {
-	return c.conditionInc
+func (c *Car) Condition() jaws.FloatSetter {
+	return uiCondition{c}
 }

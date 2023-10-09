@@ -1,42 +1,40 @@
 package main
 
 import (
-	"html"
-	"html/template"
+	"fmt"
+	"strings"
 
-	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
 )
 
-type uiInputText struct {
-	jid  string
-	mu   deadlock.RWMutex // protects following
-	data string
-}
+type uiInputText struct{ *Globals }
 
-func newUiInputText(jid, data string) *uiInputText {
-	return &uiInputText{
-		jid:  jid,
-		data: data,
-	}
-}
-
-// eventFn gets called by JaWS when the client browser Javascript reports that the data has changed.
-func (ui *uiInputText) eventFn(rq *jaws.Request, jid string, val string) error {
-	ui.mu.Lock()
-	defer ui.mu.Unlock()
-	// it's usually a good idea to ensure that the value is actually changed before doing work
-	if ui.data != val {
-		ui.data = val
-		// sends the changed text to all *other* Requests.
-		rq.SetTextValue(ui.jid, val)
-	}
-	return nil
-}
-
-func (ui *uiInputText) JawsUi(rq *jaws.Request, attrs ...string) template.HTML {
+func (ui uiInputText) JawsGetString(e *jaws.Element) (v string) {
 	ui.mu.RLock()
-	data := ui.data
+	v = ui.inputText
 	ui.mu.RUnlock()
-	return rq.Text(ui.jid, html.EscapeString(data), ui.eventFn, attrs...)
+	return
+}
+
+func (ui uiInputText) JawsSetString(e *jaws.Element, v string) (err error) {
+	if v != "" && ui.SelectPet.Set(v, true) {
+		e.Dirty(ui.SelectPet)
+	}
+	ui.mu.Lock()
+	if strings.HasPrefix(v, "fail") {
+		if v == "fail" {
+			err = fmt.Errorf("whaddayamean, fail?")
+		} else {
+			// try using cut'n'paste or just holding down 'l'
+			ui.inputText = "well, if you insist..."
+		}
+	} else {
+		ui.inputText = v
+	}
+	ui.mu.Unlock()
+	return
+}
+
+func (g *Globals) InputText() jaws.StringSetter {
+	return uiInputText{g}
 }

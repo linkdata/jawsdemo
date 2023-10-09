@@ -25,59 +25,70 @@
 			If you don't need to listen to events from the client browser, the following
 			method may be a good choice. 
 
-			It calls jaws.Request.A() via UiState.Request. The "nil" argument here means
-			no events will be forwarded from the client.
+			It calls jaws.Request.A() via UiState.Request. Two parameters are required,
+			plus a variable number of optional parameters.
+			
+			The first parameter is the tags you want to associate with the UI element.
+			Tags are used when letting JaWS know which Elements need to be updated.
+			Tags can be anything (interface{}), but we treat some types special:
 
-			If you did want to forward events, and want to use this syntax, then that
-			argument would have to be a function returning a jaws.ClickFn function.
-			This is because the Go template package won't allow you to pass a function
-			as an argument; instead it will be invoked.
+			If a string is given, it is split on spaces into multiple tags.
+			For a slice of strings, we iterate over them and again split on spaces.
+			A slice of interface{} will have all it's elements as tags.
+
+			Here, we just call CarsLinkID and use it's return value. We can use tags
+			to modify a set of HTML elements - the sample program uses this tag
+			to change the <a> tag's inner HTML dynamically.
+
+			The second parameter is the HTML code to display inside the <a> element.
+			Here we call CarsLinkText and have it return it.
+
+			Finally, we provide a string with HTML attributes as the optional
+			parameters. The optional parameters can contain other things as well,
+			but strings are copied into the HTML closing tag as-is.
 		-->
-		{{$.A .CarsLinkID .CarsLinkText nil `href="/cars" class="btn btn-primary"`}}
+		{{$.A .G.CarsLink `href="/cars" class="btn btn-primary mb-3"`}}
 
 		<form autocomplete="off">
+			<!--
+				JaWS Request objects have helper functions to allow easy data
+				binding between your application and it's web UI.
+
+				They take a jaws.[Type]Getter or jaws.[Type]Setter of the
+				appropriate type: "String", "Html", "Bool", "Float" or "Time",
+				alternatively a *atomic.Value.
+			-->
 			<div class="mb-3">
-				<!--
-					If you prefer to move data references away from the HTML template
-					another option is to use jaws.Request.Ui(), which accepts an
-					object implementing the "jaws.Ui" interface and zero or more
-					strings (normally a list of HTML attributes).
-
-					This allows for building types for generic use, and then
-					use those types directly in your structures instead of the
-					primitive data types.
-
-					.G.InputText here is an example of one such implementation.
-				-->
 				<label class="form-label">Text</label>
-				{{$.Ui .G.InputText `class="form-control"`}}
-			</div>
-			<div class="mb-3">
-				<!--
-					If jaws.Request doesn't have a helper function for a HTML tag, you can still
-					use it. Here, we use Request.OnInput() to have JaWS call the function returned by
-					OnInputTextArea() when the textarea data changes.
-				-->
-				<textarea jid="{{.G.InputTextAreaID}}" rows="4" cols="50">{{.G.InputTextArea}}</textarea>
-				{{$.OnInput .G.InputTextAreaID .G.OnInputTextArea}}
-			</div>
-			<div class="row mb-3">
-				<label for="{{.G.InputRangeID}}" class="col-sm-2 form-label">Range</label>
-				<div class="col-sm-10">
-					<!--
-						Previous UI elements have consisted of only one HTML element,
-						but this one shows that you can of course return HTML from
-						JawsUi() that renders several and use an input event function
-						to them in synch.
-					-->
-					{{$.Ui .G.InputRange `class="form-range align-bottom w-75"`}}
-				</div>
+				{{$.Text .G.InputText `class="form-control"`}}
 			</div>
 			<div class="form-check mb-3">
-				{{$.Ui .G.InputCheckbox `class="form-check-input"`}}
+				{{$.Checkbox .G.InputCheckbox `class="form-check-input"`}}
+				<label class="form-check-label">Checkbox</label>
 			</div>
 			<div class="mb-3">
-				{{$.Ui .G.InputDate `class="form-label"`}}
+				<label class="form-label">Date</label>
+				{{$.Date .G.InputDate}}
+			</div>
+			<div class="mb-3">
+				{{$.Textarea .G.InputTextArea `rows="4" cols="50"`}}
+			</div>
+			<div class="row mb-3">
+				<label class="col-sm-2 form-label">Range</label>
+				<div class="col-sm-10">
+					<!-- 
+						JaWS tags are used to logically link JaWS Elements together. When a
+						Jaws.Dirty(tags) call is made, all Elements with one or more of the
+						given tags have their JawsUpdate() method called eventually.
+
+						Here, both UI Elements share the same uiInputRange{} for their data,
+						and JaWS will automatically add that as a tag. So when the Range
+						gets modified, the Span can set it's attributes and value in the
+						uiInputRange.JawsGetHtml() method.
+					-->
+					{{$.Range .G.InputRange `class="form-range align-bottom w-75"`}}
+					{{$.Span .G.InputRange}}
+				</div>
 			</div>
 			<!--
 				Radio buttons require special handling because selecting
@@ -109,15 +120,44 @@
 
 			<div class="mb-3">
 				<label>Choose a pet:</label>
-				{{$.Ui .G.SelectPet `class="form-select"`}}
+				{{$.Select .G.SelectPet `class="form-select"`}}
 			</div>
-			{{$.Ui .G.InputButton `class="btn btn-primary mt-3"`}}
+			{{$.Button .G.InputButton `class="btn btn-primary m-3"`}}
 
 			<!--
-				What this does is left as an exercise to the reader.
-				Hint: It's connected to the mystical button in "cars.html".
+				This table of cars can be reordered using the buttons, but since we 
+				iterate over .G.Cars manually using 'range', JaWS won't be able to
+				add or remove rows to the table. For that, see "cars.html".
 			-->
-			{{$.OnEvent .G.SetInputButtonID .G.OnSetInputButton}}
+			<table class="table">
+				<thead>
+					<tr>
+						<th scope="col">VIN</th>
+						<th scope="col">Make</th>
+						<th scope="col">Model</th>
+						<th scope="col">Year</th>
+						<th scope="col">Condition</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{range .G.Cars}}
+					<!--
+						Using Request.Template() here with a string giving the
+						template name requires us to set the Jaws.Template variable
+						so the Request can use Template.Lookup() to resolve the name.
+						We could also pass a *template.Template directly instead.
+
+						When parsing "car_row.html", "$.Dot" will be the pointer
+						to the current car, and "$" will be the *Element, which is
+						also a *Request.
+
+						Request.Template() adds both the dot value (here a *Car)
+						and the *template.Template as JaWS tags.
+					-->
+					{{$.Template "car_row.html" .}}
+					{{end}}
+				</tbody>
+			</table>
 		</form>
 	</div>
 </body>
