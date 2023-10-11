@@ -61,7 +61,7 @@ func NewGlobals() *Globals {
 
 var _ jaws.ClickHandler = (*Globals)(nil)
 
-func (g *Globals) JawsClick(e *jaws.Element, name string) (bool, error) {
+func (g *Globals) JawsClick(e *jaws.Element, name string) error {
 	g.mu.Lock()
 	defer g.mu.Unlock()
 	if g.inputButton == "Meh" {
@@ -72,5 +72,5 @@ func (g *Globals) JawsClick(e *jaws.Element, name string) (bool, error) {
 		e.Jaws.RemoveAttr(g.InputButton(), "disabled")
 	}
 	e.Request.Dirty(g.InputButton())
-	return true, nil
+	return nil
 }
