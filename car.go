@@ -20,13 +20,14 @@ func (ct *CarsTable) JawsContains(rq *jaws.Request) (tl []jaws.UI) {
 	return tl
 }
 
-func (ct *CarsTable) JawsClick(e *jaws.Element, name string) error {
+func (ct *CarsTable) JawsClick(e *jaws.Element, name string) (stop bool, err error) {
 	switch name {
 	case "add":
 		AddRandomCar()
 		e.Dirty(globals.CarsTable)
+		stop = true
 	}
-	return nil
+	return
 }
 
 type Car struct {
@@ -61,7 +62,8 @@ func AddRandomCar() {
 	globals.Cars = append(globals.Cars, car)
 }
 
-func (c *Car) JawsClick(e *jaws.Element, name string) error {
+func (c *Car) JawsClick(e *jaws.Element, name string) (stop bool, err error) {
+	stop = true
 	switch name {
 	case "up":
 		jaws.ListMove(globals.Cars, c, -1)
@@ -73,24 +75,27 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 		c.mu.Lock()
 		defer c.mu.Unlock()
 		if c.condition > 99 {
-			return errors.New("condition too high")
+			return true, errors.New("condition too high")
 		}
 		c.condition++
 		e.Dirty(c.Condition())
-		return nil
+		return
 	case "-":
 		c.mu.Lock()
 		defer c.mu.Unlock()
 		if c.condition < 1 {
-			return errors.New("condition too low")
+			return true, errors.New("condition too low")
 		}
 		c.condition--
 		e.Dirty(c.Condition())
-		return nil
+		return
+	default:
+		stop = false
+		return
 	}
 
 	e.Dirty(globals.CarsTable)
-	return nil
+	return
 }
 
 type uiCondition struct{ *Car }

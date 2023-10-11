@@ -16,4 +16,4 @@ require (
 )
 
 // For debugging local copy of JaWS. Also set jaws version above to v0.0.0
-// replace github.com/linkdata/jaws => ../jaws
+replace github.com/linkdata/jaws => ../jaws
