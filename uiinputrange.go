@@ -9,7 +9,7 @@ import (
 
 type uiInputRange struct{ *Globals }
 
-var _ jaws.FloatGetter = (*uiInputRange)(nil) // statically ensure we implement this interface
+var _ jaws.FloatSetter = (*uiInputRange)(nil) // statically ensure we implement this interface
 var _ jaws.HtmlGetter = (*uiInputRange)(nil)  // statically ensure we implement this interface
 
 func (ui uiInputRange) JawsGetHtml(e *jaws.Element) (v template.HTML) {
