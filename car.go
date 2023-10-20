@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"math/rand"
+	"slices"
 
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
@@ -65,11 +66,15 @@ func AddRandomCar() {
 func (c *Car) JawsClick(e *jaws.Element, name string) error {
 	switch name {
 	case "up":
-		jaws.ListMove(globals.Cars, c, -1)
+		if idx := slices.Index(globals.Cars, c); idx > 0 {
+			globals.Cars[idx-1], globals.Cars[idx] = globals.Cars[idx], globals.Cars[idx-1]
+		}
 	case "down":
-		jaws.ListMove(globals.Cars, c, 1)
+		if idx := slices.Index(globals.Cars, c); idx > 0 && idx < len(globals.Cars)-1 {
+			globals.Cars[idx+1], globals.Cars[idx] = globals.Cars[idx], globals.Cars[idx+1]
+		}
 	case "remove":
-		globals.Cars = jaws.ListRemove(globals.Cars, c)
+		globals.Cars = slices.DeleteFunc(globals.Cars, func(c2 *Car) bool { return c2 == c })
 	case "+":
 		c.mu.Lock()
 		defer c.mu.Unlock()
