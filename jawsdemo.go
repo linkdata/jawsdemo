@@ -88,7 +88,7 @@ func main() {
 	signal.Notify(breakChan, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		defer close(breakChan)
-		log.Printf("listening on %q", *listenaddr)
+		log.Printf("listening on \"http://%s\"", *listenaddr)
 		log.Print(http.ListenAndServe(*listenaddr, mux))
 	}()
 

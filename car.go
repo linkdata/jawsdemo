@@ -11,26 +11,6 @@ import (
 	"github.com/linkdata/jaws"
 )
 
-type CarsTable struct{}
-
-func (ct *CarsTable) JawsContains(rq *jaws.Request) (tl []jaws.UI) {
-	for _, c := range globals.Cars {
-		tl = append(tl, rq.MakeTemplate("car_row.html", c))
-	}
-	tl = append(tl, rq.MakeTemplate("car_row.html", nil))
-	return tl
-}
-
-func (ct *CarsTable) JawsClick(e *jaws.Element, name string) (err error) {
-	switch name {
-	case "add":
-		AddRandomCar()
-		e.Dirty(globals.CarsTable)
-		return nil
-	}
-	return jaws.ErrEventUnhandled
-}
-
 type Car struct {
 	VIN       string
 	Make      string
@@ -70,7 +50,7 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 			globals.Cars[idx-1], globals.Cars[idx] = globals.Cars[idx], globals.Cars[idx-1]
 		}
 	case "down":
-		if idx := slices.Index(globals.Cars, c); idx > 0 && idx < len(globals.Cars)-1 {
+		if idx := slices.Index(globals.Cars, c); idx >= 0 && idx < len(globals.Cars)-1 {
 			globals.Cars[idx+1], globals.Cars[idx] = globals.Cars[idx], globals.Cars[idx+1]
 		}
 	case "remove":
