@@ -19,8 +19,7 @@ func (rndr *renderer) makeHandler(name string) http.HandlerFunc {
 		// prepares JaWS to accept the incoming WebSocket call for
 		// this request.
 		rq := rndr.jw.NewRequest(r)
-
-		if err := rndr.jw.Template.ExecuteTemplate(w, name, NewUiState(rq, rndr.g)); err != nil {
+		if err := rndr.jw.Template.ExecuteTemplate(w, name, NewUiState(w, rq, rndr.g)); err != nil {
 			log.Fatal(err)
 		}
 	}

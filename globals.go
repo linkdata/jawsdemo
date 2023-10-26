@@ -66,11 +66,11 @@ func (g *Globals) JawsClick(e *jaws.Element, name string) error {
 	defer g.mu.Unlock()
 	if g.inputButton == "Meh" {
 		g.inputButton = "Woo"
-		e.Jaws.SetAttr(g.InputButton(), "disabled", "")
+		e.Jaws().SetAttr(g.InputButton(), "disabled", "")
 	} else {
 		g.inputButton = "Meh"
-		e.Jaws.RemoveAttr(g.InputButton(), "disabled")
+		e.Jaws().RemoveAttr(g.InputButton(), "disabled")
 	}
-	e.Request.Dirty(g.InputButton())
+	e.Dirty(g.InputButton())
 	return nil
 }
