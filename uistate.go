@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io"
 	"runtime/debug"
 	"strings"
 
@@ -9,7 +10,7 @@ import (
 
 type UiState struct {
 	G *Globals
-	*jaws.Request
+	jaws.RequestWriter
 }
 
 func (uis *UiState) Clock() jaws.HtmlGetter {
@@ -28,10 +29,10 @@ func (uis *UiState) JawsVersion() (v string) {
 	return
 }
 
-func NewUiState(rq *jaws.Request, g *Globals) *UiState {
+func NewUiState(w io.Writer, rq *jaws.Request, g *Globals) *UiState {
 	uis := &UiState{
-		G:       g,
-		Request: rq,
+		G:             g,
+		RequestWriter: rq.Writer(w),
 	}
 	return uis
 }
