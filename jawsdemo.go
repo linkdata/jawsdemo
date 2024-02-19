@@ -4,6 +4,7 @@ import (
 	"flag"
 	"html/template"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"os/signal"
@@ -51,7 +52,7 @@ func main() {
 	go func() {
 		t := time.NewTicker(time.Second)
 		defer t.Stop()
-		/*for range t.C {
+		for range t.C {
 			jw.Dirty(uiClock{})
 			if (time.Now().Second() % 3) == 0 {
 				globals.mu.Lock()
@@ -70,7 +71,7 @@ func main() {
 				globals.mu.Unlock()
 				jw.Dirty(globals.CarsLink())
 			}
-		}*/
+		}
 	}()
 
 	// the renderer simplifies making http.HanderFunc functions for us
