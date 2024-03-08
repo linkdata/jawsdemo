@@ -5,6 +5,8 @@ import "github.com/linkdata/jaws"
 type CarsTable struct{}
 
 func (ct *CarsTable) JawsContains(e *jaws.Element) (tl []jaws.UI) {
+	globals.mu.RLock()
+	defer globals.mu.RUnlock()
 	for _, c := range globals.Cars {
 		tl = append(tl, e.MakeTemplate("car_row.html", c))
 	}

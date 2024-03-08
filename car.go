@@ -40,10 +40,14 @@ func AddRandomCar() {
 		Year:      1970 + rand.Intn(30),
 		condition: 30 + rand.Intn(70),
 	}
+	globals.mu.Lock()
 	globals.Cars = append(globals.Cars, car)
+	globals.mu.Unlock()
 }
 
 func (c *Car) JawsClick(e *jaws.Element, name string) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 	switch name {
 	case "up":
 		if idx := slices.Index(globals.Cars, c); idx > 0 {
@@ -56,8 +60,6 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 	case "remove":
 		globals.Cars = slices.DeleteFunc(globals.Cars, func(c2 *Car) bool { return c2 == c })
 	case "+":
-		c.mu.Lock()
-		defer c.mu.Unlock()
 		if c.condition > 99 {
 			return errors.New("condition too high")
 		}
@@ -65,8 +67,6 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 		e.Dirty(c.Condition())
 		return nil
 	case "-":
-		c.mu.Lock()
-		defer c.mu.Unlock()
 		if c.condition < 1 {
 			return errors.New("condition too low")
 		}

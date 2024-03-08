@@ -19,6 +19,16 @@
 					<th scope="col">Condition</th>
 				</tr>
 			</thead>
+			<!--
+				jaws.RequestWriter.Tbody requires a jaws.Container.
+
+				When rendering and updating, JawsContains() must return a
+				slice of UI objects representing the items that should be
+				present, in the correct order.
+
+				JaWS will send the minimum required number of element removals,
+				additions and reorderings required to synchronize the browser.
+			-->
 			{{$.Tbody .G.CarsTable}}
 		</table>
 		{{$.Button "Mystical" .G}}

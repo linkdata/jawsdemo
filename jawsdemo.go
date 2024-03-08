@@ -39,7 +39,6 @@ func main() {
 
 	jw := jaws.New()                  // create a default JaWS instance
 	defer jw.Close()                  // ensure we clean up
-	jw.CookieName = "jawsdemo"        // optionally set a session cookie name
 	jw.Logger = log.Default()         // optionally set the logger to use
 	jw.AddTemplateLookuper(templates) // optionally let JaWS know about our templates
 	jawsboot.Setup(jw)                // optionally enable the included Bootstrap support
@@ -50,6 +49,8 @@ func main() {
 
 	// spin up a goroutine to update the clock and cars button text
 	go func() {
+		now := time.Now()
+		time.Sleep(now.Round(time.Second).Sub(now))
 		t := time.NewTicker(time.Second)
 		defer t.Stop()
 		for range t.C {

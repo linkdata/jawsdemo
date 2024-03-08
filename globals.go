@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sync/atomic"
 	"time"
 
 	"github.com/linkdata/deadlock"
@@ -11,7 +12,7 @@ type Globals struct {
 	mu               deadlock.RWMutex
 	inputText        string
 	inputTextArea    string
-	inputCheckbox    bool
+	inputCheckbox    atomic.Bool
 	InputRadioGroup1 *jaws.NamedBoolArray
 	InputRadioGroup2 *jaws.NamedBoolArray
 	inputDate        time.Time
@@ -62,15 +63,18 @@ func NewGlobals() *Globals {
 var _ jaws.ClickHandler = (*Globals)(nil)
 
 func (g *Globals) JawsClick(e *jaws.Element, name string) error {
-	g.mu.Lock()
-	defer g.mu.Unlock()
-	if g.inputButton == "Meh" {
-		g.inputButton = "Woo"
-		e.Jaws.SetAttr(g.InputButton(), "disabled", "")
-	} else {
-		g.inputButton = "Meh"
-		e.Jaws.RemoveAttr(g.InputButton(), "disabled")
+	if name == "clicky" {
+		g.mu.Lock()
+		defer g.mu.Unlock()
+		if g.inputButton == "Meh" {
+			g.inputButton = "Woo"
+			e.Jaws.SetAttr(g.InputButton(), "disabled", "")
+		} else {
+			g.inputButton = "Meh"
+			e.Jaws.RemoveAttr(g.InputButton(), "disabled")
+		}
+		e.Dirty(g.InputButton())
+		return nil
 	}
-	e.Dirty(g.InputButton())
-	return nil
+	return jaws.ErrEventUnhandled
 }
