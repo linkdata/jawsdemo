@@ -1,6 +1,8 @@
 package main
 
 import (
+	"runtime/debug"
+	"strings"
 	"sync/atomic"
 	"time"
 
@@ -77,4 +79,20 @@ func (g *Globals) JawsClick(e *jaws.Element, name string) error {
 		return nil
 	}
 	return jaws.ErrEventUnhandled
+}
+
+func (g *Globals) Clock() jaws.HtmlGetter {
+	return uiClock{}
+}
+
+func (g *Globals) JawsVersion() (v string) {
+	if bi, ok := debug.ReadBuildInfo(); ok {
+		v = bi.Main.Version
+		for _, dep := range bi.Deps {
+			if strings.HasSuffix(dep.Path, "/jaws") {
+				v += " - jaws@" + dep.Version
+			}
+		}
+	}
+	return
 }

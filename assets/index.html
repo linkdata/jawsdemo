@@ -1,8 +1,9 @@
+{{with .Dot}}
 <!doctype html>
 <html lang="en">
 
 <head>
-	{{template "head.html" .}}
+	{{template "head.html" $}}
 </head>
 
 <!--
@@ -15,7 +16,7 @@
 -->
 
 <body><form autocomplete="off">
-	{{template "header.html" .}}
+	{{template "header.html" $}}
 	<div class="container">
 		<!-- if Bootstrap is in use this marks where jaws UI alerts should be rendered -->
 		<div id="jaws-alerts"></div>
@@ -64,7 +65,7 @@
 			Other optional parameters include more UI tags to associate with
 			the element or event handlers (jaws.ClickHandler and jaws.EventHandler).
 		-->
-		{{$.A .G.CarsLink `href="/cars" class="btn btn-primary mb-3"`}}
+		{{$.A .CarsLink `href="/cars" class="btn btn-primary mb-3"`}}
 
 		<!--
 			jaws.RequestWriter.Text() needs a jaws.StringSetter as the
@@ -79,7 +80,7 @@
 		-->
 		<div class="mb-3">
 			<label class="form-label">Text
-				{{$.Text .G.InputText `class="form-control"`}}
+				{{$.Text .InputText `class="form-control"`}}
 			</label>
 			<span>Try entering 'fail' or 'cat'.</span>
 		</div>
@@ -93,7 +94,7 @@
 		-->
 		<div class="form-check mb-3">
 			<label class="form-check-label">Checkbox
-				{{$.Checkbox .G.InputCheckbox `class="form-check-input"`}}
+				{{$.Checkbox .InputCheckbox `class="form-check-input"`}}
 			</label>
 		</div>
 
@@ -106,7 +107,7 @@
 		-->
 		<div class="mb-3">
 			<label class="form-label">Date
-				{{$.Date .G.InputDate}}
+				{{$.Date .InputDate}}
 			</label>
 		</div>
 
@@ -115,7 +116,7 @@
 			same as $.Text does.
 		-->
 		<div class="mb-3">
-			{{$.Textarea .G.InputTextArea `class="form-control" rows="4"`}}
+			{{$.Textarea .InputTextArea `class="form-control" rows="4"`}}
 		</div>
 
 		<!-- 
@@ -131,8 +132,8 @@
 		<div class="row mb-3">
 			<label class="form-label">Range
 				<div class="input-group">
-					<span class="form-control">{{$.Range .G.InputRange `class="form-range align-bottom"`}}</span>
-					{{$.Span .G.InputRange `class="input-group-text"`}}
+					<span class="form-control">{{$.Range .InputRange `class="form-range align-bottom"`}}</span>
+					{{$.Span .InputRange `class="input-group-text"`}}
 				</div>
 			</label>
 		</div>
@@ -152,13 +153,13 @@
 			slice of jaws.RadioElement, which we use to render the HTML
 			entities with the Radio() and Label() methods.
 		-->
-		{{range $.RadioGroup .G.InputRadioGroup1}}
+		{{range $.RadioGroup .InputRadioGroup1}}
 			<div class="form-check">
 				{{.Radio `class="form-check-input"`}}
 				{{.Label `class="form-check-label"`}}
 			</div>
 		{{end}}
-		{{range $.RadioGroup .G.InputRadioGroup2}}
+		{{range $.RadioGroup .InputRadioGroup2}}
 			<div class="form-check">
 				{{.Radio `class="form-check-input"`}}
 				{{.Label `class="form-check-label"`}}
@@ -175,7 +176,7 @@
 		-->
 		<div class="mb-3">
 			<label>Choose a pet:</label>
-			{{$.Select .G.SelectPet `class="form-select"`}}
+			{{$.Select .SelectPet `class="form-select"`}}
 		</div>
 
 
@@ -199,10 +200,10 @@
 			on the elements and check that the name
 			matches what's expected in the click handler.
 		-->
-		{{$.Button .G.InputButton `class="btn btn-primary m-3" name="clicky"`}}
+		{{$.Button .InputButton `class="btn btn-primary m-3" name="clicky"`}}
 
 		<!--
-			This table of cars is static since we iterate over .G.Cars manually
+			This table of cars is static since we iterate over .Cars manually
 			using 'range' instead of using a jaws.Container.
 			We do this just to illustrate the use of $.Template.
 
@@ -219,7 +220,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{{range .G.Cars}}
+				{{range .Cars}}
 				<!--
 					Using RequestWriter.Template() here with a string giving the
 					template name requires us call Jaws.AddTemplateLookuper()
@@ -246,5 +247,5 @@
 		</table>
 	</div>
 </body></form>
-
 </html>
+{{end}}

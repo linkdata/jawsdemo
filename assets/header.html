@@ -1,8 +1,10 @@
+{{with .Dot}}
 <div class="row m-2 border rounded-pill border-secondary bg-light">
 	<div class="col col-10">
 		<a href="/" class="text-decoration-none text-body">
-			jawsdemo&nbsp;<span class="text-secondary">{{$.JawsVersion}}</span>
+			jawsdemo&nbsp;<span class="text-secondary">{{.JawsVersion}}</span>
 		</a>
 	</div>
 	{{$.Div .Clock `class="col col-2 text-body text-end"`}}
 </div>
+{{end}}

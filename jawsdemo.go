@@ -38,9 +38,9 @@ func main() {
 	templates := template.Must(template.New("").ParseGlob("assets/*.html"))
 
 	jw := jaws.New()                  // create a default JaWS instance
+	jw.AddTemplateLookuper(templates) // let JaWS know about our templates
 	defer jw.Close()                  // ensure we clean up
 	jw.Logger = log.Default()         // optionally set the logger to use
-	jw.AddTemplateLookuper(templates) // optionally let JaWS know about our templates
 	jawsboot.Setup(jw)                // optionally enable the included Bootstrap support
 	go jw.Serve()                     // start the JaWS processing loop
 
@@ -75,14 +75,9 @@ func main() {
 		}
 	}()
 
-	// the renderer simplifies making http.HanderFunc functions for us
-	t := &renderer{
-		jw: jw,
-		g:  globals,
-	}
 	mux.Handle("/favicon.ico", http.NotFoundHandler())
-	mux.HandleFunc("/cars", t.makeHandler("cars.html"))
-	mux.HandleFunc("/", t.makeHandler("index.html"))
+	mux.Handle("/", jw.Handler("index.html", globals))
+	mux.Handle("/cars", jw.Handler("cars.html", globals))
 
 	// handle CTRL-C and start listening
 	breakChan := make(chan os.Signal, 1)
