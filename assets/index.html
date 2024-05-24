@@ -1,3 +1,11 @@
+<!--
+	In a template rendered via JaWS, the data parameter is a jaws.With{} structure.
+	This contains both the *Element being rendered and the value inside
+	the jaws.Template, which is accessible as '$.Dot', as well as a string
+	containing any extra attributes passed in '$.Attrs'.
+
+	If applicable, set the outermost HTML tag's id to the value of '$.Jid'.
+-->
 {{with .Dot}}
 <!doctype html>
 <html lang="en">
@@ -5,15 +13,6 @@
 <head>
 	{{template "head.html" $}}
 </head>
-
-<!--
-	When executing the template, we provide an *UiState as it's data parameter.
-	The UiState, in turn, embeds a jaws.RequestWriter without a member name,
-	so it's	methods are exposed directly on the UiState.
-
-	You'll note that when we call those methods, we prefix the method with "$",
-	which is the template syntax for "use the top-level data parameter".
--->
 
 <body><form autocomplete="off">
 	{{template "header.html" $}}
