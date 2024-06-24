@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/linkdata/deadlock v0.4.0
-	github.com/linkdata/jaws v0.68.0
+	github.com/linkdata/jaws v0.74.1
 )
 
 require (

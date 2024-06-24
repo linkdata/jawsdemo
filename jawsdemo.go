@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"html/template"
-	"log"
+	"log/slog"
 	"math/rand"
 	"net/http"
 	"os"
@@ -27,7 +27,7 @@ func main() {
 	if *cpuprofile != "" {
 		f, err := os.Create(*cpuprofile)
 		if err != nil {
-			log.Fatal(err)
+			panic(err)
 		}
 		defer f.Close()
 		pprof.StartCPUProfile(f)
@@ -40,7 +40,7 @@ func main() {
 	jw := jaws.New()                  // create a default JaWS instance
 	jw.AddTemplateLookuper(templates) // let JaWS know about our templates
 	defer jw.Close()                  // ensure we clean up
-	jw.Logger = log.Default()         // optionally set the logger to use
+	jw.Logger = slog.Default()        // optionally set the logger to use
 	jawsboot.Setup(jw)                // optionally enable the included Bootstrap support
 	go jw.Serve()                     // start the JaWS processing loop
 
@@ -84,21 +84,21 @@ func main() {
 	signal.Notify(breakChan, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		defer close(breakChan)
-		log.Printf("listening on \"http://%s\"", *listenaddr)
-		log.Print(http.ListenAndServe(*listenaddr, mux))
+		slog.Info("listening", "address", "http://"+*listenaddr)
+		http.ListenAndServe(*listenaddr, mux)
 	}()
 
 	// wait for the HTTP server to stop
 	if sig, ok := <-breakChan; ok {
-		log.Print(sig)
+		slog.Info(sig.String())
 	}
 
 	if *memprofile != "" {
-		f, err := os.Create(*memprofile)
-		if err != nil {
-			log.Fatal(err)
+		if f, err := os.Create(*memprofile); err == nil {
+			defer f.Close()
+			pprof.WriteHeapProfile(f)
+		} else {
+			slog.Error(err.Error())
 		}
-		defer f.Close()
-		pprof.WriteHeapProfile(f)
 	}
 }
