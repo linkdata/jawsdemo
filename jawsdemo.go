@@ -21,17 +21,24 @@ var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 var memprofile = flag.String("memprofile", "", "write memory profile to this file")
 var globals = NewGlobals()
 
+func maybeLogError(err error) {
+	if err != nil {
+		slog.Error(err.Error())
+	}
+}
+
 func main() {
 	flag.Parse()
 
 	if *cpuprofile != "" {
 		f, err := os.Create(*cpuprofile)
-		if err != nil {
-			panic(err)
+		if err == nil {
+			defer f.Close()
+			if err = pprof.StartCPUProfile(f); err == nil {
+				defer pprof.StopCPUProfile()
+			}
 		}
-		defer f.Close()
-		pprof.StartCPUProfile(f)
-		defer pprof.StopCPUProfile()
+		maybeLogError(err)
 	}
 
 	// parse our templates
@@ -41,7 +48,7 @@ func main() {
 	jw.AddTemplateLookuper(templates) // let JaWS know about our templates
 	defer jw.Close()                  // ensure we clean up
 	jw.Logger = slog.Default()        // optionally set the logger to use
-	jawsboot.Setup(jw)                // optionally enable the included Bootstrap support
+	maybeLogError(jawsboot.Setup(jw)) // optionally enable the included Bootstrap support
 	go jw.Serve()                     // start the JaWS processing loop
 
 	mux := http.NewServeMux() // create a ServeMux to do routing
@@ -85,7 +92,7 @@ func main() {
 	go func() {
 		defer close(breakChan)
 		slog.Info("listening", "address", "http://"+*listenaddr)
-		http.ListenAndServe(*listenaddr, mux)
+		slog.Error(http.ListenAndServe(*listenaddr, mux).Error())
 	}()
 
 	// wait for the HTTP server to stop
@@ -94,11 +101,11 @@ func main() {
 	}
 
 	if *memprofile != "" {
-		if f, err := os.Create(*memprofile); err == nil {
+		f, err := os.Create(*memprofile)
+		if err == nil {
 			defer f.Close()
-			pprof.WriteHeapProfile(f)
-		} else {
-			slog.Error(err.Error())
+			err = pprof.WriteHeapProfile(f)
 		}
+		maybeLogError(err)
 	}
 }
