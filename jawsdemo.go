@@ -64,6 +64,8 @@ func main() {
 			jw.Dirty(uiClock{})
 			if (time.Now().Second() % 3) == 0 {
 				globals.mu.Lock()
+				globals.counter++
+				jw.Dirty(globals.Counter())
 				x := rand.Intn(5) //#nosec G404
 				switch x {
 				case 0:

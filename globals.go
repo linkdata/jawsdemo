@@ -24,6 +24,7 @@ type Globals struct {
 	Cars             []*Car
 	carsLink         string
 	CarsTable        *CarsTable
+	counter          float64
 }
 
 func NewGlobals() *Globals {
@@ -83,6 +84,13 @@ func (g *Globals) JawsClick(e *jaws.Element, name string) error {
 
 func (g *Globals) Clock() jaws.HtmlGetter {
 	return uiClock{}
+}
+
+func (g *Globals) Counter() jaws.FloatSetter {
+	return jaws.UiFloat{
+		L: &g.mu,
+		P: &g.counter,
+	}
 }
 
 func (g *Globals) JawsVersion() (v string) {
