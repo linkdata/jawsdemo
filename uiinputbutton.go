@@ -1,6 +1,7 @@
 package main
 
 import (
+	"html"
 	"html/template"
 
 	"github.com/linkdata/jaws"
@@ -10,7 +11,7 @@ type uiInputButton struct{ *Globals }
 
 func (ui uiInputButton) JawsGetHtml(e *jaws.Element) (v template.HTML) {
 	ui.mu.RLock()
-	v = template.HTML(ui.inputButton)
+	v = template.HTML(html.EscapeString(ui.inputButton)) //#nosec G203
 	ui.mu.RUnlock()
 	return
 }

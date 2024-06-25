@@ -22,7 +22,7 @@ func (ui uiInputRange) JawsGetHtml(e *jaws.Element) (v template.HTML) {
 	default:
 		e.SetAttr("style", "color:green")
 	}
-	v = template.HTML(fmt.Sprint(ui.inputRange))
+	v = template.HTML(fmt.Sprint(ui.inputRange)) //#nosec G203
 	ui.mu.RUnlock()
 	return
 }

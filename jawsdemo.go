@@ -64,7 +64,8 @@ func main() {
 			jw.Dirty(uiClock{})
 			if (time.Now().Second() % 3) == 0 {
 				globals.mu.Lock()
-				switch rand.Intn(5) {
+				x := rand.Intn(5) //#nosec G404
+				switch x {
 				case 0:
 					globals.carsLink = "Check out these cars!"
 				case 1:
@@ -92,7 +93,7 @@ func main() {
 	go func() {
 		defer close(breakChan)
 		slog.Info("listening", "address", "http://"+*listenaddr)
-		slog.Error(http.ListenAndServe(*listenaddr, mux).Error())
+		slog.Error(http.ListenAndServe(*listenaddr, mux).Error()) //#nosec G114
 	}()
 
 	// wait for the HTTP server to stop

@@ -16,5 +16,5 @@ func (uiClock) JawsGetHtml(e *jaws.Element) template.HTML {
 	if now.Second()%2 == 0 {
 		flash = ":"
 	}
-	return template.HTML(fmt.Sprintf("%02d%s%02d", now.Hour(), flash, now.Minute()))
+	return template.HTML(fmt.Sprintf("%02d%s%02d", now.Hour(), flash, now.Minute())) //#nosec G203
 }

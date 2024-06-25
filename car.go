@@ -23,10 +23,15 @@ type Car struct {
 var carMakes = []string{"Dodge", "Hyundai", "Acura", "Volvo", "Saab", "Lada", "Mazda"}
 var carModels = []string{"Sedan", "Coupe", "SUV", "Truck", "Cabriolet"}
 
+func intN(n int) int {
+	x := rand.Intn(n) //#nosec G404
+	return x
+}
+
 func AddRandomCar() {
 	var vin []byte
 	for i := 0; i < 17; i++ {
-		n := byte(rand.Intn(26 + 10))
+		n := byte(intN(26 + 10))
 		if n < 10 {
 			vin = append(vin, '0'+n)
 		} else {
@@ -35,10 +40,10 @@ func AddRandomCar() {
 	}
 	car := &Car{
 		VIN:       string(vin),
-		Make:      carMakes[rand.Intn(len(carMakes))],
-		Model:     carModels[rand.Intn(len(carModels))],
-		Year:      1970 + rand.Intn(30),
-		condition: 30 + rand.Intn(70),
+		Make:      carMakes[intN(len(carMakes))],
+		Model:     carModels[intN(len(carModels))],
+		Year:      1970 + intN(30),
+		condition: 30 + intN(70),
 	}
 	globals.mu.Lock()
 	globals.Cars = append(globals.Cars, car)
@@ -92,7 +97,7 @@ func (ui uiCondition) JawsGetFloat(e *jaws.Element) (v float64) {
 
 func (ui uiCondition) JawsGetHtml(e *jaws.Element) (v template.HTML) {
 	ui.mu.RLock()
-	v = template.HTML(fmt.Sprint(ui.condition))
+	v = template.HTML(fmt.Sprint(ui.condition)) //#nosec G203
 	ui.mu.RUnlock()
 	return
 }
