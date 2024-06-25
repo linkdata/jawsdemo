@@ -24,7 +24,8 @@ type Globals struct {
 	Cars             []*Car
 	carsLink         string
 	CarsTable        *CarsTable
-	counter          float64
+	counter1         float64
+	counter2         float64
 }
 
 func NewGlobals() *Globals {
@@ -86,10 +87,17 @@ func (g *Globals) Clock() jaws.HtmlGetter {
 	return uiClock{}
 }
 
-func (g *Globals) Counter() jaws.FloatSetter {
+func (g *Globals) Counter1() jaws.FloatSetter {
 	return jaws.UiFloat{
 		L: &g.mu,
-		P: &g.counter,
+		P: &g.counter1,
+	}
+}
+
+func (g *Globals) Counter2() jaws.FloatSetter {
+	return jaws.UiFloat{
+		L: &g.mu,
+		P: &g.counter2,
 	}
 }
 

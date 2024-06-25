@@ -12,10 +12,12 @@
 
 <head>
 	{{template "head.html" $}}
-	{{$.JsNumber .Counter "democounter"}}
 </head>
 
 <body><form autocomplete="off">
+	{{$.JsNumber .Counter1 "democounter1"}}
+	{{$.JsNumber .Counter2 "democounter2"}}
+
 	{{template "header.html" $}}
 	<div class="container">
 		<!-- if Bootstrap is in use this marks where jaws UI alerts should be rendered -->
