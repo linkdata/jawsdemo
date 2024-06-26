@@ -12,21 +12,21 @@
 
 <head>
 	{{template "head.html" $}}
-</head>
-
-<body><form autocomplete="off">
 	<script>
 	var clientX;
 	var clientY;
-	onmousemove = function(e){
-		jawsVar('clientX', e.clientX);
-		jawsVar('clientY', e.clientY);
+	onmousemove = function(e) {
+		if (typeof jawsVar !== 'undefined') {
+			jawsVar('clientX', e.clientX);
+			jawsVar('clientY', e.clientY);
+		}
 	}
 	</script>
 	{{$.JsNumber .ClientX "clientX"}}
 	{{$.JsNumber .ClientY "clientY"}}
-	{{$.Div .ClientPos .ClientX .ClientY}}
+</head>
 
+<body><form autocomplete="off">
 	{{template "header.html" $}}
 	<div class="container">
 		<!-- if Bootstrap is in use this marks where jaws UI alerts should be rendered -->
