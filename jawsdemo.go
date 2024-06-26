@@ -12,6 +12,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/jawsboot"
 )
@@ -48,6 +49,7 @@ func main() {
 	jw.AddTemplateLookuper(templates) // let JaWS know about our templates
 	defer jw.Close()                  // ensure we clean up
 	jw.Logger = slog.Default()        // optionally set the logger to use
+	jw.Debug = deadlock.Debug
 	maybeLogError(jawsboot.Setup(jw)) // optionally enable the included Bootstrap support
 	go jw.Serve()                     // start the JaWS processing loop
 
@@ -64,8 +66,6 @@ func main() {
 			jw.Dirty(uiClock{})
 			if (time.Now().Second() % 3) == 0 {
 				globals.mu.Lock()
-				globals.counter1++
-				jw.Dirty(globals.Counter1())
 				x := rand.Intn(5) //#nosec G404
 				switch x {
 				case 0:

@@ -15,8 +15,17 @@
 </head>
 
 <body><form autocomplete="off">
-	{{$.JsNumber .Counter1 "democounter1"}}
-	{{$.JsNumber .Counter2 "democounter2"}}
+	<script>
+	var clientX;
+	var clientY;
+	onmousemove = function(e){
+		jawsVar('clientX', e.clientX);
+		jawsVar('clientY', e.clientY);
+	}
+	</script>
+	{{$.JsNumber .ClientX "clientX"}}
+	{{$.JsNumber .ClientY "clientY"}}
+	{{$.Div .ClientPos .ClientX .ClientY}}
 
 	{{template "header.html" $}}
 	<div class="container">
