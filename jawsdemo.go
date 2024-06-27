@@ -64,6 +64,8 @@ func main() {
 		defer t.Stop()
 		for range t.C {
 			jw.Dirty(uiClock{})
+			globals.runtime.Set(time.Since(now).Seconds())
+			jw.Dirty(globals.Runtime())
 			if (time.Now().Second() % 3) == 0 {
 				globals.mu.Lock()
 				x := rand.Intn(5) //#nosec G404
