@@ -12,21 +12,6 @@
 
 <head>
 	{{template "head.html" $}}
-	<script>
-	var clientX;
-	var clientY;
-	var runtime;
-	onmousemove = function(e) {
-		if (typeof jawsVar !== 'undefined') {
-			jawsVar('clientX', e.clientX);
-			jawsVar('clientY', e.clientY);
-		}
-	}
-	setInterval(function() { console.log(runtime); }, 1000);
-	</script>
-	{{$.JsNumber .ClientX "clientX"}}
-	{{$.JsNumber .ClientY "clientY"}}
-	{{$.JsNumber .Runtime "runtime"}}
 </head>
 
 <body><form autocomplete="off">

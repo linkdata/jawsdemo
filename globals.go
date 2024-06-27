@@ -26,7 +26,7 @@ type Globals struct {
 	CarsTable        *CarsTable
 	clientX          float64
 	clientY          float64
-	runtime          jaws.Float
+	runtime          jaws.String
 }
 
 func NewGlobals() *Globals {
@@ -102,7 +102,7 @@ func (g *Globals) ClientY() jaws.FloatSetter {
 	}
 }
 
-func (g *Globals) Runtime() jaws.FloatSetter {
+func (g *Globals) Runtime() jaws.StringSetter {
 	return &g.runtime
 }
 

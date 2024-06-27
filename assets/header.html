@@ -9,4 +9,30 @@
 	</div>
 	{{$.Div .Clock `class="col col-2 text-body text-end"`}}
 </div>
+
+<!--
+	Interacting with Javascript variables on the page uses the jaws.Js(type),
+	types like jaws.JsNumber. You bind them to a setter of the appropriate
+	type and give them a name which the Javascript uses. The name may be
+	a series of dot-separated names, in which case we follow the chain.
+
+	To send an updated value back to the server from the script, use
+	jawsVar('varname'). You can set a value and send it using 
+	jawsVar('varname', value).
+-->
+{{$.JsString .Runtime "runtime"}}
+{{$.JsNumber .ClientX "client.X"}}
+{{$.JsNumber .ClientY "client.Y"}}
+
+<script>
+	var client = {X:0, Y:0};
+	var runtime;
+	onmousemove = function(e) {
+		if (typeof jawsVar !== 'undefined') {
+			jawsVar('client.X', e.clientX);
+			jawsVar('client.Y', e.clientY);
+		}
+	}
+	setInterval(function() { console.log(runtime); }, 1000);
+</script>
 {{end}}

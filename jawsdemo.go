@@ -64,7 +64,7 @@ func main() {
 		defer t.Stop()
 		for range t.C {
 			jw.Dirty(uiClock{})
-			globals.runtime.Set(time.Since(now).Seconds())
+			globals.runtime.Set(time.Since(now).String())
 			jw.Dirty(globals.Runtime())
 			if (time.Now().Second() % 3) == 0 {
 				globals.mu.Lock()
