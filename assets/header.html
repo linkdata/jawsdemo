@@ -5,24 +5,40 @@
 			jawsdemo
 			<span class="text-secondary">{{.JawsVersion}}</span>
 			{{$.Span .ClientPos .ClientX .ClientY `class="text-info"`}}
+			{{$.Span .UserAgent `class="text-ok"`}}
 		</a>
 	</div>
 	{{$.Div .Clock `class="col col-2 text-body text-end"`}}
 </div>
 
 <!--
-	Interacting with Javascript variables on the page uses the jaws.Js(type),
-	types like jaws.JsNumber. You bind them to a setter of the appropriate
-	type and give them a name which the Javascript uses. The name may be
-	a series of dot-separated names, in which case we follow the chain.
+	Interacting with Javascript variables on the page uses
+	the jaws.Js(type), types like jaws.JsNumber.
+	
+	You bind them to a setter of the appropriate type and give them the
+	name which the Javascript uses. The name may be a series of dot-separated
+	names, in which case we follow the chain.
 
 	To send an updated value back to the server from the script, use
 	jawsVar('varname'). You can set a value and send it using 
 	jawsVar('varname', value).
+
+	Interacting with functions, you use jaws.JsFunction. It requires
+	three parameters.
+	
+	The first must be a jaws.AnySetter to provide the argument to the
+	function call and that when marked as dirty, causes the call to occur.
+
+	The second may be a jaws.AnySetter or nil, and receives the result of
+	the function call. Unless it returns nil from JawsGetTag, it's tags
+	will be marked as dirty.
+
+	The third is the name of the Javascript function.
 -->
 {{$.JsString .Runtime "runtime"}}
 {{$.JsNumber .ClientX "client.X"}}
 {{$.JsNumber .ClientY "client.Y"}}
+{{$.JsFunction .GetUserAgent .UserAgent "getUserAgent"}}
 
 <script>
 	var client = {X:0, Y:0};
@@ -33,6 +49,8 @@
 			jawsVar('client.Y', e.clientY);
 		}
 	}
-	setInterval(function() { console.log(runtime); }, 1000);
+	function getUserAgent(msg) {
+		return msg + runtime;
+	}
 </script>
 {{end}}

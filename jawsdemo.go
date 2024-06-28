@@ -72,17 +72,23 @@ func main() {
 				switch x {
 				case 0:
 					globals.carsLink = "Check out these cars!"
+					globals.GetUserAgent().Store("runtime: ")
 				case 1:
 					globals.carsLink = "Did you know VIN numbers are encoded?"
+					globals.GetUserAgent().Store("uptime: ")
 				case 2:
 					globals.carsLink = "DO NOT CLICK HERE!"
+					globals.GetUserAgent().Store("bored for ")
 				case 3:
 					globals.carsLink = "Cars"
+					globals.GetUserAgent().Store("waited ")
 				default:
 					globals.carsLink = "This is a boring link to car info."
+					globals.GetUserAgent().Store("...")
 				}
 				globals.mu.Unlock()
 				jw.Dirty(globals.CarsLink())
+				jw.Dirty(globals.GetUserAgent())
 			}
 		}
 	}()

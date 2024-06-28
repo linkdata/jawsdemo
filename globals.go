@@ -11,22 +11,24 @@ import (
 )
 
 type Globals struct {
-	mu               deadlock.RWMutex
-	inputText        string
-	inputTextArea    string
-	inputCheckbox    atomic.Bool
-	InputRadioGroup1 *jaws.NamedBoolArray
-	InputRadioGroup2 *jaws.NamedBoolArray
-	inputDate        time.Time
-	inputRange       int
-	inputButton      string
-	SelectPet        *jaws.NamedBoolArray
-	Cars             []*Car
-	carsLink         string
-	CarsTable        *CarsTable
-	clientX          float64
-	clientY          float64
-	runtime          jaws.String
+	mu                deadlock.RWMutex
+	inputText         string
+	inputTextArea     string
+	inputCheckbox     atomic.Bool
+	InputRadioGroup1  *jaws.NamedBoolArray
+	InputRadioGroup2  *jaws.NamedBoolArray
+	inputDate         time.Time
+	inputRange        int
+	inputButton       string
+	SelectPet         *jaws.NamedBoolArray
+	Cars              []*Car
+	carsLink          string
+	CarsTable         *CarsTable
+	clientX           float64
+	clientY           float64
+	runtime           jaws.String
+	getUserAgentParam atomic.Value
+	userAgent         atomic.Value
 }
 
 func NewGlobals() *Globals {
@@ -104,6 +106,14 @@ func (g *Globals) ClientY() jaws.FloatSetter {
 
 func (g *Globals) Runtime() jaws.StringSetter {
 	return &g.runtime
+}
+
+func (g *Globals) GetUserAgent() *atomic.Value {
+	return &g.getUserAgentParam
+}
+
+func (g *Globals) UserAgent() *atomic.Value {
+	return &g.userAgent
 }
 
 func (g *Globals) JawsVersion() (v string) {
