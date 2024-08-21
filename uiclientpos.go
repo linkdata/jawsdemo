@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html"
 	"html/template"
+	"strings"
 
 	"github.com/linkdata/jaws"
 )
@@ -11,9 +12,12 @@ import (
 type uiClientPos struct{ *Globals }
 
 func (ui uiClientPos) JawsGetHtml(e *jaws.Element) (v template.HTML) {
+	var sb strings.Builder
 	ui.mu.RLock()
-	s := fmt.Sprintf("%.0fx%.0f", ui.clientX, ui.clientY)
-	v = template.HTML(html.EscapeString(s)) //#nosec G203
+	for k := range ui.clientX {
+		fmt.Fprintf(&sb, "%.0fx%.0f\n", ui.clientX[k], ui.clientY[k])
+	}
+	v = template.HTML(html.EscapeString(sb.String())) //#nosec G203
 	ui.mu.RUnlock()
 	return
 }

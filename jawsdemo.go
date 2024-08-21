@@ -94,8 +94,8 @@ func main() {
 	}()
 
 	mux.Handle("/favicon.ico", http.NotFoundHandler())
-	mux.Handle("/", jw.Handler("index.html", globals))
-	mux.Handle("/cars", jw.Handler("cars.html", globals))
+	mux.Handle("/", jw.Session(jw.Handler("index.html", globals)))
+	mux.Handle("/cars", jw.Session(jw.Handler("cars.html", globals)))
 
 	// handle CTRL-C and start listening
 	breakChan := make(chan os.Signal, 1)

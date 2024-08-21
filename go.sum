@@ -2,7 +2,7 @@ github.com/coder/websocket v1.8.12 h1:5bUXkEPPIbewrnkU8LTCLVaxi4N4J8ahufH2vlo4NA
 github.com/coder/websocket v1.8.12/go.mod h1:LNVeNrXQZfe5qhS9ALED3uA+l5pPqvwXg3CKoDBB2gs=
 github.com/linkdata/deadlock v0.5.2 h1:clEEeRsMJCrEm5SuBI3v2l3sdCSP74p0ii+C1rR9nA0=
 github.com/linkdata/deadlock v0.5.2/go.mod h1:M3Td2tmYASdLm6xblKGlFvfu8SI+nPjrB7mDeFDEz/k=
-github.com/linkdata/jaws v0.76.0 h1:VD+9pvAxj0ZCkzpeF+4pXzS7fp8uZUOsrxuUqG5PH78=
-github.com/linkdata/jaws v0.76.0/go.mod h1:JxYHNtthn869CpiAYQs3yK5eT1lX5X2rXRBSKUYMx5g=
+github.com/linkdata/jaws v0.77.0 h1:UnClKhJqC8ncqW9rsaMSBYmNjEQl0XTrPLipiAtBewA=
+github.com/linkdata/jaws v0.77.0/go.mod h1:gg4p8eQSw8u3JMmTlE5XzZ0hxDkZn+uRMC91CMGopUM=
 github.com/petermattis/goid v0.0.0-20240813172612-4fcff4a6cae7 h1:Dx7Ovyv/SFnMFw3fD4oEoeorXc6saIiQ23LrGLth0Gw=
 github.com/petermattis/goid v0.0.0-20240813172612-4fcff4a6cae7/go.mod h1:pxMtw7cyUw6B2bRH0ZBANSPg+AoSud1I1iyJHI69jH4=

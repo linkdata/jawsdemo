@@ -24,8 +24,8 @@ type Globals struct {
 	Cars              []*Car
 	carsLink          string
 	CarsTable         *CarsTable
-	clientX           float64
-	clientY           float64
+	clientX           map[*jaws.Session]float64
+	clientY           map[*jaws.Session]float64
 	runtime           jaws.String
 	getUserAgentParam atomic.Value
 	userAgent         atomic.Value
@@ -62,6 +62,8 @@ func NewGlobals() *Globals {
 				condition: 67,
 			},
 		},
+		clientX: make(map[*jaws.Session]float64),
+		clientY: make(map[*jaws.Session]float64),
 	}
 	g.inputTextArea = "The quick brown fox jumps over the lazy dog"
 	return g
@@ -88,20 +90,6 @@ func (g *Globals) JawsClick(e *jaws.Element, name string) error {
 
 func (g *Globals) Clock() jaws.HtmlGetter {
 	return uiClock{}
-}
-
-func (g *Globals) ClientX() jaws.FloatSetter {
-	return jaws.UiFloat{
-		L: &g.mu,
-		P: &g.clientX,
-	}
-}
-
-func (g *Globals) ClientY() jaws.FloatSetter {
-	return jaws.UiFloat{
-		L: &g.mu,
-		P: &g.clientY,
-	}
 }
 
 func (g *Globals) Runtime() jaws.StringSetter {
