@@ -4,7 +4,7 @@
 		<a href="/" class="text-decoration-none text-body text-nowrap">
 			jawsdemo
 			<span class="text-secondary">{{.JawsVersion}}</span>
-			{{$.Span .ClientPos .ClientX .ClientY `class="text-info"`}}
+			{{$.Span .ClientPos .Client `class="text-info"`}}
 			{{$.Span .UserAgent `class="text-ok"`}}
 		</a>
 	</div>
@@ -36,17 +36,18 @@
 	The third is the name of the Javascript function.
 -->
 {{$.JsString .Runtime "runtime"}}
-{{$.JsNumber .ClientX "client.X"}}
-{{$.JsNumber .ClientY "client.Y"}}
+{{$.JsAny .Client "client"}}
 {{$.JsFunction .GetUserAgent .UserAgent "getUserAgent"}}
 
 <script>
-	var client = {X:0, Y:0};
+	var client = {X:0, Y:0, B:0};
 	var runtime;
 	onmousemove = function(e) {
 		if (typeof jawsVar !== 'undefined') {
-			jawsVar('client.X', e.clientX);
-			jawsVar('client.Y', e.clientY);
+			client.X = e.clientX; // or jawsVar('client.X', e.clientX), which would also send the update
+			client.Y = e.clientY;
+			client.B = e.buttons;
+			jawsVar('client');
 		}
 	}
 	function getUserAgent(msg) {

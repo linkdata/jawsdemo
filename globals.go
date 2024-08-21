@@ -24,8 +24,7 @@ type Globals struct {
 	Cars              []*Car
 	carsLink          string
 	CarsTable         *CarsTable
-	clientX           map[*jaws.Session]float64
-	clientY           map[*jaws.Session]float64
+	client            map[*jaws.Session]*Client
 	runtime           jaws.String
 	getUserAgentParam atomic.Value
 	userAgent         atomic.Value
@@ -62,8 +61,7 @@ func NewGlobals() *Globals {
 				condition: 67,
 			},
 		},
-		clientX: make(map[*jaws.Session]float64),
-		clientY: make(map[*jaws.Session]float64),
+		client: make(map[*jaws.Session]*Client),
 	}
 	g.inputTextArea = "The quick brown fox jumps over the lazy dog"
 	return g

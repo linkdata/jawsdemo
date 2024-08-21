@@ -14,11 +14,11 @@ type uiClientPos struct{ *Globals }
 func (ui uiClientPos) JawsGetHtml(e *jaws.Element) (v template.HTML) {
 	var sb strings.Builder
 	ui.mu.RLock()
-	for k := range ui.clientX {
-		fmt.Fprintf(&sb, "%.0fx%.0f\n", ui.clientX[k], ui.clientY[k])
+	for _, c := range ui.client {
+		fmt.Fprintf(&sb, "%.0fx%.0f-%b ", c.X, c.Y, int(c.B))
 	}
-	v = template.HTML(html.EscapeString(sb.String())) //#nosec G203
 	ui.mu.RUnlock()
+	v = template.HTML(html.EscapeString(sb.String())) //#nosec G203
 	return
 }
 
