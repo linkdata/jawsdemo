@@ -225,8 +225,6 @@
 					template name requires us call Jaws.AddTemplateLookuper()
 					with our templates so the Request can resolve the name.
 
-					We could also pass a *template.Template directly instead.
-
 					When parsing "car_row.html", "$" will be a jaws.With{}
 					structure containing:
 
@@ -237,8 +235,8 @@
 
 					So "$.Dot" will be the pointer to the current car.
 
-					RequestWriter.Template() adds both the dot value (here a *Car)
-					and the template name (or pointer) as JaWS tags.
+					RequestWriter.Template() adds the dot value (here a *Car)
+					as a JaWS tag.
 				-->
 				{{$.Template "car_row.html" .}}
 				{{end}}
