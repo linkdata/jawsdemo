@@ -4,7 +4,7 @@
 		<a href="/" class="text-decoration-none text-body text-nowrap">
 			jawsdemo
 			<span class="text-secondary">{{.JawsVersion}}</span>
-			{{$.Span .ClientPos .Client `class="text-info"`}}
+			{{$.Span .ClientPos `class="text-info"`}}
 			{{$.Span .UserAgent `class="text-ok"`}}
 		</a>
 	</div>
@@ -35,8 +35,8 @@
 
 	The third is the name of the Javascript function.
 -->
-{{$.JsString .Runtime "runtime"}}
-{{$.JsAny .Client "client"}}
+{{$.JsVar .Runtime}}
+{{$.JsVar .Client}}
 {{$.JsFunction .GetUserAgent .UserAgent "getUserAgent"}}
 
 <script>

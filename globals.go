@@ -25,7 +25,7 @@ type Globals struct {
 	carsLink          string
 	CarsTable         *CarsTable
 	client            map[*jaws.Session]*Client
-	runtime           jaws.String
+	runtime           string
 	getUserAgentParam atomic.Value
 	userAgent         atomic.Value
 }
@@ -90,8 +90,8 @@ func (g *Globals) Clock() jaws.HtmlGetter {
 	return uiClock{}
 }
 
-func (g *Globals) Runtime() jaws.StringSetter {
-	return &g.runtime
+func (g *Globals) Runtime() any {
+	return jaws.NewJsVar("runtime", jaws.Bind(&g.mu, &g.runtime))
 }
 
 func (g *Globals) GetUserAgent() *atomic.Value {

@@ -64,8 +64,6 @@ func main() {
 		defer t.Stop()
 		for range t.C {
 			jw.Dirty(uiClock{})
-			globals.runtime.Set(time.Since(now).String())
-			jw.Dirty(globals.Runtime())
 			if (time.Now().Second() % 3) == 0 {
 				globals.mu.Lock()
 				x := rand.Intn(5) //#nosec G404
@@ -86,9 +84,12 @@ func main() {
 					globals.carsLink = "This is a boring link to car info."
 					globals.GetUserAgent().Store("...")
 				}
+				globals.runtime = time.Since(now).String()
 				globals.mu.Unlock()
+				jw.Dirty(globals.Runtime())
 				jw.Dirty(globals.CarsLink())
 				jw.Dirty(globals.GetUserAgent())
+				jw.Dirty(globals.Client())
 			}
 		}
 	}()
