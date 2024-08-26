@@ -13,7 +13,8 @@
 
 <!--
 	Interacting with Javascript variables on the page uses
-	the jaws.Js(type), types like jaws.JsNumber.
+	the generic type jaws.JsVar. Values will be sent to and from
+	the Javascript as JSON.
 	
 	You bind them to a setter of the appropriate type and give them the
 	name which the Javascript uses. The name may be a series of dot-separated
@@ -35,9 +36,9 @@
 
 	The third is the name of the Javascript function.
 -->
-{{$.JsVar .Runtime}}
-{{$.JsVar .Client}}
-{{$.JsFunction .GetUserAgent .UserAgent "getUserAgent"}}
+{{$.JsVar "runtime" .Runtime}}
+{{$.JsVar "client" .Client}}
+{{$.JsFunc "getUserAgent" .GetUserAgent .UserAgent}}
 
 <script>
 	var client = {X:0, Y:0, B:0};

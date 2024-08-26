@@ -26,8 +26,8 @@ type Globals struct {
 	CarsTable         *CarsTable
 	client            map[*jaws.Session]*Client
 	runtime           string
-	getUserAgentParam atomic.Value
-	userAgent         atomic.Value
+	getUserAgentParam string
+	userAgent         string
 }
 
 func NewGlobals() *Globals {
@@ -91,15 +91,15 @@ func (g *Globals) Clock() jaws.HtmlGetter {
 }
 
 func (g *Globals) Runtime() any {
-	return jaws.NewJsVar("runtime", jaws.Bind(&g.mu, &g.runtime))
+	return jaws.NewJsVar(jaws.Bind(&g.mu, &g.runtime))
 }
 
-func (g *Globals) GetUserAgent() *atomic.Value {
-	return &g.getUserAgentParam
+func (g *Globals) GetUserAgent() jaws.JsVar[string] {
+	return jaws.NewJsVar(jaws.Bind(&g.mu, &g.getUserAgentParam))
 }
 
-func (g *Globals) UserAgent() *atomic.Value {
-	return &g.userAgent
+func (g *Globals) UserAgent() jaws.JsVar[string] {
+	return jaws.NewJsVar(jaws.Bind(&g.mu, &g.userAgent))
 }
 
 func (g *Globals) JawsVersion() (v string) {

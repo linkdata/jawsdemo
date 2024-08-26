@@ -18,8 +18,8 @@ func (ui uiClient) getClient(rq *jaws.Request) (c *Client) {
 	return
 }
 
-func (ui uiClient) JawsVarMake(rq *jaws.Request) (v jaws.UI, err error) {
-	return jaws.NewJsVar("client", jaws.Bind(&ui.mu, ui.getClient(rq))), nil
+func (ui uiClient) JawsVarMake(rq *jaws.Request) (v jaws.IsJsVar, err error) {
+	return jaws.NewJsVar(jaws.Bind(&ui.mu, ui.getClient(rq))), nil
 }
 
 func (c *Client) JawsGetTag(*jaws.Request) any {

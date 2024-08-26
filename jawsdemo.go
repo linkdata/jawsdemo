@@ -70,19 +70,19 @@ func main() {
 				switch x {
 				case 0:
 					globals.carsLink = "Check out these cars!"
-					globals.GetUserAgent().Store("runtime: ")
+					globals.getUserAgentParam = "runtime: "
 				case 1:
 					globals.carsLink = "Did you know VIN numbers are encoded?"
-					globals.GetUserAgent().Store("uptime: ")
+					globals.getUserAgentParam = "uptime: "
 				case 2:
 					globals.carsLink = "DO NOT CLICK HERE!"
-					globals.GetUserAgent().Store("bored for ")
+					globals.getUserAgentParam = "bored for "
 				case 3:
 					globals.carsLink = "Cars"
-					globals.GetUserAgent().Store("waited ")
+					globals.getUserAgentParam = "waited "
 				default:
 					globals.carsLink = "This is a boring link to car info."
-					globals.GetUserAgent().Store("...")
+					globals.getUserAgentParam = "..."
 				}
 				globals.runtime = time.Since(now).String()
 				globals.mu.Unlock()
