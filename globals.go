@@ -102,6 +102,10 @@ func (g *Globals) UserAgent() jaws.JsVar[string] {
 	return jaws.NewJsVar(jaws.Bind(&g.mu, &g.userAgent))
 }
 
+func (g *Globals) ClientUserAgent() jaws.StringGetter {
+	return jaws.Bind(&g.mu, &g.userAgent)
+}
+
 func (g *Globals) JawsVersion() (v string) {
 	if bi, ok := debug.ReadBuildInfo(); ok {
 		v = bi.Main.Version
