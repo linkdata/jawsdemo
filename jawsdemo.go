@@ -64,31 +64,32 @@ func main() {
 		defer t.Stop()
 		for range t.C {
 			jw.Dirty(uiClock{})
-			globals.runtime.Set(time.Since(now).String())
-			jw.Dirty(globals.Runtime())
 			if (time.Now().Second() % 3) == 0 {
 				globals.mu.Lock()
 				x := rand.Intn(5) //#nosec G404
 				switch x {
 				case 0:
 					globals.carsLink = "Check out these cars!"
-					globals.GetUserAgent().Store("runtime: ")
+					globals.getUserAgentParam = "runtime: "
 				case 1:
 					globals.carsLink = "Did you know VIN numbers are encoded?"
-					globals.GetUserAgent().Store("uptime: ")
+					globals.getUserAgentParam = "uptime: "
 				case 2:
 					globals.carsLink = "DO NOT CLICK HERE!"
-					globals.GetUserAgent().Store("bored for ")
+					globals.getUserAgentParam = "bored for "
 				case 3:
 					globals.carsLink = "Cars"
-					globals.GetUserAgent().Store("waited ")
+					globals.getUserAgentParam = "waited "
 				default:
 					globals.carsLink = "This is a boring link to car info."
-					globals.GetUserAgent().Store("...")
+					globals.getUserAgentParam = "..."
 				}
+				globals.runtime = time.Since(now).String()
 				globals.mu.Unlock()
+				jw.Dirty(globals.Runtime())
 				jw.Dirty(globals.CarsLink())
 				jw.Dirty(globals.GetUserAgent())
+				jw.Dirty(globals.Client())
 			}
 		}
 	}()

@@ -6,32 +6,28 @@ import (
 
 type uiClient struct{ *Globals }
 
-func (ui uiClient) JawsGetAny(e *jaws.Element) any {
-	ui.mu.RLock()
-	defer ui.mu.RUnlock()
-	if v, ok := ui.client[e.Session()]; ok {
-		return *v
+func (ui uiClient) getClient(rq *jaws.Request) (c *Client) {
+	sess := rq.Session()
+	ui.mu.Lock()
+	c = ui.client[sess]
+	if c == nil {
+		c = &Client{}
+		ui.client[sess] = c
 	}
-	return Client{}
+	ui.mu.Unlock()
+	return
 }
 
-func (ui uiClient) JawsSetAny(e *jaws.Element, v any) error {
-	if v, ok := v.(map[string]any); ok {
-		sess := e.Session()
-		ui.mu.Lock()
-		c := ui.client[sess]
-		if c == nil {
-			c = &Client{}
-			ui.client[sess] = c
-		}
-		c.X = v["X"].(float64)
-		c.Y = v["Y"].(float64)
-		c.B = v["B"].(float64)
-		ui.mu.Unlock()
-	}
-	return nil
+func (ui uiClient) JawsVarMake(rq *jaws.Request) (v jaws.IsJsVar, err error) {
+	return jaws.NewJsVar(jaws.Bind(&ui.mu, ui.getClient(rq))), nil
 }
 
-func (g *Globals) Client() jaws.AnySetter {
+func (c *Client) JawsGetTag(*jaws.Request) any {
+	return uiClientPos{}
+}
+
+var _ jaws.VarMaker = uiClient{}
+
+func (g *Globals) Client() uiClient {
 	return uiClient{g}
 }
