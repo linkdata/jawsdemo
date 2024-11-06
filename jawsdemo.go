@@ -45,16 +45,15 @@ func main() {
 	// parse our templates
 	templates := template.Must(template.New("").ParseGlob("assets/*.html"))
 
-	jw := jaws.New()                  // create a default JaWS instance
-	jw.AddTemplateLookuper(templates) // let JaWS know about our templates
-	defer jw.Close()                  // ensure we clean up
-	jw.Logger = slog.Default()        // optionally set the logger to use
-	jw.Debug = deadlock.Debug
-	maybeLogError(jawsboot.Setup(jw)) // optionally enable the included Bootstrap support
-	go jw.Serve()                     // start the JaWS processing loop
-
-	mux := http.NewServeMux() // create a ServeMux to do routing
-	mux.Handle("/jaws/", jw)  // ensure the JaWS routes are handled
+	mux := http.NewServeMux()                     // create a ServeMux to do routing
+	jw := jaws.New()                              // create a default JaWS instance
+	jw.AddTemplateLookuper(templates)             // let JaWS know about our templates
+	defer jw.Close()                              // ensure we clean up
+	jw.Logger = slog.Default()                    // optionally set the logger to use
+	jw.Debug = deadlock.Debug                     // optionally set the debug flag
+	maybeLogError(jawsboot.Setup(jw, mux.Handle)) // optionally enable the included Bootstrap support
+	go jw.Serve()                                 // start the JaWS processing loop
+	mux.Handle("/jaws/", jw)                      // ensure the JaWS routes are handled
 
 	// spin up a goroutine to update the clock and cars button text
 	go func() {
