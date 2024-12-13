@@ -17,7 +17,7 @@ type Car struct {
 	Model     string
 	Year      int
 	mu        deadlock.RWMutex
-	condition int
+	condition float64
 }
 
 var carMakes = []string{"Dodge", "Hyundai", "Acura", "Volvo", "Saab", "Lada", "Mazda"}
@@ -43,7 +43,7 @@ func AddRandomCar() {
 		Make:      carMakes[intN(len(carMakes))],
 		Model:     carModels[intN(len(carModels))],
 		Year:      1970 + intN(30),
-		condition: 30 + intN(70),
+		condition: 30 + float64(intN(70)),
 	}
 	globals.mu.Lock()
 	globals.Cars = append(globals.Cars, car)
@@ -104,11 +104,11 @@ func (ui uiCondition) JawsGetHtml(e *jaws.Element) (v template.HTML) {
 
 func (ui uiCondition) JawsSetFloat(e *jaws.Element, v float64) error {
 	ui.mu.Lock()
-	ui.condition = int(v)
+	ui.condition = v
 	ui.mu.Unlock()
 	return nil
 }
 
-func (c *Car) Condition() jaws.FloatSetter {
-	return uiCondition{c}
+func (c *Car) Condition() any {
+	return jaws.Bind(&c.mu, &c.condition)
 }

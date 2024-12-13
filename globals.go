@@ -3,7 +3,6 @@ package main
 import (
 	"runtime/debug"
 	"strings"
-	"sync/atomic"
 	"time"
 
 	"github.com/linkdata/deadlock"
@@ -14,11 +13,11 @@ type Globals struct {
 	mu                deadlock.RWMutex
 	inputText         string
 	inputTextArea     string
-	inputCheckbox     atomic.Bool
+	inputCheckbox     bool
 	InputRadioGroup1  *jaws.NamedBoolArray
 	InputRadioGroup2  *jaws.NamedBoolArray
 	inputDate         time.Time
-	inputRange        int
+	inputRange        float64
 	inputButton       string
 	SelectPet         *jaws.NamedBoolArray
 	Cars              []*Car
@@ -102,7 +101,7 @@ func (g *Globals) UserAgent() jaws.JsVar[string] {
 	return jaws.NewJsVar(jaws.Bind(&g.mu, &g.userAgent))
 }
 
-func (g *Globals) ClientUserAgent() jaws.StringGetter {
+func (g *Globals) ClientUserAgent() any {
 	return jaws.Bind(&g.mu, &g.userAgent)
 }
 

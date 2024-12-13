@@ -13,4 +13,4 @@ require (
 )
 
 // For debugging a local copy of JaWS.
-// replace github.com/linkdata/jaws => ../jaws
+replace github.com/linkdata/jaws => ../jaws
