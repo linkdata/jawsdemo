@@ -7,12 +7,12 @@ import (
 	"github.com/linkdata/jaws"
 )
 
-type uiInputRange struct{ *Globals }
+type uiInputRange struct {
+	jaws.Binder[float64]
+	*Globals
+}
 
-var _ jaws.FloatSetter = (*uiInputRange)(nil) // statically ensure we implement this interface
-var _ jaws.HtmlGetter = (*uiInputRange)(nil)  // statically ensure we implement this interface
-
-func (ui uiInputRange) JawsGetHtml(e *jaws.Element) (v template.HTML) {
+func (ui *uiInputRange) JawsGetHtml(e *jaws.Element) (v template.HTML) {
 	ui.mu.RLock()
 	switch {
 	case ui.inputRange < 50:
@@ -27,20 +27,9 @@ func (ui uiInputRange) JawsGetHtml(e *jaws.Element) (v template.HTML) {
 	return
 }
 
-func (ui uiInputRange) JawsGetFloat(e *jaws.Element) (v float64) {
-	ui.mu.RLock()
-	v = float64(ui.inputRange)
-	ui.mu.RUnlock()
-	return
-}
-
-func (ui uiInputRange) JawsSetFloat(e *jaws.Element, v float64) (err error) {
-	ui.mu.Lock()
-	ui.inputRange = int(v)
-	ui.mu.Unlock()
-	return
-}
-
-func (g *Globals) InputRange() interface{} {
-	return uiInputRange{g}
+func (g *Globals) InputRange() any {
+	return &uiInputRange{
+		Binder:  jaws.Bind(&g.mu, &g.inputRange),
+		Globals: g,
+	}
 }
