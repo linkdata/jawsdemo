@@ -2,8 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
-	"html/template"
 	"math/rand"
 	"slices"
 
@@ -83,29 +81,6 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 	}
 
 	e.Dirty(globals.CarsTable)
-	return nil
-}
-
-type uiCondition struct{ *Car }
-
-func (ui uiCondition) JawsGetFloat(e *jaws.Element) (v float64) {
-	ui.mu.RLock()
-	v = float64(ui.condition)
-	ui.mu.RUnlock()
-	return
-}
-
-func (ui uiCondition) JawsGetHtml(e *jaws.Element) (v template.HTML) {
-	ui.mu.RLock()
-	v = template.HTML(fmt.Sprint(ui.condition)) //#nosec G203
-	ui.mu.RUnlock()
-	return
-}
-
-func (ui uiCondition) JawsSetFloat(e *jaws.Element, v float64) error {
-	ui.mu.Lock()
-	ui.condition = v
-	ui.mu.Unlock()
 	return nil
 }
 
