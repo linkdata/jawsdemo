@@ -1,8 +1,8 @@
 package main
 
 import (
+	"embed"
 	"flag"
-	"html/template"
 	"log/slog"
 	"math/rand"
 	"net/http"
@@ -15,7 +15,12 @@ import (
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/jawsboot"
+	"github.com/linkdata/jaws/staticserve"
+	"github.com/linkdata/jaws/templatereloader"
 )
+
+//go:embed assets
+var assetsFS embed.FS
 
 var listenaddr = flag.String("listenaddr", "localhost:8081", "address to listen on")
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
@@ -26,6 +31,21 @@ func maybeLogError(err error) {
 	if err != nil {
 		slog.Error(err.Error())
 	}
+}
+
+func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (faviconuri string, err error) {
+	var tmpl jaws.TemplateLookuper
+	if tmpl, err = templatereloader.New(assetsFS, "assets/ui/*.html", ""); err == nil {
+		jw.AddTemplateLookuper(tmpl)
+		if faviconuri, err = staticserve.HandleFS(assetsFS, "assets", "static/images/favicon.png", mux.Handle); err == nil {
+			if err = jawsboot.Setup(jw, mux.Handle, faviconuri); err == nil {
+				mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
+				mux.Handle("/", jw.Session(jw.Handler("index.html", globals)))
+				mux.Handle("/cars", jw.Session(jw.Handler("cars.html", globals)))
+			}
+		}
+	}
+	return
 }
 
 func main() {
@@ -42,18 +62,17 @@ func main() {
 		maybeLogError(err)
 	}
 
-	// parse our templates
-	templates := template.Must(template.New("").ParseGlob("assets/*.html"))
+	mux := http.NewServeMux()  // create a ServeMux to do routing
+	jw := jaws.New()           // create a default JaWS instance
+	defer jw.Close()           // ensure we clean up
+	jw.Logger = slog.Default() // optionally set the logger to use
+	jw.Debug = deadlock.Debug  // optionally set the debug flag
 
-	mux := http.NewServeMux()                     // create a ServeMux to do routing
-	jw := jaws.New()                              // create a default JaWS instance
-	jw.AddTemplateLookuper(templates)             // let JaWS know about our templates
-	defer jw.Close()                              // ensure we clean up
-	jw.Logger = slog.Default()                    // optionally set the logger to use
-	jw.Debug = deadlock.Debug                     // optionally set the debug flag
-	maybeLogError(jawsboot.Setup(jw, mux.Handle)) // optionally enable the included Bootstrap support
-	go jw.Serve()                                 // start the JaWS processing loop
-	mux.Handle("/jaws/", jw)                      // ensure the JaWS routes are handled
+	faviconuri, err := setupRoutes(jw, mux)
+	maybeLogError(err)
+	globals.FaviconURI = faviconuri
+
+	go jw.Serve() // start the JaWS processing loop
 
 	// spin up a goroutine to update the clock and cars button text
 	go func() {
@@ -92,10 +111,6 @@ func main() {
 			}
 		}
 	}()
-
-	mux.Handle("/favicon.ico", http.NotFoundHandler())
-	mux.Handle("/", jw.Session(jw.Handler("index.html", globals)))
-	mux.Handle("/cars", jw.Session(jw.Handler("cars.html", globals)))
 
 	// handle CTRL-C and start listening
 	breakChan := make(chan os.Signal, 1)

@@ -10,6 +10,7 @@ import (
 )
 
 type Globals struct {
+	FaviconURI        string
 	mu                deadlock.RWMutex
 	inputText         string
 	inputTextArea     string
