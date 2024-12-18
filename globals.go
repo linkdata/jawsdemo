@@ -85,7 +85,7 @@ func (g *Globals) JawsClick(e *jaws.Element, name string) error {
 	return jaws.ErrEventUnhandled
 }
 
-func (g *Globals) Clock() jaws.HtmlGetter {
+func (g *Globals) Clock() jaws.HTMLGetter {
 	return uiClock{}
 }
 

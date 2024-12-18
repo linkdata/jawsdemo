@@ -12,7 +12,7 @@ import (
 
 type uiClientPos struct{ *Globals }
 
-func (ui uiClientPos) JawsGetHtml(e *jaws.Element) (v template.HTML) {
+func (ui uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 	var sessions []*jaws.Session
 	ui.mu.RLock()
 	for sess := range ui.client {
@@ -33,6 +33,6 @@ func (ui uiClientPos) JawsGetTag(*jaws.Request) any {
 	return uiClientPos{}
 }
 
-func (g *Globals) ClientPos() jaws.HtmlGetter {
+func (g *Globals) ClientPos() jaws.HTMLGetter {
 	return uiClientPos{g}
 }

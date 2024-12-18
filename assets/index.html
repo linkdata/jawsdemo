@@ -37,11 +37,11 @@
 			plus a variable number of optional parameters.
 			
 			The first parameter is something that will determine the inner HTML of
-			the <a> tag. If it's a jaws.HtmlGetter or a template.HTML string, the
+			the <a> tag. If it's a jaws.HTMLGetter or a template.HTML string, the
 			data is output as-is. If it's a jaws.StringGetter or string, the data
 			is HTML escaped.
 
-			If the first parameter is a jaws.HtmlGetter or jaws.StringGetter, it
+			If the first parameter is a jaws.HTMLGetter or jaws.StringGetter, it
 			is also used as the 'UI tag' of the created element.
 
 			'UI tags' are used when letting JaWS know which Elements need to be updated.
@@ -126,7 +126,7 @@
 			Here, both UI Elements share the same uiInputRange{} for their data,
 			and JaWS will automatically add that as a tag. So when the Range
 			gets modified, the Span can set it's attributes and value in the
-			uiInputRange.JawsGetHtml() method.
+			uiInputRange.JawsGetHTML() method.
 		-->
 		<div class="row mb-3">
 			<label class="form-label">Range

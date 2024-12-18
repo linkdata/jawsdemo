@@ -12,7 +12,7 @@ type uiInputRange struct {
 	*Globals
 }
 
-func (ui *uiInputRange) JawsGetHtml(e *jaws.Element) (v template.HTML) {
+func (ui *uiInputRange) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 	ui.mu.RLock()
 	switch {
 	case ui.inputRange < 50:
