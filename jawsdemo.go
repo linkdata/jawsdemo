@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"embed"
 	"flag"
 	"log/slog"
@@ -51,6 +52,9 @@ func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (faviconuri string, err erro
 func main() {
 	flag.Parse()
 
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill, syscall.SIGTERM)
+	defer stop()
+
 	if *cpuprofile != "" {
 		f, err := os.Create(*cpuprofile)
 		if err == nil {
@@ -62,8 +66,11 @@ func main() {
 		maybeLogError(err)
 	}
 
-	mux := http.NewServeMux()  // create a ServeMux to do routing
-	jw := jaws.New()           // create a default JaWS instance
+	mux := http.NewServeMux() // create a ServeMux to do routing
+	jw, err := jaws.New()     // create a default JaWS instance
+	if err != nil {
+		panic(err)
+	}
 	defer jw.Close()           // ensure we clean up
 	jw.Logger = slog.Default() // optionally set the logger to use
 	jw.Debug = deadlock.Debug  // optionally set the debug flag
@@ -72,7 +79,7 @@ func main() {
 	maybeLogError(err)
 	globals.FaviconURI = faviconuri
 
-	go jw.Serve() // start the JaWS processing loop
+	go jw.Serve() // start the JaWS processing loop, Serve returns when Close is called.
 
 	// spin up a goroutine to update the clock and cars button text
 	go func() {
@@ -112,19 +119,14 @@ func main() {
 		}
 	}()
 
-	// handle CTRL-C and start listening
-	breakChan := make(chan os.Signal, 1)
-	signal.Notify(breakChan, os.Interrupt, syscall.SIGTERM)
 	go func() {
-		defer close(breakChan)
 		slog.Info("listening", "address", "http://"+*listenaddr)
 		slog.Error(http.ListenAndServe(*listenaddr, mux).Error()) //#nosec G114
 	}()
 
-	// wait for the HTTP server to stop
-	if sig, ok := <-breakChan; ok {
-		slog.Info(sig.String())
-	}
+	// wait for stop
+	<-ctx.Done()
+	slog.Info("stopped", "reason", ctx.Err())
 
 	if *memprofile != "" {
 		f, err := os.Create(*memprofile)
