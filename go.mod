@@ -4,7 +4,7 @@ go 1.21
 
 require (
 	github.com/linkdata/deadlock v0.5.3
-	github.com/linkdata/jaws v0.105.0
+	github.com/linkdata/jaws v0.110.0
 )
 
 require (
@@ -13,4 +13,4 @@ require (
 )
 
 // For debugging a local copy of JaWS.
-replace github.com/linkdata/jaws => ../jaws
+// replace github.com/linkdata/jaws => ../jaws
