@@ -5,7 +5,7 @@
 
 Simple demo application for [JaWS](https://github.com/linkdata/jaws), with extensive comments on how to use it.
 
-Maybe start by having a look at the comments in `assets/index.html`.
+Maybe start by having a look at the comments in `assets/ui/index.html`.
 
 ## Use
 
