@@ -1,0 +1,249 @@
+<!--
+	In a template rendered via JaWS, the data parameter is a jaws.With{} structure.
+	This contains both the *Element being rendered and the value inside
+	the jaws.Template, which is accessible as '$.Dot', as well as a string
+	containing any extra attributes passed in '$.Attrs'.
+
+	If applicable, set the outermost HTML tag's id to the value of '$.Jid'.
+-->
+
+{{with .Dot}}
+<!doctype html>
+<html lang="en">
+
+<head>
+	{{template "head.html" $}}
+</head>
+
+<body><form autocomplete="off">
+	{{template "header.html" $}}
+	<div class="container">
+		<!-- if Bootstrap is in use this marks where jaws UI alerts should be rendered -->
+		<div id="jaws-alerts"></div>
+
+		<p>
+			You should open this page in more than one browser window and place them
+			so you can see all of them at the same time.
+		</p>
+		<p>
+			Start reading about how JaWS works in <code>assets/index.html</code>.
+		</p>
+
+		<!--
+			JaWS allows several ways to register a HTML element and render it's HTML code.
+			If you don't need to listen to events from the client browser, the following
+			method may be a good choice. 
+
+			It calls jaws.RequestWriter.A() via the UiState. One parameter is required,
+			plus a variable number of optional parameters.
+			
+			The first parameter is something that will determine the inner HTML of
+			the <a> tag. If it's a jaws.HTMLGetter or a template.HTML string, the
+			data is output as-is. If it's a jaws.StringGetter or string, the data
+			is HTML escaped.
+
+			If the first parameter is a jaws.HTMLGetter or jaws.StringGetter, it
+			is also used as the 'UI tag' of the created element.
+
+			'UI tags' are used when letting JaWS know which Elements need to be updated.
+
+			UI tags can be anything comparable, but we disallow primitive types
+			such as integers or strings. If you really need to use a string as a UI tag,
+			use the type alias jaws.Tag. In most places where you can pass a tag
+			you can also pass a slice of tags or something that implements
+			jaws.TagGetter.
+
+			We use UI tags to mark tagged HTML elements as 'dirty', meaning they 
+			need to be updated. We do this by calling 'Jaws.Dirty(tag)'.
+
+			On regular intervals (by default 100ms) JaWS will update the browser
+			HTML elements as needed.
+
+			Finally, we provide a string with HTML attributes as the optional
+			parameters that are copied into the HTML closing tag as-is.
+
+			Other optional parameters include more UI tags to associate with
+			the element or event handlers (jaws.ClickHandler and jaws.EventHandler).
+		-->
+		{{$.A .CarsLink `href="/cars" class="btn btn-primary mb-3"`}}
+
+		<!--
+			jaws.RequestWriter.Text() needs a jaws.StringSetter as the
+			first parameter. JaWS will call it's JawsGetString and
+			JawsSetString as needed, and will mark it's tags as dirty
+			automatically - meaning that typing in one browser window
+			is immediately reflected in others.
+
+			It's important that all data that underlies what is being
+			shown or manipulated in the UI is protected by mutexes and
+			that the get and set functions enforce this.
+		-->
+		<div class="mb-3">
+			<label class="form-label">Text
+				{{$.Text .InputText `class="form-control"`}}
+			</label>
+			<span>Try entering 'fail' or 'cat'.</span>
+		</div>
+
+		<!--
+			jaws.RequestWriter.Checkbox needs a jaws.BoolSetter.
+
+			Normally you would use a sync.Mutex or sync.RWMutex
+			to protect from race conditions, but we can also
+			use atomics. Here we use an atomic.Bool.
+		-->
+		<div class="form-check mb-3">
+			<label class="form-check-label">Checkbox
+				{{$.Checkbox .InputCheckbox `class="form-check-input"`}}
+			</label>
+		</div>
+
+		<!--
+			jaws.RequestWriter.Date needs a jaws.TimeSetter.
+
+			The RequestWriter methods are named after the HTML elements
+			or HTML "input" element types they create, but their data 
+			sources are named after the Go types they use.
+		-->
+		<div class="mb-3">
+			<label class="form-label">Date
+				{{$.Date .InputDate}}
+			</label>
+		</div>
+
+		<!--
+			jaws.RequestWriter.Textarea needs a jaws.StringSetter,
+			same as $.Text does.
+		-->
+		<div class="mb-3">
+			{{$.Textarea .InputTextArea `class="form-control" rows="4"`}}
+		</div>
+
+		<!-- 
+			JaWS UI tags are used to logically link JaWS Elements together. When a
+			Jaws.Dirty(tags) call is made, all Elements with one or more of the
+			given tags have their JawsUpdate() method called eventually.
+
+			Here, both UI Elements share the same uiInputRange{} for their data,
+			and JaWS will automatically add that as a tag. So when the Range
+			gets modified, the Span can set it's attributes and value in the
+			uiInputRange.JawsGetHTML() method.
+		-->
+		<div class="row mb-3">
+			<label class="form-label">Range
+				<div class="input-group">
+					<span class="form-control">{{$.Range .InputRange `class="form-range align-bottom"`}}</span>
+					{{$.Span .InputRange `class="input-group-text"`}}
+				</div>
+			</label>
+		</div>
+		
+		<!--
+			Radio buttons require special handling because selecting
+			one in a group of several de-selects all the others, and
+			keeping this in sync with the server and other browsers
+			takes care.
+
+			You can either handle this yourself using Request.Radio(),
+			using the boolean event functions for the individual radio
+			buttons and coordinating in your server, or use
+			RequestWriter.RadioGroup(). Here, we will use the latter.
+
+			RadioGroup() requires a jaws.NamedBoolArray and returns a 
+			slice of jaws.RadioElement, which we use to render the HTML
+			entities with the Radio() and Label() methods.
+		-->
+		{{range $.RadioGroup .InputRadioGroup1}}
+			<div class="form-check">
+				{{.Radio `class="form-check-input"`}}
+				{{.Label `class="form-check-label"`}}
+			</div>
+		{{end}}
+		{{range $.RadioGroup .InputRadioGroup2}}
+			<div class="form-check">
+				{{.Radio `class="form-check-input"`}}
+				{{.Label `class="form-check-label"`}}
+			</div>
+		{{end}}
+
+		<!--
+			jaws.RequestWriter.Select requires a jaws.SelectHandler,
+			which is something that implements both jaws.Container 
+			and jaws.StringSetter.
+
+			Fortunately, jaws.NamedBoolArray does this for us, so
+			for simple use cases like this we can just use that.
+		-->
+		<div class="mb-3">
+			<label>Choose a pet:</label>
+			{{$.Select .SelectPet `class="form-select"`}}
+		</div>
+
+
+		<!--
+			jaws.RequestWriter.Button needs something to decide
+			the inner HTML of the button (same as $.A or $.Span),
+			and normally also a jaws.ClickHandler to react to
+			button presses. These can be the same object.
+
+			If the button has a static inner HTML, you can just
+			put it directly as the first argument and then
+			pass the jaws.ClickHandler as an optional argument.
+
+			If the button element itself doesn't have a 
+			click handler defined, or the handler returns 
+			jaws.ErrEventUnhandled, the click event gets
+			propagated to the nearest parent JaWS Element
+			according to the browsers DOM.
+
+			It is recommended to set the 'name' HTML attribute
+			on the elements and check that the name
+			matches what's expected in the click handler.
+		-->
+		{{$.Button .InputButton `class="btn btn-primary m-3" name="clicky"`}}
+
+		<!--
+			This table of cars is static since we iterate over .Cars manually
+			using 'range' instead of using a jaws.Container.
+			We do this just to illustrate the use of $.Template.
+
+			See "assets/cars.html" for how to have a dynamically updating table.
+		-->
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">VIN</th>
+					<th scope="col">Make</th>
+					<th scope="col">Model</th>
+					<th scope="col">Year</th>
+					<th scope="col">Condition</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{range .Cars}}
+				<!--
+					Using RequestWriter.Template() here with a string giving the
+					template name requires us call Jaws.AddTemplateLookuper()
+					with our templates so the Request can resolve the name.
+
+					When parsing "car_row.html", "$" will be a jaws.With{}
+					structure containing:
+
+						"$.Element": the Element being rendered using a template
+						"$.RequestWriter": the RequestWriter
+						"$.Dot": user data parameter
+						"$.Attrs": HTML attributes string
+
+					So "$.Dot" will be the pointer to the current car.
+
+					RequestWriter.Template() adds the dot value (here a *Car)
+					as a JaWS tag.
+				-->
+				{{$.Template "car_row.html" .}}
+				{{end}}
+			</tbody>
+		</table>
+	</div>
+</body></form>
+</html>
+{{end}}

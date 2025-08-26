@@ -1,0 +1,40 @@
+{{with .Dot}}
+<!doctype html>
+<html lang="en">
+
+<head>
+	{{template "head.html" $}}
+</head>
+
+<body>
+	{{template "header.html" $}}
+	<div class="container">
+		<div id="jaws-alerts"></div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th scope="col">VIN</th>
+					<th scope="col">Make</th>
+					<th scope="col">Model</th>
+					<th scope="col">Year</th>
+					<th scope="col">Condition</th>
+				</tr>
+			</thead>
+			<!--
+				jaws.RequestWriter.Tbody requires a jaws.Container.
+
+				When rendering and updating, JawsContains() must return a
+				slice of UI objects representing the items that should be
+				present, in the correct order.
+
+				JaWS will send the minimum required number of element removals,
+				additions and reorderings required to synchronize the browser.
+			-->
+			{{$.Tbody .CarsTable}}
+		</table>
+		{{$.Button "Mystical" .}}
+	</div>
+</body>
+
+</html>
+{{end}}
