@@ -18,6 +18,7 @@ import (
 	"github.com/linkdata/jaws/jawsboot"
 	"github.com/linkdata/jaws/staticserve"
 	"github.com/linkdata/jaws/templatereloader"
+	"github.com/linkdata/jaws/ui"
 )
 
 //go:embed assets
@@ -42,8 +43,8 @@ func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (faviconuri string, err erro
 			staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png"))
 		if err == nil {
 			mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
-			mux.Handle("/", jw.Session(jw.Handler("index.html", globals)))
-			mux.Handle("/cars", jw.Session(jw.Handler("cars.html", globals)))
+			mux.Handle("/", jw.Session(ui.Handler(jw, "index.html", globals)))
+			mux.Handle("/cars", jw.Session(ui.Handler(jw, "cars.html", globals)))
 		}
 		faviconuri = jw.FaviconURL()
 	}
