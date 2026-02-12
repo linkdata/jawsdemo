@@ -31,7 +31,7 @@ var globals = NewGlobals()
 
 func maybeLogError(err error) {
 	if err != nil {
-		slog.Error(err.Error())
+		slog.Error("error", "text", err)
 	}
 }
 
