@@ -30,8 +30,8 @@ type Globals struct {
 
 func NewGlobals() *Globals {
 	g := &Globals{
-		InputRadioGroup1: jaws.NewNamedBoolArray().Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
-		InputRadioGroup2: jaws.NewNamedBoolArray().Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
+		InputRadioGroup1: jaws.NewNamedBoolArray(false).Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
+		InputRadioGroup2: jaws.NewNamedBoolArray(false).Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
 		inputDate:        time.Now(),
 		inputButton:      "meh",
 		SelectPet:        newUiSelectPet(),

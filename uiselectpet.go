@@ -5,7 +5,7 @@ import (
 )
 
 func newUiSelectPet() *jaws.NamedBoolArray {
-	nba := jaws.NewNamedBoolArray()
+	nba := jaws.NewNamedBoolArray(false)
 	nba.Add("", "--Please choose an option--")
 	nba.Add("dog", "Dog")
 	nba.Add("cat", "Cat")
