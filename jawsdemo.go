@@ -38,15 +38,16 @@ func maybeLogError(err error) {
 func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (faviconuri string, err error) {
 	var tmpl jaws.TemplateLookuper
 	if tmpl, err = templatereloader.New(assetsFS, "assets/ui/*.html", ""); err == nil {
-		jw.AddTemplateLookuper(tmpl)
-		err = jw.Setup(mux.Handle, "/static", jawsboot.Setup,
-			staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png"))
-		if err == nil {
-			mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
-			mux.Handle("/", jw.Session(ui.Handler(jw, "index.html", globals)))
-			mux.Handle("/cars", jw.Session(ui.Handler(jw, "cars.html", globals)))
+		if err = jw.AddTemplateLookuper(tmpl); err == nil {
+			err = jw.Setup(mux.Handle, "/static", jawsboot.Setup,
+				staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png"))
+			if err == nil {
+				mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
+				mux.Handle("/", jw.Session(ui.Handler(jw, "index.html", globals)))
+				mux.Handle("/cars", jw.Session(ui.Handler(jw, "cars.html", globals)))
+			}
+			faviconuri = jw.FaviconURL()
 		}
-		faviconuri = jw.FaviconURL()
 	}
 	return
 }
