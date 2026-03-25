@@ -40,7 +40,7 @@ func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (faviconuri string, err erro
 	if tmpl, err = templatereloader.New(assetsFS, "assets/ui/*.html", ""); err == nil {
 		if err = jw.AddTemplateLookuper(tmpl); err == nil {
 			err = jw.Setup(mux.Handle, "/static", jawsboot.Setup,
-				staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png"))
+				staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png", "mousetrack.js"))
 			if err == nil {
 				mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
 				mux.Handle("/", jw.Session(ui.Handler(jw, "index.html", globals)))
@@ -118,7 +118,7 @@ func main() {
 
 	go func() {
 		slog.Info("listening", "address", "http://"+*listenaddr)
-		slog.Error(http.ListenAndServe(*listenaddr, mux).Error()) //#nosec G114
+		slog.Error(http.ListenAndServe(*listenaddr, jw.SecureHeadersMiddleware(mux)).Error()) //#nosec G114
 	}()
 
 	// wait for stop
