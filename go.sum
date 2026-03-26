@@ -6,6 +6,8 @@ github.com/linkdata/jaws v0.204.0 h1:0nWBshA3GX9NGZti6RCEsWHKGgwL2LoS2JXlvW2hDxw
 github.com/linkdata/jaws v0.204.0/go.mod h1:Wvf/a6DQ5mZEOFXPYIKlY2qVOyI1k+RDlmdp33262RA=
 github.com/linkdata/jq v0.0.3 h1:m1eFUh2gJ8ebg3GF5d+etiGbMtYtYSO3M7jn2Gy5cs4=
 github.com/linkdata/jq v0.0.3/go.mod h1:b76MMuWybyXrVEKSHJkv+r5IEattnghPf1bNRJ5PNlE=
+github.com/linkdata/webserv v1.0.2 h1:pzEJuIaWr10xq5ul5wnkSWXdRCynXxxKJuB8O4hwJZ8=
+github.com/linkdata/webserv v1.0.2/go.mod h1:t925mW7aIgkoIJcRxQV4qyCmIQB41920MlFfocx9reQ=
 github.com/petermattis/goid v0.0.0-20250813065127-a731cc31b4fe/go.mod h1:pxMtw7cyUw6B2bRH0ZBANSPg+AoSud1I1iyJHI69jH4=
 github.com/petermattis/goid v0.0.0-20260113132338-7c7de50cc741 h1:KPpdlQLZcHfTMQRi6bFQ7ogNO0ltFT4PmtwTLW4W+14=
 github.com/petermattis/goid v0.0.0-20260113132338-7c7de50cc741/go.mod h1:pxMtw7cyUw6B2bRH0ZBANSPg+AoSud1I1iyJHI69jH4=

@@ -19,14 +19,29 @@ import (
 	"github.com/linkdata/jaws/staticserve"
 	"github.com/linkdata/jaws/templatereloader"
 	"github.com/linkdata/jaws/ui"
+	"github.com/linkdata/webserv"
 )
 
 //go:embed assets
 var assetsFS embed.FS
 
-var listenaddr = flag.String("listenaddr", "localhost:8081", "address to listen on")
-var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
-var memprofile = flag.String("memprofile", "", "write memory profile to this file")
+var (
+	flagAddress    = flag.String("address", os.Getenv("WEBSERV_ADDRESS"), "serve HTTP requests on given [address][:port]")
+	flagCertDir    = flag.String("certdir", os.Getenv("WEBSERV_CERTDIR"), "where to find fullchain.pem and privkey.pem")
+	flagUser       = flag.String("user", envOrDefault("WEBSERV_USER", ""), "switch to this user after startup (*nix only)")
+	flagDataDir    = flag.String("datadir", envOrDefault("WEBSERV_DATADIR", "$HOME"), "where to store data files after startup")
+	flagListenURL  = flag.String("listenurl", os.Getenv("WEBSERV_LISTENURL"), "specify the external URL clients can reach us at")
+	flagCpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+	flagMemprofile = flag.String("memprofile", "", "write memory profile to this file")
+)
+
+func envOrDefault(envvar, defval string) (s string) {
+	if s = os.Getenv(envvar); s == "" {
+		s = defval
+	}
+	return
+}
+
 var globals = NewGlobals()
 
 func maybeLogError(err error) {
@@ -35,7 +50,7 @@ func maybeLogError(err error) {
 	}
 }
 
-func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (faviconuri string, err error) {
+func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (err error) {
 	var tmpl jaws.TemplateLookuper
 	if tmpl, err = templatereloader.New(assetsFS, "assets/ui/*.html", ""); err == nil {
 		if err = jw.AddTemplateLookuper(tmpl); err == nil {
@@ -46,20 +61,47 @@ func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (faviconuri string, err erro
 				mux.Handle("/", jw.Session(ui.Handler(jw, "index.html", globals)))
 				mux.Handle("/cars", jw.Session(ui.Handler(jw, "cars.html", globals)))
 			}
-			faviconuri = jw.FaviconURL()
 		}
 	}
 	return
 }
 
+func backgroundUpdates(jw *jaws.Jaws) {
+	now := time.Now()
+	time.Sleep(now.Round(time.Second).Sub(now))
+	t := time.NewTicker(time.Second)
+	defer t.Stop()
+	for range t.C {
+		jw.Dirty(uiClock{})
+		if (time.Now().Second() % 3) == 0 {
+			globals.mu.Lock()
+			x := rand.Intn(5) //#nosec G404
+			switch x {
+			case 0:
+				globals.carsLink = "Check out these cars!"
+			case 1:
+				globals.carsLink = "Did you know VIN numbers are encoded?"
+			case 2:
+				globals.carsLink = "DO NOT CLICK HERE!"
+			case 3:
+				globals.carsLink = "Cars"
+			default:
+				globals.carsLink = "This is a boring link to car info."
+			}
+			globals.runtime = time.Since(now).String()
+			globals.mu.Unlock()
+			jw.Dirty(globals.Runtime())
+			jw.Dirty(globals.CarsLink())
+			jw.Dirty(globals.Client())
+		}
+	}
+}
+
 func main() {
 	flag.Parse()
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill, syscall.SIGTERM)
-	defer stop()
-
-	if *cpuprofile != "" {
-		f, err := os.Create(*cpuprofile)
+	if *flagCpuprofile != "" {
+		f, err := os.Create(*flagCpuprofile)
 		if err == nil {
 			defer f.Close()
 			if err = pprof.StartCPUProfile(f); err == nil {
@@ -69,64 +111,46 @@ func main() {
 		maybeLogError(err)
 	}
 
-	mux := http.NewServeMux() // create a ServeMux to do routing
-	jw, err := jaws.New()     // create a default JaWS instance
-	if err != nil {
-		panic(err)
+	cfg := webserv.Config{
+		Address:   *flagAddress,
+		CertDir:   *flagCertDir,
+		User:      *flagUser,
+		DataDir:   *flagDataDir,
+		ListenURL: *flagListenURL,
+		Logger:    slog.Default(),
 	}
-	defer jw.Close()           // ensure we clean up
-	jw.Logger = slog.Default() // optionally set the logger to use
-	jw.Debug = deadlock.Debug  // optionally set the debug flag
 
-	faviconuri, err := setupRoutes(jw, mux)
-	maybeLogError(err)
-	globals.FaviconURI = faviconuri
+	l, err := cfg.Listen()
+	if err == nil {
+		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill, syscall.SIGTERM)
+		defer stop()
+		var jw *jaws.Jaws
+		// create a default JaWS instance
+		if jw, err = jaws.New(); err == nil {
+			defer jw.Close()          // ensure we clean up
+			jw.Logger = cfg.Logger    // optionally set the logger to use
+			jw.Debug = deadlock.Debug // optionally set the debug flag
 
-	go jw.Serve() // start the JaWS processing loop, Serve returns when Close is called.
+			mux := http.NewServeMux() // create a ServeMux to do routing
+			if err = setupRoutes(jw, mux); err == nil {
+				globals.FaviconURI = jw.FaviconURL()
 
-	// spin up a goroutine to update the clock and cars button text
-	go func() {
-		now := time.Now()
-		time.Sleep(now.Round(time.Second).Sub(now))
-		t := time.NewTicker(time.Second)
-		defer t.Stop()
-		for range t.C {
-			jw.Dirty(uiClock{})
-			if (time.Now().Second() % 3) == 0 {
-				globals.mu.Lock()
-				x := rand.Intn(5) //#nosec G404
-				switch x {
-				case 0:
-					globals.carsLink = "Check out these cars!"
-				case 1:
-					globals.carsLink = "Did you know VIN numbers are encoded?"
-				case 2:
-					globals.carsLink = "DO NOT CLICK HERE!"
-				case 3:
-					globals.carsLink = "Cars"
-				default:
-					globals.carsLink = "This is a boring link to car info."
-				}
-				globals.runtime = time.Since(now).String()
-				globals.mu.Unlock()
-				jw.Dirty(globals.Runtime())
-				jw.Dirty(globals.CarsLink())
-				jw.Dirty(globals.Client())
+				// start the JaWS processing loop, Serve returns when Close is called.
+				go jw.Serve()
+
+				// spin up a goroutine to update the clock and cars button text
+				go backgroundUpdates(jw)
+
+				// start serving requests using the default secure headers
+				err = cfg.Serve(ctx, l, jw.SecureHeadersMiddleware(mux))
 			}
 		}
-	}()
+	}
 
-	go func() {
-		slog.Info("listening", "address", "http://"+*listenaddr)
-		slog.Error(http.ListenAndServe(*listenaddr, jw.SecureHeadersMiddleware(mux)).Error()) //#nosec G114
-	}()
+	maybeLogError(err)
 
-	// wait for stop
-	<-ctx.Done()
-	slog.Info("stopped", "reason", ctx.Err())
-
-	if *memprofile != "" {
-		f, err := os.Create(*memprofile)
+	if *flagMemprofile != "" {
+		f, err := os.Create(*flagMemprofile)
 		if err == nil {
 			defer f.Close()
 			err = pprof.WriteHeapProfile(f)
