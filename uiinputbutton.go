@@ -9,13 +9,19 @@ import (
 
 type uiInputButton struct{ *Globals }
 
-func (ui uiInputButton) JawsGetHTML(e *jaws.Element) (v template.HTML) {
-	ui.mu.RLock()
-	v = template.HTML(html.EscapeString(ui.inputButton)) //#nosec G203
-	ui.mu.RUnlock()
+func (btn uiInputButton) JawsGetHTML(e *jaws.Element) (v template.HTML) {
+	btn.mu.RLock()
+	v = template.HTML(html.EscapeString(btn.inputButton)) //#nosec G203
+	btn.mu.RUnlock()
+	if e.Session().Get("mystical") != nil {
+		e.Jaws.SetAttr(btn.InputButton(), "disabled", "")
+	} else {
+		e.Jaws.RemoveAttr(btn.InputButton(), "disabled")
+	}
 	return
 }
 
-func (g *Globals) InputButton() jaws.HTMLGetter {
+func (g *Globals) InputButton() any {
+	// Click events will be handled in Globals.JawsClick()
 	return uiInputButton{g}
 }

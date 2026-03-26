@@ -141,8 +141,8 @@ func main() {
 				// spin up a goroutine to update the clock and cars button text
 				go backgroundUpdates(jw)
 
-				// start serving requests using the default secure headers
-				err = cfg.Serve(ctx, l, jw.SecureHeadersMiddleware(mux))
+				// start serving requests using the default secure headers and with a JaWS session
+				err = cfg.Serve(ctx, l, jw.Session(jw.SecureHeadersMiddleware(mux)))
 			}
 		}
 	}

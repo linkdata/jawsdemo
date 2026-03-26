@@ -2,27 +2,28 @@ package main
 
 import (
 	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/ui"
 )
 
 type uiClient struct{ *Globals }
 
-func (ui uiClient) getClient(rq *jaws.Request) (c *Client) {
+func (uic uiClient) getClient(rq *jaws.Request) (c *Client) {
 	sess := rq.Session()
-	ui.mu.Lock()
-	c = ui.client[sess]
+	uic.mu.Lock()
+	c = uic.client[sess]
 	if c == nil {
 		c = &Client{}
-		ui.client[sess] = c
+		uic.client[sess] = c
 	}
-	ui.mu.Unlock()
+	uic.mu.Unlock()
 	return
 }
 
-func (ui uiClient) JawsMakeJsVar(rq *jaws.Request) (v jaws.IsJsVar, err error) {
-	return jaws.NewJsVar(&ui.mu, ui.getClient(rq)), nil
+func (uic uiClient) JawsMakeJsVar(rq *jaws.Request) (v ui.IsJsVar, err error) {
+	return ui.NewJsVar(&uic.mu, uic.getClient(rq)), nil
 }
 
-var _ jaws.JsVarMaker = uiClient{}
+var _ ui.JsVarMaker = uiClient{}
 
 func (g *Globals) Client() uiClient {
 	return uiClient{g}

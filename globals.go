@@ -7,6 +7,7 @@ import (
 
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/ui"
 )
 
 type Globals struct {
@@ -72,11 +73,11 @@ func (g *Globals) JawsClick(e *jaws.Element, name string) error {
 		g.mu.Lock()
 		defer g.mu.Unlock()
 		if g.inputButton == "Meh" {
-			g.inputButton = "Woo"
-			e.Jaws.SetAttr(g.InputButton(), "disabled", "")
+			g.inputButton = "Mystical?"
+			e.Session().Set("mystical", true)
 		} else {
 			g.inputButton = "Meh"
-			e.Jaws.RemoveAttr(g.InputButton(), "disabled")
+			e.Session().Set("mystical", nil)
 		}
 		e.Dirty(g.InputButton())
 		return nil
@@ -89,7 +90,7 @@ func (g *Globals) Clock() jaws.HTMLGetter {
 }
 
 func (g *Globals) Runtime() any {
-	return jaws.NewJsVar(&g.mu, &g.runtime)
+	return ui.NewJsVar(&g.mu, &g.runtime)
 }
 
 func (g *Globals) JawsVersion() (v string) {

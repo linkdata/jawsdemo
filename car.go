@@ -28,7 +28,7 @@ func intN(n int) int {
 
 func AddRandomCar() {
 	var vin []byte
-	for i := 0; i < 17; i++ {
+	for range 17 {
 		n := byte(intN(26 + 10)) // #nosec G115
 		if n < 10 {
 			vin = append(vin, '0'+n)
