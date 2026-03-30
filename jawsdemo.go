@@ -8,9 +8,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
-	"os/signal"
 	"runtime/pprof"
-	"syscall"
 	"time"
 
 	"github.com/linkdata/deadlock"
@@ -122,8 +120,8 @@ func main() {
 
 	l, err := cfg.Listen()
 	if err == nil {
-		ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, os.Kill, syscall.SIGTERM)
-		defer stop()
+		defer l.Close()
+
 		var jw *jaws.Jaws
 		// create a default JaWS instance
 		if jw, err = jaws.New(); err == nil {
@@ -142,7 +140,7 @@ func main() {
 				go backgroundUpdates(jw)
 
 				// start serving requests using the default secure headers and with a JaWS session
-				err = cfg.Serve(ctx, l, jw.Session(jw.SecureHeadersMiddleware(mux)))
+				err = cfg.Serve(context.Background(), l, jw.Session(jw.SecureHeadersMiddleware(mux)))
 			}
 		}
 	}
