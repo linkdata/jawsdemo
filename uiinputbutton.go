@@ -14,9 +14,9 @@ func (btn uiInputButton) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 	v = template.HTML(html.EscapeString(btn.inputButton)) //#nosec G203
 	btn.mu.RUnlock()
 	if e.Session().Get("mystical") != nil {
-		e.Jaws.SetAttr(btn.InputButton(), "disabled", "")
+		e.SetAttr("disabled", "")
 	} else {
-		e.Jaws.RemoveAttr(btn.InputButton(), "disabled")
+		e.RemoveAttr("disabled")
 	}
 	return
 }
