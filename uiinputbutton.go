@@ -1,27 +1,36 @@
 package main
 
 import (
-	"html"
-	"html/template"
-
 	"github.com/linkdata/jaws"
 )
 
-type uiInputButton struct{ *Globals }
-
-func (btn uiInputButton) JawsGetHTML(e *jaws.Element) (v template.HTML) {
-	btn.mu.RLock()
-	v = template.HTML(html.EscapeString(btn.inputButton)) //#nosec G203
-	btn.mu.RUnlock()
-	if e.Session().Get("mystical") != nil {
-		e.SetAttr("disabled", "")
-	} else {
-		e.RemoveAttr("disabled")
-	}
-	return
-}
-
-func (g *Globals) InputButton() any {
-	// Click events will be handled in Globals.JawsClick()
-	return uiInputButton{g}
+func (g *Globals) InputButton() jaws.Binder[string] {
+	rv := jaws.Bind(&g.mu, &g.inputButton).
+		GetLocked(func(bind jaws.Binder[string], elem *jaws.Element) (value string) {
+			value = g.inputButton
+			if elem.Session().Get("mystical") != nil {
+				elem.SetAttr("disabled", "")
+			} else {
+				elem.RemoveAttr("disabled")
+			}
+			return
+		}).
+		Clicked(func(elem *jaws.Element, name string) (err error) {
+			err = jaws.ErrEventUnhandled
+			if name == "clicky" {
+				err = nil
+				g.mu.Lock()
+				defer g.mu.Unlock()
+				if g.inputButton == "Meh" {
+					g.inputButton = "Mystical?"
+					elem.Session().Set("mystical", true)
+				} else {
+					g.inputButton = "Meh"
+					elem.Session().Set("mystical", nil)
+				}
+				elem.Dirty(g.InputButton())
+			}
+			return
+		})
+	return rv
 }

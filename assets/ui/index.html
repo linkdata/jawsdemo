@@ -196,12 +196,11 @@
 			propagated to the nearest parent JaWS Element
 			according to the browsers DOM.
 
-			It is recommended to set the 'name' HTML attribute
+			You should set the 'name' HTML attribute
 			on the elements and check that the name
 			matches what's expected in the click handler.
 		-->
 		{{$.Button .InputButton `class="btn btn-primary m-3" name="clicky"`}}
-
 		<!--
 			This table of cars is static since we iterate over .Cars manually
 			using 'range' instead of using a jaws.Container.

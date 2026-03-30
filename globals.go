@@ -66,25 +66,6 @@ func NewGlobals() *Globals {
 	return g
 }
 
-var _ jaws.ClickHandler = (*Globals)(nil)
-
-func (g *Globals) JawsClick(e *jaws.Element, name string) error {
-	if name == "clicky" {
-		g.mu.Lock()
-		defer g.mu.Unlock()
-		if g.inputButton == "Meh" {
-			g.inputButton = "Mystical?"
-			e.Session().Set("mystical", true)
-		} else {
-			g.inputButton = "Meh"
-			e.Session().Set("mystical", nil)
-		}
-		e.Dirty(g.InputButton())
-		return nil
-	}
-	return jaws.ErrEventUnhandled
-}
-
 func (g *Globals) Clock() jaws.HTMLGetter {
 	return uiClock{}
 }
