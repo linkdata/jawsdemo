@@ -15,7 +15,7 @@ func (g *Globals) InputButton() jaws.Binder[string] {
 			}
 			return
 		}).
-		Clicked(func(elem *jaws.Element, name string) (err error) {
+		Clicked(func(bind jaws.Binder[string], elem *jaws.Element, name string) (err error) {
 			err = jaws.ErrEventUnhandled
 			if name == "clicky" {
 				err = nil
@@ -28,7 +28,7 @@ func (g *Globals) InputButton() jaws.Binder[string] {
 					g.inputButton = "Meh"
 					elem.Session().Set("mystical", nil)
 				}
-				elem.Dirty(g.InputButton())
+				elem.Dirty(bind)
 			}
 			return
 		})
