@@ -1,8 +1,9 @@
 package main
 
-import "github.com/linkdata/jaws/ui"
-
-import "github.com/linkdata/jaws"
+import (
+	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/ui"
+)
 
 type CarsTable struct{}
 
@@ -18,6 +19,8 @@ func (ct *CarsTable) JawsContains(e *jaws.Element) (tl []jaws.UI) {
 
 func (ct *CarsTable) JawsClick(e *jaws.Element, name string) (err error) {
 	switch name {
+	case "mystical":
+		e.Session().Set("mystical", nil)
 	case "add":
 		AddRandomCar()
 		e.Dirty(globals.CarsTable)
