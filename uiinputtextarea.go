@@ -1,9 +1,7 @@
 package main
 
-import (
-	"github.com/linkdata/jaws"
-)
+import "github.com/linkdata/jaws/lib/bind"
 
 func (g *Globals) InputTextArea() any {
-	return jaws.Bind(&g.mu, &g.inputTextArea)
+	return bind.New(&g.mu, &g.inputTextArea)
 }

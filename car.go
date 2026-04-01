@@ -7,6 +7,7 @@ import (
 
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/lib/bind"
 )
 
 type Car struct {
@@ -85,5 +86,5 @@ func (c *Car) JawsClick(e *jaws.Element, name string) error {
 }
 
 func (c *Car) Condition() any {
-	return jaws.Bind(&c.mu, &c.condition)
+	return bind.New(&c.mu, &c.condition)
 }

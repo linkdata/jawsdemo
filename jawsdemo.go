@@ -14,9 +14,9 @@ import (
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/jawsboot"
-	"github.com/linkdata/jaws/staticserve"
-	"github.com/linkdata/jaws/templatereloader"
-	"github.com/linkdata/jaws/ui"
+	"github.com/linkdata/jaws/lib/templatereloader"
+	"github.com/linkdata/jaws/lib/ui"
+	"github.com/linkdata/staticserve"
 	"github.com/linkdata/webserv"
 )
 

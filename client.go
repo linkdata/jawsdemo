@@ -1,8 +1,9 @@
 package main
 
-import "github.com/linkdata/jaws/ui"
-
-import "github.com/linkdata/jaws"
+import (
+	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/lib/ui"
+)
 
 type Client struct {
 	X float64

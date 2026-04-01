@@ -5,10 +5,11 @@ import (
 	"html/template"
 
 	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/lib/bind"
 )
 
 type uiInputRange struct {
-	jaws.Binder[float64]
+	bind.Binder[float64]
 	*Globals
 }
 
@@ -29,7 +30,7 @@ func (ui *uiInputRange) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 
 func (g *Globals) InputRange() any {
 	return &uiInputRange{
-		Binder:  jaws.Bind(&g.mu, &g.inputRange),
+		Binder:  bind.New(&g.mu, &g.inputRange),
 		Globals: g,
 	}
 }

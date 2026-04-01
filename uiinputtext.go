@@ -5,11 +5,12 @@ import (
 	"strings"
 
 	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/lib/bind"
 )
 
 func (g *Globals) InputText() any {
-	return jaws.Bind(&g.mu, &g.inputText).
-		SetLocked(func(bind jaws.Binder[string], elem *jaws.Element, v string) error {
+	return bind.New(&g.mu, &g.inputText).
+		SetLocked(func(bind bind.Binder[string], elem *jaws.Element, v string) error {
 			// if user entered a pet, change the dropdown to that pet
 			if v != "" && g.SelectPet.Count(v) > 0 {
 				g.SelectPet.Set(v, true)

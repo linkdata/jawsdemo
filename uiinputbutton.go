@@ -2,11 +2,12 @@ package main
 
 import (
 	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/lib/bind"
 )
 
-func (g *Globals) InputButton() jaws.Binder[string] {
-	rv := jaws.Bind(&g.mu, &g.inputButton).
-		GetLocked(func(bind jaws.Binder[string], elem *jaws.Element) (value string) {
+func (g *Globals) InputButton() bind.Binder[string] {
+	rv := bind.New(&g.mu, &g.inputButton).
+		GetLocked(func(bind bind.Binder[string], elem *jaws.Element) (value string) {
 			value = g.inputButton
 			if elem.Session().Get("mystical") != nil {
 				elem.SetAttr("disabled", "")
@@ -15,7 +16,7 @@ func (g *Globals) InputButton() jaws.Binder[string] {
 			}
 			return
 		}).
-		Clicked(func(bind jaws.Binder[string], elem *jaws.Element, name string) (err error) {
+		Clicked(func(bind bind.Binder[string], elem *jaws.Element, name string) (err error) {
 			err = jaws.ErrEventUnhandled
 			if name == "clicky" {
 				err = nil

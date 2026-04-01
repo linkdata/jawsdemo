@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/linkdata/jaws"
-	"github.com/linkdata/jaws/ui"
+	"github.com/linkdata/jaws/lib/ui"
 )
 
 type uiClient struct{ *Globals }

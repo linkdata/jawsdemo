@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/lib/bind"
 )
 
 type uiClientPos struct{ *Globals }
@@ -33,6 +34,6 @@ func (uic uiClientPos) JawsGetTag(*jaws.Request) any {
 	return uiClientPos{}
 }
 
-func (g *Globals) ClientPos() jaws.HTMLGetter {
+func (g *Globals) ClientPos() bind.HTMLGetter {
 	return uiClientPos{g}
 }

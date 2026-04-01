@@ -1,9 +1,7 @@
 package main
 
-import (
-	"github.com/linkdata/jaws"
-)
+import "github.com/linkdata/jaws/lib/bind"
 
 func (g *Globals) CarsLink() any {
-	return jaws.Bind(&g.mu, &g.carsLink)
+	return bind.New(&g.mu, &g.carsLink)
 }

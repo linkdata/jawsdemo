@@ -7,7 +7,9 @@ import (
 
 	"github.com/linkdata/deadlock"
 	"github.com/linkdata/jaws"
-	"github.com/linkdata/jaws/ui"
+	"github.com/linkdata/jaws/lib/bind"
+	"github.com/linkdata/jaws/lib/named"
+	"github.com/linkdata/jaws/lib/ui"
 )
 
 type Globals struct {
@@ -16,12 +18,12 @@ type Globals struct {
 	inputText        string
 	inputTextArea    string
 	inputCheckbox    bool
-	InputRadioGroup1 *jaws.NamedBoolArray
-	InputRadioGroup2 *jaws.NamedBoolArray
+	InputRadioGroup1 *named.BoolArray
+	InputRadioGroup2 *named.BoolArray
 	inputDate        time.Time
 	inputRange       float64
 	inputButton      string
-	SelectPet        *jaws.NamedBoolArray
+	SelectPet        *named.BoolArray
 	Cars             []*Car
 	carsLink         string
 	CarsTable        *CarsTable
@@ -31,8 +33,8 @@ type Globals struct {
 
 func NewGlobals() *Globals {
 	g := &Globals{
-		InputRadioGroup1: jaws.NewNamedBoolArray(false).Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
-		InputRadioGroup2: jaws.NewNamedBoolArray(false).Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
+		InputRadioGroup1: named.NewBoolArray(false).Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
+		InputRadioGroup2: named.NewBoolArray(false).Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
 		inputDate:        time.Now(),
 		inputButton:      "meh",
 		SelectPet:        newUiSelectPet(),
@@ -66,7 +68,7 @@ func NewGlobals() *Globals {
 	return g
 }
 
-func (g *Globals) Clock() jaws.HTMLGetter {
+func (g *Globals) Clock() bind.HTMLGetter {
 	return uiClock{}
 }
 
