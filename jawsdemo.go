@@ -23,6 +23,8 @@ import (
 //go:embed assets
 var assetsFS embed.FS
 
+//go:generate go run github.com/linkdata/gitsemver@latest -gopackage -package main -out version.gen.go
+
 var (
 	flagAddress    = flag.String("address", os.Getenv("WEBSERV_ADDRESS"), "serve HTTP requests on given [address][:port]")
 	flagCertDir    = flag.String("certdir", os.Getenv("WEBSERV_CERTDIR"), "where to find fullchain.pem and privkey.pem")

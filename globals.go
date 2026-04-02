@@ -77,8 +77,8 @@ func (g *Globals) Runtime() any {
 }
 
 func (g *Globals) JawsVersion() (v string) {
+	v = PkgVersion
 	if bi, ok := debug.ReadBuildInfo(); ok {
-		v = bi.Main.Version
 		for _, dep := range bi.Deps {
 			if strings.HasSuffix(dep.Path, "/jaws") {
 				v += " - jaws@" + dep.Version
