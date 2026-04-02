@@ -18,8 +18,8 @@ type uiClientPos struct{ *Globals }
 func (uic uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 	var activeclientsessions []*jaws.Session
 	sessions := e.Jaws.Sessions()
-	uic.mu.RLock()
-	defer uic.mu.RUnlock()
+	uic.mu.Lock()
+	defer uic.mu.Unlock()
 	for sess, c := range uic.client {
 		if slices.Contains(sessions, sess) {
 			if c.X != -1 || c.Y != -1 {
