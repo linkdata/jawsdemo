@@ -18,15 +18,18 @@ func (uic uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 	var sessions []*jaws.Session
 	uic.mu.RLock()
 	defer uic.mu.RUnlock()
-	for sess := range uic.client {
-		sessions = append(sessions, sess)
+	for sess, c := range uic.client {
+		if c.X != -1 || c.Y != -1 {
+			sessions = append(sessions, sess)
+		}
 	}
 	sort.Slice(sessions, func(i, j int) bool { return sessions[i].ID() < sessions[j].ID() })
 	var sb strings.Builder
+	fmt.Fprintf(&sb, "(%d/%d)", len(sessions), len(uic.client))
 	for _, sess := range sessions {
 		c := uic.client[sess]
 		if c.X != -1 || c.Y != -1 {
-			fmt.Fprintf(&sb, "%.0fx%.0f-%b ", c.X, c.Y, int(c.B))
+			fmt.Fprintf(&sb, " %.0fx%.0f-%b", c.X, c.Y, int(c.B))
 		}
 	}
 	v = template.HTML(html.EscapeString(sb.String())) //#nosec G203
