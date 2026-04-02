@@ -1,8 +1,6 @@
 package main
 
 import (
-	"slices"
-
 	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/lib/ui"
 )
@@ -20,12 +18,6 @@ func (uic uiClient) getClient(rq *jaws.Request) (c *Client) {
 			B: 0,
 		}
 		uic.client[sess] = c
-	}
-	sessions := rq.Jaws.Sessions()
-	for sess = range uic.client {
-		if !slices.Contains(sessions, sess) {
-			delete(uic.client, sess)
-		}
 	}
 	uic.mu.Unlock()
 	return
