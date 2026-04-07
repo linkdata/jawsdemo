@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"html"
 	"html/template"
-	"slices"
 	"sort"
 	"strings"
 
@@ -16,27 +15,20 @@ import (
 type uiClientPos struct{ *Globals }
 
 func (uic uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) {
-	var activeclientsessions []*jaws.Session
+	var activeclients []*Client
 	sessions := e.Jaws.Sessions()
-	uic.mu.Lock()
-	defer uic.mu.Unlock()
-	for sess, c := range uic.client {
-		if slices.Contains(sessions, sess) {
+	sort.Slice(sessions, func(i, j int) bool { return sessions[i].ID() < sessions[j].ID() })
+	for _, sess := range sessions {
+		if c, _ := sess.Get("client").(*Client); c != nil {
 			if c.X != -1 || c.Y != -1 {
-				activeclientsessions = append(activeclientsessions, sess)
+				activeclients = append(activeclients, c)
 			}
-		} else {
-			delete(uic.client, sess)
 		}
 	}
-	sort.Slice(activeclientsessions, func(i, j int) bool { return activeclientsessions[i].ID() < activeclientsessions[j].ID() })
 	var sb strings.Builder
-	fmt.Fprintf(&sb, "(%d/%d)", len(activeclientsessions), len(uic.client))
-	for _, sess := range activeclientsessions {
-		c := uic.client[sess]
-		if c.X != -1 || c.Y != -1 {
-			fmt.Fprintf(&sb, " %.0fx%.0f-%b", c.X, c.Y, int(c.B))
-		}
+	fmt.Fprintf(&sb, "(%d/%d)", len(activeclients), len(sessions))
+	for _, c := range activeclients {
+		fmt.Fprintf(&sb, " %.0fx%.0f-%b", c.X, c.Y, int(c.B))
 	}
 	v = template.HTML(html.EscapeString(sb.String())) //#nosec G203
 	return

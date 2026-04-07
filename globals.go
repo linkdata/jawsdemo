@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/linkdata/deadlock"
-	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/lib/bind"
 	"github.com/linkdata/jaws/lib/named"
 	"github.com/linkdata/jaws/lib/ui"
@@ -27,7 +26,6 @@ type Globals struct {
 	Cars             []*Car
 	carsLink         string
 	CarsTable        *CarsTable
-	client           map[*jaws.Session]*Client
 	runtime          string
 }
 
@@ -62,7 +60,6 @@ func NewGlobals() *Globals {
 				condition: 67,
 			},
 		},
-		client: make(map[*jaws.Session]*Client),
 	}
 	g.inputTextArea = "The quick brown fox jumps over the lazy dog"
 	return g
