@@ -58,8 +58,8 @@ func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (err error) {
 				staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png", "mousetrack.js"))
 			if err == nil {
 				mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
-				mux.Handle("/", jw.Session(ui.Handler(jw, "index.html", globals)))
-				mux.Handle("/cars", jw.Session(ui.Handler(jw, "cars.html", globals)))
+				mux.Handle("GET /{$}", jw.Session(ui.Handler(jw, "index.html", globals)))
+				mux.Handle("GET /cars", jw.Session(ui.Handler(jw, "cars.html", globals)))
 			}
 		}
 	}
