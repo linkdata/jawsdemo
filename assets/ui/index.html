@@ -199,6 +199,10 @@
 			You should set the 'name' HTML attribute
 			on the elements and check that the name
 			matches what's expected in the click handler.
+
+			Since this particular button changes it's text based on
+			a state variable, we'll be using a data binding for it's
+			HTML text.
 		-->
 		{{$.Button .InputButton `class="btn btn-primary m-3" name="clicky"`}}
 		<!--

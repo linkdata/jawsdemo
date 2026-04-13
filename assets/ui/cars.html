@@ -32,7 +32,11 @@
 			-->
 			{{$.Tbody .CarsTable}}
 		</table>
-		{{$.Button "Mystical" `class="btn btn-primary m-3" name="mystical"` .CarsTable}}
+		<!--
+			This button uses ui.Clickable() to provide the button HTML
+			and the click handler.
+		-->
+		{{$.Button .CarsTable.Mystical `class="btn btn-primary m-3"`}}
 	</div>
 {{$.TailHTML}}
 </body>

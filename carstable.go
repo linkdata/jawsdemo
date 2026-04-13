@@ -19,12 +19,17 @@ func (ct *CarsTable) JawsContains(e *jaws.Element) (tl []jaws.UI) {
 
 func (ct *CarsTable) JawsClick(e *jaws.Element, name string) (err error) {
 	switch name {
-	case "mystical":
-		e.Session().Set("mystical", nil)
 	case "add":
 		AddRandomCar()
 		e.Dirty(globals.CarsTable)
 		return nil
 	}
 	return jaws.ErrEventUnhandled
+}
+
+func (ct *CarsTable) Mystical() jaws.ClickHandler {
+	return ui.Clickable("Mystical", func(elem *jaws.Element, name string) (err error) {
+		elem.Session().Set("mystical", nil)
+		return
+	})
 }
