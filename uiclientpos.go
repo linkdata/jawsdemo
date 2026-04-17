@@ -9,7 +9,7 @@ import (
 
 	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/lib/bind"
-	"github.com/linkdata/jaws/lib/jtag"
+	"github.com/linkdata/jaws/lib/tag"
 )
 
 type uiClientPos struct{ *Globals }
@@ -19,6 +19,7 @@ func (uic uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 	sessions := e.Jaws.Sessions()
 	sort.Slice(sessions, func(i, j int) bool { return sessions[i].ID() < sessions[j].ID() })
 	uic.mu.RLock()
+	defer uic.mu.RUnlock()
 	for _, sess := range sessions {
 		if c, _ := sess.Get("client").(*Client); c != nil {
 			if c.X != -1 || c.Y != -1 {
@@ -26,7 +27,6 @@ func (uic uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 			}
 		}
 	}
-	uic.mu.RUnlock()
 	var sb strings.Builder
 	fmt.Fprintf(&sb, "(%d/%d)", len(activeclients), len(sessions))
 	for _, c := range activeclients {
@@ -36,7 +36,7 @@ func (uic uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 	return
 }
 
-func (uic uiClientPos) JawsGetTag(jtag.Context) any {
+func (uic uiClientPos) JawsGetTag(tag.Context) any {
 	return uiClientPos{}
 }
 

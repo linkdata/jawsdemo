@@ -17,8 +17,8 @@ func (ct *CarsTable) JawsContains(e *jaws.Element) (tl []jaws.UI) {
 	return tl
 }
 
-func (ct *CarsTable) JawsClick(e *jaws.Element, name string) (err error) {
-	switch name {
+func (ct *CarsTable) JawsClick(e *jaws.Element, data jaws.Click) (err error) {
+	switch data.Name {
 	case "add":
 		AddRandomCar()
 		e.Dirty(globals.CarsTable)
@@ -28,7 +28,7 @@ func (ct *CarsTable) JawsClick(e *jaws.Element, name string) (err error) {
 }
 
 func (ct *CarsTable) Mystical() jaws.ClickHandler {
-	return ui.Clickable("Mystical", func(elem *jaws.Element, name string) (err error) {
+	return ui.New("Mystical").Clicked(func(obj ui.Object, elem *jaws.Element, click jaws.Click) (err error) {
 		elem.Session().Set("mystical", nil)
 		return
 	})

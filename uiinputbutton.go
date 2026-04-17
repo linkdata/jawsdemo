@@ -16,10 +16,9 @@ func (g *Globals) InputButton() bind.Binder[string] {
 			}
 			return
 		}).
-		Clicked(func(bind bind.Binder[string], elem *jaws.Element, name string) (err error) {
-			err = jaws.ErrEventUnhandled
-			if name == "clicky" {
-				err = nil
+		Clicked(func(bind bind.Binder[string], elem *jaws.Element, data jaws.Click) (err error) {
+			switch data.Name {
+			case "clicky":
 				g.mu.Lock()
 				defer g.mu.Unlock()
 				if g.inputButton == "Meh" {
@@ -30,8 +29,9 @@ func (g *Globals) InputButton() bind.Binder[string] {
 					elem.Session().Set("mystical", nil)
 				}
 				elem.Dirty(bind)
+				return nil
 			}
-			return
+			return jaws.ErrEventUnhandled
 		})
 	return rv
 }

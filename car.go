@@ -49,10 +49,10 @@ func AddRandomCar() {
 	globals.mu.Unlock()
 }
 
-func (c *Car) JawsClick(e *jaws.Element, name string) error {
+func (c *Car) JawsClick(e *jaws.Element, data jaws.Click) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	switch name {
+	switch data.Name {
 	case "up":
 		if idx := slices.Index(globals.Cars, c); idx > 0 {
 			globals.Cars[idx-1], globals.Cars[idx] = globals.Cars[idx], globals.Cars[idx-1]
