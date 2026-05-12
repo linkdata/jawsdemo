@@ -34,7 +34,7 @@ func NewGlobals() *Globals {
 		InputRadioGroup1: named.NewBoolArray(false).Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
 		InputRadioGroup2: named.NewBoolArray(false).Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
 		inputDate:        time.Now(),
-		inputButton:      "meh",
+		inputButton:      "Meh",
 		SelectPet:        newUiSelectPet(),
 		carsLink:         "...",
 		Cars: []*Car{
@@ -61,6 +61,7 @@ func NewGlobals() *Globals {
 			},
 		},
 	}
+	g.CarsTable = &CarsTable{globals: g}
 	g.inputTextArea = "The quick brown fox jumps over the lazy dog"
 	return g
 }
