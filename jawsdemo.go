@@ -67,8 +67,8 @@ func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (err error) {
 }
 
 func backgroundUpdates(jw *jaws.Jaws) {
-	now := time.Now()
-	time.Sleep(now.Round(time.Second).Sub(now))
+	started := time.Now()
+	time.Sleep(time.Until(started.Truncate(time.Second).Add(time.Second)))
 	t := time.NewTicker(time.Second)
 	defer t.Stop()
 	for range t.C {
@@ -88,7 +88,7 @@ func backgroundUpdates(jw *jaws.Jaws) {
 			default:
 				globals.carsLink = "This is a boring link to car info."
 			}
-			globals.runtime = time.Since(now).String()
+			globals.runtime = time.Since(started).String()
 			globals.mu.Unlock()
 			jw.Dirty(globals.Runtime())
 			jw.Dirty(globals.CarsLink())
