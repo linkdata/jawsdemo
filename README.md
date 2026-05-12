@@ -11,5 +11,8 @@ Maybe start by having a look at the comments in `assets/ui/index.html`.
 
 `go run .`
 
-Open multiple web browser pages to `http://localhost:8081/`. Play around with the controls on the pages. As you alter the values in one web page, the others match the changes in real time.
+Open multiple web browser pages to `http://localhost:8080/`. Play around with the controls on the pages. As you alter the values in one web page, the others match the changes in real time.
 
+To use a different port, pass an explicit address:
+
+`go run . -address localhost:8081`

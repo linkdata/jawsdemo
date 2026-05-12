@@ -15,7 +15,8 @@
 	{{template "head.html" $}}
 </head>
 
-<body><form autocomplete="off">
+<body>
+<form autocomplete="off">
 	{{template "header.html" $}}
 	<div class="container">
 		<!-- if Bootstrap is in use this marks where jaws UI alerts should be rendered -->
@@ -30,7 +31,7 @@
 		</p>
 
 		<!--
-			JaWS allows several ways to register a HTML element and render it's HTML code.
+			JaWS allows several ways to register an HTML element and render its HTML code.
 			If you don't need to listen to events from the client browser, the following
 			method may be a good choice. 
 
@@ -38,8 +39,8 @@
 			plus a variable number of optional parameters.
 			
 			The first parameter is something that will determine the inner HTML of
-			the <a> tag. If it's a jaws.HTMLGetter or a template.HTML string, the
-			data is output as-is. If it's a jaws.StringGetter or string, the data
+			the <a> tag. If it is a jaws.HTMLGetter or a template.HTML string, the
+			data is output as-is. If it is a jaws.StringGetter or string, the data
 			is HTML escaped.
 
 			If the first parameter is a jaws.HTMLGetter or jaws.StringGetter, it
@@ -60,7 +61,7 @@
 			HTML elements as needed.
 
 			Finally, we provide a string with HTML attributes as the optional
-			parameters that are copied into the HTML closing tag as-is.
+			parameters that are copied into the HTML opening tag as-is.
 
 			Other optional parameters include more UI tags to associate with
 			the element or event handlers (jaws.ClickHandler and jaws.EventHandler).
@@ -69,8 +70,8 @@
 
 		<!--
 			jaws.RequestWriter.Text() needs a jaws.StringSetter as the
-			first parameter. JaWS will call it's JawsGetString and
-			JawsSetString as needed, and will mark it's tags as dirty
+			first parameter. JaWS will call its JawsGetString and
+			JawsSetString as needed, and will mark its tags as dirty
 			automatically - meaning that typing in one browser window
 			is immediately reflected in others.
 
@@ -89,8 +90,8 @@
 			jaws.RequestWriter.Checkbox needs a jaws.BoolSetter.
 
 			Normally you would use a sync.Mutex or sync.RWMutex
-			to protect from race conditions, but we can also
-			use atomics. Here we use an atomic.Bool.
+			to protect from race conditions. Here the checkbox
+			is protected by the shared Globals mutex.
 		-->
 		<div class="form-check mb-3">
 			<label class="form-check-label">Checkbox
@@ -126,7 +127,7 @@
 
 			Here, both UI Elements share the same uiInputRange{} for their data,
 			and JaWS will automatically add that as a tag. So when the Range
-			gets modified, the Span can set it's attributes and value in the
+			gets modified, the Span can set its attributes and value in the
 			uiInputRange.JawsGetHTML() method.
 		-->
 		<div class="row mb-3">
@@ -200,8 +201,8 @@
 			on the elements and check that the name
 			matches what's expected in the click handler.
 
-			Since this particular button changes it's text based on
-			a state variable, we'll be using a data binding for it's
+			Since this particular button changes its text based on
+			a state variable, we'll be using a data binding for its
 			HTML text.
 		-->
 		{{$.Button .InputButton `class="btn btn-primary m-3" name="clicky"`}}
@@ -247,7 +248,8 @@
 			</tbody>
 		</table>
 	</div>
+</form>
 {{$.TailHTML}}
-</body></form>
+</body>
 </html>
 {{end}}
