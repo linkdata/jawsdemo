@@ -26,6 +26,7 @@ type Globals struct {
 	Cars             []*Car
 	carsLink         string
 	CarsTable        *CarsTable
+	drawingTraces    []drawingTrace
 	runtime          string
 }
 

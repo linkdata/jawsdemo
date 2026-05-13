@@ -31,6 +31,19 @@
 		</p>
 
 		<!--
+			This SVG is a shared drawing surface. Pointer coordinates are converted
+			by JaWS to the SVG viewBox coordinate system before they reach the
+			server, so the pointer handler can store them directly while dragging.
+
+			The canonical drawing data lives in Globals. Each session gets its
+			own trace and color. Right-clicking clears only your trace.
+		-->
+		<div class="mb-3">
+			<label class="form-label">Shared drawing</label>
+			{{$.SVG .Drawing `class="border rounded w-100 bg-light" style="touch-action: none; user-select: none;" viewBox="0 0 640 320" name="drawing" role="img" aria-label="Shared drawing area"`}}
+		</div>
+
+		<!--
 			JaWS allows several ways to register an HTML element and render its HTML code.
 			If you don't need to listen to events from the client browser, the following
 			method may be a good choice. 
