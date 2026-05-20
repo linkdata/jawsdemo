@@ -58,8 +58,8 @@ func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (err error) {
 				staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png", "mousetrack.js"))
 			if err == nil {
 				mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
-				mux.Handle("GET /{$}", jw.Session(ui.Handler(jw, "index.html", globals)))
-				mux.Handle("GET /cars", jw.Session(ui.Handler(jw, "cars.html", globals)))
+				mux.Handle("GET /{$}", ui.Handler(jw, "index.html", globals))
+				mux.Handle("GET /cars", ui.Handler(jw, "cars.html", globals))
 			}
 		}
 	}
@@ -130,6 +130,7 @@ func main() {
 			defer jw.Close()          // ensure we clean up
 			jw.Logger = cfg.Logger    // optionally set the logger to use
 			jw.Debug = deadlock.Debug // optionally set the debug flag
+			jw.AutoSession = true     // lazily create sessions when the WebSocket connects
 
 			mux := http.NewServeMux() // create a ServeMux to do routing
 			if err = setupRoutes(jw, mux); err == nil {
@@ -141,8 +142,8 @@ func main() {
 				// spin up a goroutine to update the clock and cars button text
 				go backgroundUpdates(jw)
 
-				// start serving requests using the default secure headers and with a JaWS session
-				err = cfg.Serve(context.Background(), l, jw.Session(jw.SecureHeadersMiddleware(mux)))
+				// start serving requests using the default secure headers
+				err = cfg.Serve(context.Background(), l, jw.SecureHeadersMiddleware(mux))
 			}
 		}
 	}

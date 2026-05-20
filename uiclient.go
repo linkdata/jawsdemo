@@ -9,13 +9,12 @@ type uiClient struct{ *Globals }
 
 func (uic uiClient) getClient(rq *jaws.Request) (c *Client) {
 	sess := rq.Session()
-	if c, _ = sess.Get("client").(*Client); c == nil {
+	if c, _ = sess.Get(clientSessionKey).(*Client); c == nil {
 		c = &Client{
 			X: -1,
 			Y: -1,
-			B: 0,
 		}
-		sess.Set("client", c)
+		sess.Set(clientSessionKey, c)
 	}
 	return
 }

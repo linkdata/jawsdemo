@@ -21,7 +21,7 @@ func (uic uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 	uic.mu.RLock()
 	defer uic.mu.RUnlock()
 	for _, sess := range sessions {
-		if c, _ := sess.Get("client").(*Client); c != nil {
+		if c, _ := sess.Get(clientSessionKey).(*Client); c != nil {
 			if c.X != -1 || c.Y != -1 {
 				activeclients = append(activeclients, c)
 			}

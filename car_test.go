@@ -142,7 +142,7 @@ func TestInputButtonFirstClickEntersMysticalState(t *testing.T) {
 	}
 }
 
-func TestRoutesRender(t *testing.T) {
+func TestClientJsVarDoesNotRequireInitialSession(t *testing.T) {
 	g := useTestGlobals(t)
 	jw, err := jaws.New()
 	if err != nil {
@@ -150,12 +150,49 @@ func TestRoutesRender(t *testing.T) {
 	}
 	t.Cleanup(jw.Close)
 
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
+	rq := jw.NewRequest(req)
+	jsvar, err := g.Client().JawsMakeJsVar(rq)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if rq.Session() != nil {
+		t.Fatal("initial render created a session")
+	}
+	clientVar, ok := jsvar.(*ui.JsVar[Client])
+	if !ok {
+		t.Fatalf("JawsMakeJsVar returned %T, want *ui.JsVar[Client]", jsvar)
+	}
+	if got := clientVar.JawsGet(nil); got != (Client{}) {
+		t.Fatalf("initial client = %#v, want zero value", got)
+	}
+}
+
+func TestClientPathSetStoresClientInSession(t *testing.T) {
+	elem := newTestElement(t)
+	client := &Client{X: 12, Y: 34, B: 1}
+
+	client.JawsPathSet(elem, "X", client.X)
+	if got := elem.Session().Get(clientSessionKey); got != client {
+		t.Fatalf("client session value = %#v, want %p", got, client)
+	}
+}
+
+func TestRoutesRender(t *testing.T) {
+	g := useTestGlobals(t)
+	jw, err := jaws.New()
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(jw.Close)
+	jw.AutoSession = true
+
 	mux := http.NewServeMux()
 	if err := setupRoutes(jw, mux); err != nil {
 		t.Fatal(err)
 	}
 	g.FaviconURI = jw.FaviconURL()
-	handler := jw.Session(jw.SecureHeadersMiddleware(mux))
+	handler := jw.SecureHeadersMiddleware(mux)
 
 	for _, path := range []string{"/", "/cars"} {
 		t.Run(path, func(t *testing.T) {
@@ -167,6 +204,9 @@ func TestRoutesRender(t *testing.T) {
 			}
 			if !strings.Contains(rr.Body.String(), "<!doctype html>") {
 				t.Fatalf("response for %q did not render an HTML document", path)
+			}
+			if cookies := rr.Result().Cookies(); len(cookies) != 0 {
+				t.Fatalf("response for %q created cookies: %#v", path, cookies)
 			}
 		})
 	}
