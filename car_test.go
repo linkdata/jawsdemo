@@ -163,7 +163,7 @@ func TestClientJsVarDoesNotRequireInitialSession(t *testing.T) {
 	if !ok {
 		t.Fatalf("JawsMakeJsVar returned %T, want *ui.JsVar[Client]", jsvar)
 	}
-	if got := clientVar.JawsGet(nil); got != (Client{}) {
+	if got := clientVar.JawsGet(nil); got != (Client{X: -1, Y: -1}) {
 		t.Fatalf("initial client = %#v, want zero value", got)
 	}
 }
