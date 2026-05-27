@@ -1,10 +1,7 @@
 <!--
-	In a template rendered via JaWS, the data parameter is a jaws.With{} structure.
-	This contains both the *Element being rendered and the value inside
-	the jaws.Template, which is accessible as '$.Dot', as well as a string
-	containing any extra attributes passed in '$.Attrs'.
-
-	If applicable, set the outermost HTML tag's id to the value of '$.Jid'.
+	In a template rendered via JaWS, the data parameter is a ui.With{} structure.
+	This embeds both the *Element being rendered and the RequestWriter.
+	The application value is accessible as '$.Dot'.
 -->
 
 {{with .Dot}}
@@ -209,7 +206,6 @@
 		<!--
 			This table of cars is static since we iterate over .Cars manually
 			using 'range' instead of using a jaws.Container.
-			We do this just to illustrate the use of $.Template.
 
 			See "assets/ui/cars.html" for how to have a dynamically updating table.
 		-->
@@ -226,24 +222,12 @@
 			<tbody>
 				{{range .Cars}}
 				<!--
-					Using RequestWriter.Template() here with a string giving the
-					template name requires us call Jaws.AddTemplateLookuper()
-					with our templates so the Request can resolve the name.
-
-					When parsing "car_row.html", "$" will be a jaws.With{}
-					structure containing:
-
-						"$.Element": the Element being rendered using a template
-						"$.RequestWriter": the RequestWriter
-						"$.Dot": user data parameter
-						"$.Attrs": HTML attributes string
-
-					So "$.Dot" will be the pointer to the current car.
-
-					RequestWriter.Template() adds the dot value (here a *Car)
-					as a JaWS tag.
+					The row body is shared with the dynamic car table. Current
+					RequestWriter.Template() output is wrapped in a managed div,
+					so table rows use an explicit <tr> and execute the cells-only
+					partial with a ui.With{} whose Dot is the current *Car.
 				-->
-				{{$.Template "car_row.html" .}}
+				<tr>{{template "car_row.html" ($.Dot.CarRowWith $ .)}}</tr>
 				{{end}}
 			</tbody>
 		</table>

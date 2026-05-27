@@ -74,6 +74,11 @@ func (g *Globals) Runtime() any {
 	return ui.NewJsVar(&g.mu, &g.runtime)
 }
 
+func (g *Globals) CarRowWith(data ui.With, car *Car) ui.With {
+	data.Dot = car
+	return data
+}
+
 func (g *Globals) JawsVersion() (v string) {
 	v = PkgVersion
 	if bi, ok := debug.ReadBuildInfo(); ok {

@@ -163,8 +163,8 @@ func TestClientJsVarDoesNotRequireInitialSession(t *testing.T) {
 	if !ok {
 		t.Fatalf("JawsMakeJsVar returned %T, want *ui.JsVar[Client]", jsvar)
 	}
-	if got := clientVar.JawsGet(nil); got != (Client{}) {
-		t.Fatalf("initial client = %#v, want zero value", got)
+	if got := clientVar.JawsGet(nil); got != (Client{X: -1, Y: -1}) {
+		t.Fatalf("initial client = %#v, want unset-position sentinel", got)
 	}
 }
 
@@ -204,6 +204,15 @@ func TestRoutesRender(t *testing.T) {
 			}
 			if !strings.Contains(rr.Body.String(), "<!doctype html>") {
 				t.Fatalf("response for %q did not render an HTML document", path)
+			}
+			if path == "/cars" {
+				body := rr.Body.String()
+				if !strings.Contains(body, `<tbody id="Jid.`) || !strings.Contains(body, `<tr id="Jid.`) {
+					t.Fatalf("response for %q did not render managed table rows: %s", path, body)
+				}
+				if strings.Contains(body, "data-jawstemplate") {
+					t.Fatalf("response for %q rendered template wrappers inside the car table: %s", path, body)
+				}
 			}
 			if cookies := rr.Result().Cookies(); len(cookies) != 0 {
 				t.Fatalf("response for %q created cookies: %#v", path, cookies)
