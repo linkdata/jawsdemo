@@ -222,12 +222,11 @@
 			<tbody>
 				{{range .Cars}}
 				<!--
-					The row body is shared with the dynamic car table. Current
-					RequestWriter.Template() output is wrapped in a managed div,
-					so table rows use an explicit <tr> and execute the cells-only
-					partial with a ui.With{} whose Dot is the current *Car.
+					The row body is shared with the dynamic car table. The Template
+					call renders the partial with the current *Car as dot and wraps
+					it in a managed <tr>.
 				-->
-				<tr>{{template "car_row.html" ($.Dot.CarRowWith $ .)}}</tr>
+				{{$.Template "tr" "car_row.html" .}}
 				{{end}}
 			</tbody>
 		</table>
