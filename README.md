@@ -9,6 +9,10 @@ Maybe start by having a look at the comments in `assets/ui/index.html`.
 
 ## Use
 
+Generate the version file, then run the application:
+
+`go generate ./...`
+
 `go run .`
 
 Open multiple web browser pages to `http://localhost:8080/`. Play around with the controls on the pages. As you alter the values in one web page, the others match the changes in real time.
