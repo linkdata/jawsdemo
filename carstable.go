@@ -70,7 +70,7 @@ func (row CarRow) auth(elem *jaws.Element) jaws.Auth {
 	if f := elem.Request.Jaws.MakeAuth; f != nil {
 		return f(elem.Request)
 	}
-	return jaws.DefaultAuth{}
+	return &jaws.DefaultAuth{}
 }
 
 func (row CarRow) execute(elem *jaws.Element, w io.Writer) error {
