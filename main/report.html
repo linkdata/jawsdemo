@@ -1,0 +1,930 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>jawsdemo: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/linkdata/jawsdemo/car.go (96.6%)</option>
+				
+				<option value="file1">github.com/linkdata/jawsdemo/carstable.go (58.3%)</option>
+				
+				<option value="file2">github.com/linkdata/jawsdemo/client.go (100.0%)</option>
+				
+				<option value="file3">github.com/linkdata/jawsdemo/globals.go (100.0%)</option>
+				
+				<option value="file4">github.com/linkdata/jawsdemo/jawsdemo.go (18.5%)</option>
+				
+				<option value="file5">github.com/linkdata/jawsdemo/uicarslink.go (100.0%)</option>
+				
+				<option value="file6">github.com/linkdata/jawsdemo/uiclient.go (100.0%)</option>
+				
+				<option value="file7">github.com/linkdata/jawsdemo/uiclientpos.go (72.2%)</option>
+				
+				<option value="file8">github.com/linkdata/jawsdemo/uiclock.go (100.0%)</option>
+				
+				<option value="file9">github.com/linkdata/jawsdemo/uiinputbutton.go (77.8%)</option>
+				
+				<option value="file10">github.com/linkdata/jawsdemo/uiinputcheckbox.go (100.0%)</option>
+				
+				<option value="file11">github.com/linkdata/jawsdemo/uiinputdate.go (100.0%)</option>
+				
+				<option value="file12">github.com/linkdata/jawsdemo/uiinputrange.go (77.8%)</option>
+				
+				<option value="file13">github.com/linkdata/jawsdemo/uiinputtext.go (11.1%)</option>
+				
+				<option value="file14">github.com/linkdata/jawsdemo/uiinputtextarea.go (100.0%)</option>
+				
+				<option value="file15">github.com/linkdata/jawsdemo/uiselectpet.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">no coverage</span>
+				<span class="cov1">low coverage</span>
+				<span class="cov2">*</span>
+				<span class="cov3">*</span>
+				<span class="cov4">*</span>
+				<span class="cov5">*</span>
+				<span class="cov6">*</span>
+				<span class="cov7">*</span>
+				<span class="cov8">*</span>
+				<span class="cov9">*</span>
+				<span class="cov10">high coverage</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package main
+
+import (
+        "errors"
+        "math/rand"
+        "slices"
+
+        "github.com/linkdata/deadlock"
+        "github.com/linkdata/jaws"
+        "github.com/linkdata/jaws/lib/bind"
+)
+
+type Car struct {
+        VIN       string
+        Make      string
+        Model     string
+        Year      int
+        mu        deadlock.RWMutex
+        condition float64
+}
+
+var carMakes = []string{"Dodge", "Hyundai", "Acura", "Volvo", "Saab", "Lada", "Mazda"}
+var carModels = []string{"Sedan", "Coupe", "SUV", "Truck", "Cabriolet"}
+
+func intN(n int) int <span class="cov10" title="21">{
+        x := rand.Intn(n) //#nosec G404
+        return x
+}</span>
+
+func (g *Globals) AddRandomCar() *Car <span class="cov1" title="1">{
+        var vin []byte
+        for range 17 </span><span class="cov9" title="17">{
+                n := byte(intN(26 + 10)) // #nosec G115
+                if n &lt; 10 </span><span class="cov5" title="4">{
+                        vin = append(vin, '0'+n)
+                }</span> else<span class="cov8" title="13"> {
+                        vin = append(vin, 'A'+(n-10))
+                }</span>
+        }
+        <span class="cov1" title="1">car := &amp;Car{
+                VIN:       string(vin),
+                Make:      carMakes[intN(len(carMakes))],
+                Model:     carModels[intN(len(carModels))],
+                Year:      1970 + intN(30),
+                condition: 30 + float64(intN(70)),
+        }
+        g.mu.Lock()
+        g.Cars = append(g.Cars, car)
+        g.mu.Unlock()
+        return car</span>
+}
+
+func AddRandomCar() <span class="cov0" title="0">{
+        globals.AddRandomCar()
+}</span>
+
+func (c *Car) JawsClick(e *jaws.Element, data jaws.Click) error <span class="cov6" title="7">{
+        switch data.Name </span>{
+        case "up":<span class="cov1" title="1">
+                var changed bool
+                globals.mu.Lock()
+                if idx := slices.Index(globals.Cars, c); idx &gt; 0 </span><span class="cov1" title="1">{
+                        globals.Cars[idx-1], globals.Cars[idx] = globals.Cars[idx], globals.Cars[idx-1]
+                        changed = true
+                }</span>
+                <span class="cov1" title="1">globals.mu.Unlock()
+                if changed </span><span class="cov1" title="1">{
+                        e.Dirty(globals.CarsTable)
+                }</span>
+                <span class="cov1" title="1">return nil</span>
+        case "down":<span class="cov1" title="1">
+                var changed bool
+                globals.mu.Lock()
+                if idx := slices.Index(globals.Cars, c); idx &gt;= 0 &amp;&amp; idx &lt; len(globals.Cars)-1 </span><span class="cov1" title="1">{
+                        globals.Cars[idx+1], globals.Cars[idx] = globals.Cars[idx], globals.Cars[idx+1]
+                        changed = true
+                }</span>
+                <span class="cov1" title="1">globals.mu.Unlock()
+                if changed </span><span class="cov1" title="1">{
+                        e.Dirty(globals.CarsTable)
+                }</span>
+                <span class="cov1" title="1">return nil</span>
+        case "remove":<span class="cov1" title="1">
+                var changed bool
+                globals.mu.Lock()
+                before := len(globals.Cars)
+                globals.Cars = slices.DeleteFunc(globals.Cars, func(c2 *Car) bool </span><span class="cov4" title="3">{ return c2 == c }</span>)
+                <span class="cov1" title="1">changed = len(globals.Cars) != before
+                globals.mu.Unlock()
+                if changed </span><span class="cov1" title="1">{
+                        e.Dirty(globals.CarsTable)
+                }</span>
+                <span class="cov1" title="1">return nil</span>
+        case "+":<span class="cov3" title="2">
+                c.mu.Lock()
+                defer c.mu.Unlock()
+                if c.condition &gt;= 100 </span><span class="cov1" title="1">{
+                        return errors.New("condition too high")
+                }</span>
+                <span class="cov1" title="1">c.condition++
+                e.Dirty(c.Condition())
+                return nil</span>
+        case "-":<span class="cov3" title="2">
+                c.mu.Lock()
+                defer c.mu.Unlock()
+                if c.condition &lt;= 0 </span><span class="cov1" title="1">{
+                        return errors.New("condition too low")
+                }</span>
+                <span class="cov1" title="1">c.condition--
+                e.Dirty(c.Condition())
+                return nil</span>
+        default:<span class="cov0" title="0">
+                return jaws.ErrEventUnhandled</span>
+        }
+}
+
+func (c *Car) Condition() any <span class="cov7" title="8">{
+        return bind.New(&amp;c.mu, &amp;c.condition)
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package main
+
+import (
+        "fmt"
+        "html/template"
+        "io"
+        "strings"
+
+        "github.com/linkdata/jaws"
+        "github.com/linkdata/jaws/lib/tag"
+        "github.com/linkdata/jaws/lib/ui"
+)
+
+const carRowTemplate = "car_row.html"
+
+type CarsTable struct {
+        globals *Globals
+}
+
+var _ tag.TagGetter = (*CarsTable)(nil)
+
+func (ct *CarsTable) owner() *Globals <span class="cov10" title="8">{
+        if ct != nil &amp;&amp; ct.globals != nil </span><span class="cov10" title="8">{
+                return ct.globals
+        }</span>
+        <span class="cov0" title="0">return globals</span>
+}
+
+func (ct *CarsTable) JawsGetTag(tag.Context) any <span class="cov7" title="5">{
+        return &amp;ct.owner().Cars
+}</span>
+
+func (ct *CarsTable) JawsContains(e *jaws.Element) (tl []jaws.UI) <span class="cov1" title="1">{
+        g := ct.owner()
+        g.mu.RLock()
+        defer g.mu.RUnlock()
+        for _, c := range g.Cars </span><span class="cov5" title="3">{
+                tl = append(tl, CarRow{Car: c})
+        }</span>
+        <span class="cov1" title="1">tl = append(tl, CarRow{})
+        return tl</span>
+}
+
+func (ct *CarsTable) JawsClick(e *jaws.Element, data jaws.Click) (err error) <span class="cov0" title="0">{
+        switch data.Name </span>{
+        case "add":<span class="cov0" title="0">
+                ct.owner().AddRandomCar()
+                e.Dirty(ct)
+                return nil</span>
+        }
+        <span class="cov0" title="0">return jaws.ErrEventUnhandled</span>
+}
+
+func (ct *CarsTable) Mystical() jaws.ClickHandler <span class="cov4" title="2">{
+        return ui.New("Mystical").Clicked(func(obj ui.Object, elem *jaws.Element, click jaws.Click) (err error) </span><span class="cov1" title="1">{
+                elem.Session().Set("mystical", nil)
+                elem.Dirty(ct.owner().InputButton())
+                return
+        }</span>)
+}
+
+type CarRow struct {
+        Car *Car
+}
+
+var _ jaws.UI = CarRow{}
+var _ jaws.ClickHandler = CarRow{}
+
+func (row CarRow) auth(elem *jaws.Element) jaws.Auth <span class="cov7" title="4">{
+        if f := elem.Request.Jaws.MakeAuth; f != nil </span><span class="cov0" title="0">{
+                return f(elem.Request)
+        }</span>
+        <span class="cov7" title="4">return &amp;jaws.DefaultAuth{}</span>
+}
+
+func (row CarRow) execute(elem *jaws.Element, w io.Writer) error <span class="cov7" title="4">{
+        tmpl := elem.Request.Jaws.LookupTemplate(carRowTemplate)
+        if tmpl == nil </span><span class="cov0" title="0">{
+                return fmt.Errorf("missing template %q: %w", carRowTemplate, ui.ErrMissingTemplate)
+        }</span>
+        <span class="cov7" title="4">return tmpl.Execute(w, ui.With{
+                Element:       elem,
+                RequestWriter: ui.RequestWriter{Request: elem.Request, Writer: w},
+                Dot:           row.Car,
+                Auth:          row.auth(elem),
+        })</span>
+}
+
+func (row CarRow) JawsRender(elem *jaws.Element, w io.Writer, params []any) (err error) <span class="cov7" title="4">{
+        elem.Tag(row.Car)
+        attrs := elem.ApplyParams(params)
+
+        b := elem.Jid().AppendStartTagAttr(nil, "tr")
+        for _, attr := range attrs </span><span class="cov0" title="0">{
+                if attr != "" </span><span class="cov0" title="0">{
+                        b = append(b, ' ')
+                        b = append(b, attr...)
+                }</span>
+        }
+        <span class="cov7" title="4">b = append(b, '&gt;')
+        if _, err = w.Write(b); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov7" title="4">if err = row.execute(elem, w); err != nil </span><span class="cov0" title="0">{
+                return err
+        }</span>
+        <span class="cov7" title="4">_, err = io.WriteString(w, "&lt;/tr&gt;")
+        return err</span>
+}
+
+func (row CarRow) JawsUpdate(elem *jaws.Element) <span class="cov0" title="0">{
+        var sb strings.Builder
+        if err := row.execute(elem, &amp;sb); err == nil </span><span class="cov0" title="0">{
+                elem.SetInner(template.HTML(sb.String())) // #nosec G203
+        }</span> else<span class="cov0" title="0"> {
+                elem.Request.MustLog(err)
+        }</span>
+}
+
+func (row CarRow) JawsClick(elem *jaws.Element, click jaws.Click) error <span class="cov0" title="0">{
+        if row.Car == nil </span><span class="cov0" title="0">{
+                return jaws.ErrEventUnhandled
+        }</span>
+        <span class="cov0" title="0">return row.Car.JawsClick(elem, click)</span>
+}
+</pre>
+		
+		<pre class="file" id="file2" style="display: none">package main
+
+import (
+        "github.com/linkdata/jaws"
+        "github.com/linkdata/jaws/lib/ui"
+)
+
+type Client struct {
+        X float64
+        Y float64
+        B float64 // button state
+}
+
+const clientSessionKey = "client"
+
+var _ ui.SetPather = (*Client)(nil)
+
+func (c *Client) JawsPathSet(elem *jaws.Element, jspath string, value any) <span class="cov8" title="1">{
+        if sess := elem.Session(); sess.Get(clientSessionKey) == nil </span><span class="cov8" title="1">{
+                sess.Set(clientSessionKey, c)
+        }</span>
+        <span class="cov8" title="1">elem.Dirty(uiClientPos{})</span>
+}
+</pre>
+		
+		<pre class="file" id="file3" style="display: none">package main
+
+import (
+        "runtime/debug"
+        "strings"
+        "time"
+
+        "github.com/linkdata/deadlock"
+        "github.com/linkdata/jaws/lib/bind"
+        "github.com/linkdata/jaws/lib/named"
+        "github.com/linkdata/jaws/lib/ui"
+)
+
+type Globals struct {
+        FaviconURI       string
+        mu               deadlock.RWMutex
+        inputText        string
+        inputTextArea    string
+        inputCheckbox    bool
+        InputRadioGroup1 *named.BoolArray
+        InputRadioGroup2 *named.BoolArray
+        inputDate        time.Time
+        inputRange       float64
+        inputButton      string
+        SelectPet        *named.BoolArray
+        Cars             []*Car
+        carsLink         string
+        CarsTable        *CarsTable
+        runtime          string
+}
+
+func NewGlobals() *Globals <span class="cov7" title="7">{
+        g := &amp;Globals{
+                InputRadioGroup1: named.NewBoolArray(false).Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
+                InputRadioGroup2: named.NewBoolArray(false).Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
+                inputDate:        time.Now(),
+                inputButton:      "Meh",
+                SelectPet:        newUiSelectPet(),
+                carsLink:         "...",
+                Cars: []*Car{
+                        {
+                                VIN:       "JH4DB1671PS002584",
+                                Year:      1993,
+                                Make:      "Acura",
+                                Model:     "Integra",
+                                condition: 12,
+                        },
+                        {
+                                VIN:       "KM8JT3AC2DU583865",
+                                Year:      2013,
+                                Make:      "Hyundai",
+                                Model:     "Tucson",
+                                condition: 97,
+                        },
+                        {
+                                VIN:       "1D4GP24R75B188657",
+                                Year:      2005,
+                                Make:      "Dodge",
+                                Model:     "Grand Caravan",
+                                condition: 67,
+                        },
+                },
+        }
+        g.CarsTable = &amp;CarsTable{globals: g}
+        g.inputTextArea = "The quick brown fox jumps over the lazy dog"
+        return g
+}</span>
+
+func (g *Globals) Clock() bind.HTMLGetter <span class="cov3" title="2">{
+        return uiClock{}
+}</span>
+
+func (g *Globals) Runtime() any <span class="cov3" title="2">{
+        return ui.NewJsVar(&amp;g.mu, &amp;g.runtime)
+}</span>
+
+func (g *Globals) JawsVersion() (v string) <span class="cov3" title="2">{
+        v = PkgVersion
+        if bi, ok := debug.ReadBuildInfo(); ok </span><span class="cov3" title="2">{
+                for _, dep := range bi.Deps </span><span class="cov10" title="16">{
+                        if strings.HasSuffix(dep.Path, "/jaws") </span><span class="cov3" title="2">{
+                                v += " - jaws@" + dep.Version
+                        }</span>
+                }
+        }
+        <span class="cov3" title="2">return</span>
+}
+</pre>
+		
+		<pre class="file" id="file4" style="display: none">package main
+
+import (
+        "context"
+        "embed"
+        "flag"
+        "log/slog"
+        "math/rand"
+        "net/http"
+        "os"
+        "runtime/pprof"
+        "time"
+
+        "github.com/linkdata/deadlock"
+        "github.com/linkdata/jaws"
+        "github.com/linkdata/jaws/jawsboot"
+        "github.com/linkdata/jaws/lib/templatereloader"
+        "github.com/linkdata/jaws/lib/ui"
+        "github.com/linkdata/staticserve"
+        "github.com/linkdata/webserv"
+)
+
+//go:embed assets
+var assetsFS embed.FS
+
+//go:generate go run github.com/linkdata/gitsemver@latest -gopackage -package main -out version.gen.go
+
+var (
+        flagAddress    = flag.String("address", os.Getenv("WEBSERV_ADDRESS"), "serve HTTP requests on given [address][:port]")
+        flagCertDir    = flag.String("certdir", os.Getenv("WEBSERV_CERTDIR"), "where to find fullchain.pem and privkey.pem")
+        flagUser       = flag.String("user", envOrDefault("WEBSERV_USER", ""), "switch to this user after startup (*nix only)")
+        flagDataDir    = flag.String("datadir", envOrDefault("WEBSERV_DATADIR", "$HOME"), "where to store data files after startup")
+        flagListenURL  = flag.String("listenurl", os.Getenv("WEBSERV_LISTENURL"), "specify the external URL clients can reach us at")
+        flagCpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+        flagMemprofile = flag.String("memprofile", "", "write memory profile to this file")
+)
+
+func envOrDefault(envvar, defval string) (s string) <span class="cov10" title="2">{
+        if s = os.Getenv(envvar); s == "" </span><span class="cov10" title="2">{
+                s = defval
+        }</span>
+        <span class="cov10" title="2">return</span>
+}
+
+var globals = NewGlobals()
+
+func maybeLogError(err error) <span class="cov0" title="0">{
+        if err != nil </span><span class="cov0" title="0">{
+                slog.Error("error", "text", err)
+        }</span>
+}
+
+func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (err error) <span class="cov1" title="1">{
+        var tmpl jaws.TemplateLookuper
+        if tmpl, err = templatereloader.New(assetsFS, "assets/ui/*.html", ""); err == nil </span><span class="cov1" title="1">{
+                if err = jw.AddTemplateLookuper(tmpl); err == nil </span><span class="cov1" title="1">{
+                        err = jw.Setup(mux.Handle, "/static", jawsboot.Setup,
+                                staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png", "mousetrack.js"))
+                        if err == nil </span><span class="cov1" title="1">{
+                                mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
+                                mux.Handle("GET /{$}", ui.Handler(jw, "index.html", globals))
+                                mux.Handle("GET /cars", ui.Handler(jw, "cars.html", globals))
+                        }</span>
+                }
+        }
+        <span class="cov1" title="1">return</span>
+}
+
+func backgroundUpdates(jw *jaws.Jaws) <span class="cov0" title="0">{
+        started := time.Now()
+        time.Sleep(time.Until(started.Truncate(time.Second).Add(time.Second)))
+        t := time.NewTicker(time.Second)
+        defer t.Stop()
+        for range t.C </span><span class="cov0" title="0">{
+                jw.Dirty(uiClock{})
+                if (time.Now().Second() % 3) == 0 </span><span class="cov0" title="0">{
+                        globals.mu.Lock()
+                        x := rand.Intn(5) //#nosec G404
+                        switch x </span>{
+                        case 0:<span class="cov0" title="0">
+                                globals.carsLink = "Check out these cars!"</span>
+                        case 1:<span class="cov0" title="0">
+                                globals.carsLink = "Did you know VIN numbers are encoded?"</span>
+                        case 2:<span class="cov0" title="0">
+                                globals.carsLink = "DO NOT CLICK HERE!"</span>
+                        case 3:<span class="cov0" title="0">
+                                globals.carsLink = "Cars"</span>
+                        default:<span class="cov0" title="0">
+                                globals.carsLink = "This is a boring link to car info."</span>
+                        }
+                        <span class="cov0" title="0">globals.runtime = time.Since(started).String()
+                        globals.mu.Unlock()
+                        jw.Dirty(globals.Runtime())
+                        jw.Dirty(globals.CarsLink())
+                        jw.Dirty(globals.Client())</span>
+                }
+        }
+}
+
+func main() <span class="cov0" title="0">{
+        flag.Parse()
+
+        if *flagCpuprofile != "" </span><span class="cov0" title="0">{
+                f, err := os.Create(*flagCpuprofile)
+                if err == nil </span><span class="cov0" title="0">{
+                        defer f.Close()
+                        if err = pprof.StartCPUProfile(f); err == nil </span><span class="cov0" title="0">{
+                                defer pprof.StopCPUProfile()
+                        }</span>
+                }
+                <span class="cov0" title="0">maybeLogError(err)</span>
+        }
+
+        <span class="cov0" title="0">cfg := webserv.Config{
+                Address:   *flagAddress,
+                CertDir:   *flagCertDir,
+                User:      *flagUser,
+                DataDir:   *flagDataDir,
+                ListenURL: *flagListenURL,
+                Logger:    slog.Default(),
+        }
+
+        l, err := cfg.Listen()
+        if err == nil </span><span class="cov0" title="0">{
+                defer l.Close()
+
+                var jw *jaws.Jaws
+                // create a default JaWS instance
+                if jw, err = jaws.New(); err == nil </span><span class="cov0" title="0">{
+                        defer jw.Close()          // ensure we clean up
+                        jw.Logger = cfg.Logger    // optionally set the logger to use
+                        jw.Debug = deadlock.Debug // optionally set the debug flag
+                        jw.AutoSession = true     // lazily create sessions when the WebSocket connects
+
+                        mux := http.NewServeMux() // create a ServeMux to do routing
+                        if err = setupRoutes(jw, mux); err == nil </span><span class="cov0" title="0">{
+                                globals.FaviconURI = jw.FaviconURL()
+
+                                // start the JaWS processing loop, Serve returns when Close is called.
+                                go jw.Serve()
+
+                                // spin up a goroutine to update the clock and cars button text
+                                go backgroundUpdates(jw)
+
+                                // start serving requests using the default secure headers
+                                err = cfg.Serve(context.Background(), l, jw.SecureHeadersMiddleware(mux))
+                        }</span>
+                }
+        }
+
+        <span class="cov0" title="0">maybeLogError(err)
+
+        if *flagMemprofile != "" </span><span class="cov0" title="0">{
+                f, err := os.Create(*flagMemprofile)
+                if err == nil </span><span class="cov0" title="0">{
+                        defer f.Close()
+                        err = pprof.WriteHeapProfile(f)
+                }</span>
+                <span class="cov0" title="0">maybeLogError(err)</span>
+        }
+}
+</pre>
+		
+		<pre class="file" id="file5" style="display: none">package main
+
+import "github.com/linkdata/jaws/lib/bind"
+
+func (g *Globals) CarsLink() any <span class="cov8" title="1">{
+        return bind.New(&amp;g.mu, &amp;g.carsLink)
+}</span>
+</pre>
+		
+		<pre class="file" id="file6" style="display: none">package main
+
+import (
+        "github.com/linkdata/jaws"
+        "github.com/linkdata/jaws/lib/ui"
+)
+
+type uiClient struct{ *Globals }
+
+func (uic uiClient) getClient(rq *jaws.Request) (c *Client) <span class="cov7" title="3">{
+        sess := rq.Session()
+        if c, _ = sess.Get(clientSessionKey).(*Client); c == nil </span><span class="cov7" title="3">{
+                c = &amp;Client{
+                        X: -1,
+                        Y: -1,
+                }
+                sess.Set(clientSessionKey, c)
+        }</span>
+        <span class="cov7" title="3">return</span>
+}
+
+func (uic uiClient) JawsMakeJsVar(rq *jaws.Request) (v ui.IsJsVar, err error) <span class="cov7" title="3">{
+        return ui.NewJsVar(&amp;uic.mu, uic.getClient(rq)), nil
+}</span>
+
+var _ ui.JsVarMaker = uiClient{}
+
+func (g *Globals) Client() uiClient <span class="cov10" title="5">{
+        return uiClient{g}
+}</span>
+</pre>
+		
+		<pre class="file" id="file7" style="display: none">package main
+
+import (
+        "fmt"
+        "html"
+        "html/template"
+        "sort"
+        "strings"
+
+        "github.com/linkdata/jaws"
+        "github.com/linkdata/jaws/lib/bind"
+        "github.com/linkdata/jaws/lib/tag"
+)
+
+type uiClientPos struct{ *Globals }
+
+func (uic uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) <span class="cov4" title="2">{
+        var activeclients []*Client
+        sessions := e.Jaws.Sessions()
+        sort.Slice(sessions, func(i, j int) bool </span><span class="cov0" title="0">{ return sessions[i].ID() &lt; sessions[j].ID() }</span>)
+        <span class="cov4" title="2">uic.mu.RLock()
+        defer uic.mu.RUnlock()
+        for _, sess := range sessions </span><span class="cov0" title="0">{
+                if c, _ := sess.Get(clientSessionKey).(*Client); c != nil </span><span class="cov0" title="0">{
+                        if c.X != -1 || c.Y != -1 </span><span class="cov0" title="0">{
+                                activeclients = append(activeclients, c)
+                        }</span>
+                }
+        }
+        <span class="cov4" title="2">var sb strings.Builder
+        fmt.Fprintf(&amp;sb, "(%d/%d)", len(activeclients), len(sessions))
+        for _, c := range activeclients </span><span class="cov0" title="0">{
+                fmt.Fprintf(&amp;sb, " %.0fx%.0f-%b", c.X, c.Y, int(c.B))
+        }</span>
+        <span class="cov4" title="2">v = template.HTML(html.EscapeString(sb.String())) //#nosec G203
+        return</span>
+}
+
+func (uic uiClientPos) JawsGetTag(tag.Context) any <span class="cov10" title="5">{
+        return uiClientPos{}
+}</span>
+
+func (g *Globals) ClientPos() bind.HTMLGetter <span class="cov4" title="2">{
+        return uiClientPos{g}
+}</span>
+</pre>
+		
+		<pre class="file" id="file8" style="display: none">package main
+
+import (
+        "fmt"
+        "html/template"
+        "time"
+
+        "github.com/linkdata/jaws"
+)
+
+type uiClock struct{}
+
+func (uiClock) JawsGetHTML(e *jaws.Element) template.HTML <span class="cov10" title="2">{
+        now := time.Now().UTC()
+        flash := "&amp;nbsp;"
+        if now.Second()%2 == 0 </span><span class="cov10" title="2">{
+                flash = ":"
+        }</span>
+        <span class="cov10" title="2">return template.HTML(fmt.Sprintf("%02d%s%02d UTC", now.Hour(), flash, now.Minute()))</span> //#nosec G203
+}
+</pre>
+		
+		<pre class="file" id="file9" style="display: none">package main
+
+import (
+        "github.com/linkdata/jaws"
+        "github.com/linkdata/jaws/lib/bind"
+)
+
+func (g *Globals) InputButton() bind.Binder[string] <span class="cov10" title="3">{
+        rv := bind.New(&amp;g.mu, &amp;g.inputButton).
+                GetLocked(func(bind bind.Binder[string], elem *jaws.Element) (value string) </span><span class="cov1" title="1">{
+                        value = g.inputButton
+                        if elem.Session().Get("mystical") != nil </span><span class="cov0" title="0">{
+                                elem.SetAttr("disabled", "")
+                        }</span> else<span class="cov1" title="1"> {
+                                elem.RemoveAttr("disabled")
+                        }</span>
+                        <span class="cov1" title="1">return</span>
+                }).
+                Clicked(func(bind bind.Binder[string], elem *jaws.Element, data jaws.Click) (err error) <span class="cov1" title="1">{
+                        switch data.Name </span>{
+                        case "clicky":<span class="cov1" title="1">
+                                g.mu.Lock()
+                                defer g.mu.Unlock()
+                                if g.inputButton == "Meh" </span><span class="cov1" title="1">{
+                                        g.inputButton = "Mystical?"
+                                        elem.Session().Set("mystical", true)
+                                }</span> else<span class="cov0" title="0"> {
+                                        g.inputButton = "Meh"
+                                        elem.Session().Set("mystical", nil)
+                                }</span>
+                                <span class="cov1" title="1">elem.Dirty(bind)
+                                return nil</span>
+                        }
+                        <span class="cov0" title="0">return jaws.ErrEventUnhandled</span>
+                })
+        <span class="cov10" title="3">return rv</span>
+}
+</pre>
+		
+		<pre class="file" id="file10" style="display: none">package main
+
+import "github.com/linkdata/jaws/lib/bind"
+
+func (g *Globals) InputCheckbox() any <span class="cov8" title="1">{
+        return bind.New(&amp;g.mu, &amp;g.inputCheckbox)
+}</span>
+</pre>
+		
+		<pre class="file" id="file11" style="display: none">package main
+
+import "github.com/linkdata/jaws/lib/bind"
+
+func (g *Globals) InputDate() any <span class="cov8" title="1">{
+        return bind.New(&amp;g.mu, &amp;g.inputDate)
+}</span>
+</pre>
+		
+		<pre class="file" id="file12" style="display: none">package main
+
+import (
+        "fmt"
+        "html/template"
+
+        "github.com/linkdata/jaws"
+        "github.com/linkdata/jaws/lib/bind"
+)
+
+type uiInputRange struct {
+        bind.Binder[float64]
+        *Globals
+}
+
+func (ui *uiInputRange) JawsGetHTML(e *jaws.Element) (v template.HTML) <span class="cov1" title="1">{
+        ui.mu.RLock()
+        switch </span>{
+        case ui.inputRange &lt; 50:<span class="cov1" title="1">
+                e.SetAttr("style", "color:red")</span>
+        case ui.inputRange &lt; 90:<span class="cov0" title="0">
+                e.RemoveAttr("style")</span>
+        default:<span class="cov0" title="0">
+                e.SetAttr("style", "color:green")</span>
+        }
+        <span class="cov1" title="1">v = template.HTML(fmt.Sprint(ui.inputRange)) //#nosec G203
+        ui.mu.RUnlock()
+        return</span>
+}
+
+func (g *Globals) InputRange() any <span class="cov10" title="2">{
+        return &amp;uiInputRange{
+                Binder:  bind.New(&amp;g.mu, &amp;g.inputRange),
+                Globals: g,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file13" style="display: none">package main
+
+import (
+        "fmt"
+        "strings"
+
+        "github.com/linkdata/jaws"
+        "github.com/linkdata/jaws/lib/bind"
+)
+
+func (g *Globals) InputText() any <span class="cov8" title="1">{
+        return bind.New(&amp;g.mu, &amp;g.inputText).
+                SetLocked(func(bind bind.Binder[string], elem *jaws.Element, v string) error </span><span class="cov0" title="0">{
+                        // if user entered a pet, change the dropdown to that pet
+                        if v != "" &amp;&amp; g.SelectPet.Count(v) &gt; 0 </span><span class="cov0" title="0">{
+                                g.SelectPet.Set(v, true)
+                                elem.Dirty(g.SelectPet)
+                        }</span>
+
+                        // make it harder to enter text that starts with "fail"
+                        // try using cut'n'paste or just holding down 'l'
+                        <span class="cov0" title="0">if strings.HasPrefix(v, "fail") </span><span class="cov0" title="0">{
+                                if v == "fail" </span><span class="cov0" title="0">{
+                                        return fmt.Errorf("whaddayamean, fail?")
+                                }</span>
+                                <span class="cov0" title="0">v = "well, if you insist..."</span>
+                        }
+
+                        <span class="cov0" title="0">return bind.JawsSetLocked(elem, v)</span>
+                })
+}
+</pre>
+		
+		<pre class="file" id="file14" style="display: none">package main
+
+import "github.com/linkdata/jaws/lib/bind"
+
+func (g *Globals) InputTextArea() any <span class="cov8" title="1">{
+        return bind.New(&amp;g.mu, &amp;g.inputTextArea)
+}</span>
+</pre>
+		
+		<pre class="file" id="file15" style="display: none">package main
+
+import (
+        "github.com/linkdata/jaws/lib/named"
+)
+
+func newUiSelectPet() *named.BoolArray <span class="cov10" title="7">{
+        nba := named.NewBoolArray(false)
+        nba.Add("", "--Please choose an option--")
+        nba.Add("dog", "Dog")
+        nba.Add("cat", "Cat")
+        nba.Add("hamster", "Hamster")
+        nba.Add("parrot", "Parrot")
+        nba.Add("spider", "Spider")
+        return nba
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
