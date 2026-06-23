@@ -141,9 +141,9 @@ func (g *Globals) AddRandomCar() *Car <span class="cov1" title="1">{
         var vin []byte
         for range 17 </span><span class="cov9" title="17">{
                 n := byte(intN(26 + 10)) // #nosec G115
-                if n &lt; 10 </span><span class="cov7" title="8">{
+                if n &lt; 10 </span><span class="cov3" title="2">{
                         vin = append(vin, '0'+n)
-                }</span> else<span class="cov7" title="9"> {
+                }</span> else<span class="cov9" title="15"> {
                         vin = append(vin, 'A'+(n-10))
                 }</span>
         }
