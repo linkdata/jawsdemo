@@ -38,13 +38,6 @@ jobs:
         with:
           args: ./...
 
-      # Informational only: the report card hits an external service, so a flake
-      # or outage must not fail the build. go vet / gofmt / staticcheck above are
-      # the actual gating quality checks.
-      - name: Go report card
-        uses: creekorful/goreportcard-action@v1.0
-        continue-on-error: true
-
   build:
     runs-on: ubuntu-latest
     permissions:

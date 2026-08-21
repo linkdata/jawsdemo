@@ -1,5 +1,4 @@
 [![build](https://github.com/linkdata/jawsdemo/actions/workflows/build.yml/badge.svg)](https://github.com/linkdata/jawsdemo/actions/workflows/build.yml)
-[![goreport](https://goreportcard.com/badge/github.com/linkdata/jawsdemo)](https://goreportcard.com/report/github.com/linkdata/jawsdemo)
 
 # jawsdemo
 
