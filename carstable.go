@@ -26,7 +26,7 @@ func (ct *CarsTable) owner() *Globals {
 	return globals
 }
 
-func (ct *CarsTable) JawsGetTag(tag.Context) any {
+func (ct *CarsTable) JawsGetTag() any {
 	return &ct.owner().Cars
 }
 

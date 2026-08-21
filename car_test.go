@@ -29,7 +29,7 @@ func newTestElement(t *testing.T) *jaws.Element {
 	}
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	jw.NewSession(nil, req)
-	rq := jw.NewRequest(req)
+	rq := jw.NewRequest(httptest.NewRecorder(), req)
 	t.Cleanup(func() {
 		jw.Close()
 	})
@@ -44,7 +44,7 @@ func TestNewGlobalsInitializesSharedUIState(t *testing.T) {
 	if g.CarsTable.owner() != g {
 		t.Fatal("CarsTable is not bound to its Globals")
 	}
-	if got := g.CarsTable.JawsGetTag(nil); got != &g.Cars {
+	if got := g.CarsTable.JawsGetTag(); got != &g.Cars {
 		t.Fatalf("CarsTable tag = %p, want %p", got, &g.Cars)
 	}
 	if g.inputButton != "Meh" {
@@ -151,7 +151,7 @@ func TestClientJsVarDoesNotRequireInitialSession(t *testing.T) {
 	t.Cleanup(jw.Close)
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
-	rq := jw.NewRequest(req)
+	rq := jw.NewRequest(httptest.NewRecorder(), req)
 	jsvar, err := g.Client().JawsMakeJsVar(rq)
 	if err != nil {
 		t.Fatal(err)

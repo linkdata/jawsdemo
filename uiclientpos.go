@@ -9,7 +9,6 @@ import (
 
 	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/lib/bind"
-	"github.com/linkdata/jaws/lib/tag"
 )
 
 type uiClientPos struct{ *Globals }
@@ -36,7 +35,7 @@ func (uic uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) {
 	return
 }
 
-func (uic uiClientPos) JawsGetTag(tag.Context) any {
+func (uic uiClientPos) JawsGetTag() any {
 	return uiClientPos{}
 }
 
