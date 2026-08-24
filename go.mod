@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/linkdata/deadlock v0.5.5
-	github.com/linkdata/jaws v0.800.0
+	github.com/linkdata/jaws v0.804.0
 	github.com/linkdata/staticserve v1.1.8
 	github.com/linkdata/webserv v1.4.2
 )
