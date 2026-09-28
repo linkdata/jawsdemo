@@ -59,33 +59,31 @@
 				
 				<option value="file1">github.com/linkdata/jawsdemo/carstable.go (61.5%)</option>
 				
-				<option value="file2">github.com/linkdata/jawsdemo/client.go (100.0%)</option>
+				<option value="file2">github.com/linkdata/jawsdemo/globals.go (100.0%)</option>
 				
-				<option value="file3">github.com/linkdata/jawsdemo/globals.go (100.0%)</option>
+				<option value="file3">github.com/linkdata/jawsdemo/jawsdemo.go (13.7%)</option>
 				
-				<option value="file4">github.com/linkdata/jawsdemo/jawsdemo.go (12.5%)</option>
+				<option value="file4">github.com/linkdata/jawsdemo/uicarslink.go (100.0%)</option>
 				
-				<option value="file5">github.com/linkdata/jawsdemo/uicarslink.go (100.0%)</option>
+				<option value="file5">github.com/linkdata/jawsdemo/uiclient.go (82.4%)</option>
 				
-				<option value="file6">github.com/linkdata/jawsdemo/uiclient.go (100.0%)</option>
+				<option value="file6">github.com/linkdata/jawsdemo/uiclientpos.go (68.4%)</option>
 				
-				<option value="file7">github.com/linkdata/jawsdemo/uiclientpos.go (72.2%)</option>
+				<option value="file7">github.com/linkdata/jawsdemo/uiclock.go (100.0%)</option>
 				
-				<option value="file8">github.com/linkdata/jawsdemo/uiclock.go (80.0%)</option>
+				<option value="file8">github.com/linkdata/jawsdemo/uiinputbutton.go (77.8%)</option>
 				
-				<option value="file9">github.com/linkdata/jawsdemo/uiinputbutton.go (77.8%)</option>
+				<option value="file9">github.com/linkdata/jawsdemo/uiinputcheckbox.go (100.0%)</option>
 				
-				<option value="file10">github.com/linkdata/jawsdemo/uiinputcheckbox.go (100.0%)</option>
+				<option value="file10">github.com/linkdata/jawsdemo/uiinputdate.go (100.0%)</option>
 				
-				<option value="file11">github.com/linkdata/jawsdemo/uiinputdate.go (100.0%)</option>
+				<option value="file11">github.com/linkdata/jawsdemo/uiinputrange.go (77.8%)</option>
 				
-				<option value="file12">github.com/linkdata/jawsdemo/uiinputrange.go (77.8%)</option>
+				<option value="file12">github.com/linkdata/jawsdemo/uiinputtext.go (11.1%)</option>
 				
-				<option value="file13">github.com/linkdata/jawsdemo/uiinputtext.go (11.1%)</option>
+				<option value="file13">github.com/linkdata/jawsdemo/uiinputtextarea.go (100.0%)</option>
 				
-				<option value="file14">github.com/linkdata/jawsdemo/uiinputtextarea.go (100.0%)</option>
-				
-				<option value="file15">github.com/linkdata/jawsdemo/uiselectpet.go (100.0%)</option>
+				<option value="file14">github.com/linkdata/jawsdemo/uiselectpet.go (100.0%)</option>
 				
 				</select>
 			</div>
@@ -129,8 +127,10 @@ type Car struct {
         condition float64
 }
 
-var carMakes = []string{"Dodge", "Hyundai", "Acura", "Volvo", "Saab", "Lada", "Mazda"}
-var carModels = []string{"Sedan", "Coupe", "SUV", "Truck", "Cabriolet"}
+var (
+        carMakes  = []string{"Dodge", "Hyundai", "Acura", "Volvo", "Saab", "Lada", "Mazda"}
+        carModels = []string{"Sedan", "Coupe", "SUV", "Truck", "Cabriolet"}
+)
 
 func intN(n int) int {
         <span class="cov10" title="21">x := rand.Intn(n) //#nosec G404
@@ -142,9 +142,9 @@ func (g *Globals) AddRandomCar() *Car {
         for range 17 </span>{
                 <span class="cov9" title="17">n := byte(intN(26 + 10)) // #nosec G115
                 if n &lt; 10 </span>{
-                        <span class="cov5" title="5">vin = append(vin, '0'+n)
+                        <span class="cov7" title="8">vin = append(vin, '0'+n)
 </span>                } else {
-                        <span class="cov8" title="12">vin = append(vin, 'A'+(n-10))
+                        <span class="cov7" title="9">vin = append(vin, 'A'+(n-10))
 </span>                }
         }
         <span class="cov1" title="1">car := &amp;Car{
@@ -294,18 +294,20 @@ type CarRow struct {
         Car *Car
 }
 
-var _ jaws.UI = CarRow{}
-var _ jaws.ClickHandler = CarRow{}
+var (
+        _ jaws.UI           = CarRow{}
+        _ jaws.ClickHandler = CarRow{}
+)
 
 func (row CarRow) auth(elem *jaws.Element) jaws.Auth {
-        <span class="cov7" title="4">if f := elem.Request.Jaws.MakeAuth; f != nil </span>{
+        <span class="cov7" title="4">if f := elem.Jaws.MakeAuth; f != nil </span>{
                 <span class="cov0" title="0">return f(elem.Request)
 </span>        }
         <span class="cov7" title="4">return &amp;jaws.DefaultAuth{}</span>
 }
 
 func (row CarRow) execute(elem *jaws.Element, w io.Writer) error {
-        <span class="cov7" title="4">tmpl := elem.Request.Jaws.LookupTemplate(carRowTemplate)
+        <span class="cov7" title="4">tmpl := elem.Jaws.LookupTemplate(carRowTemplate)
         if tmpl == nil </span>{
                 <span class="cov0" title="0">return fmt.Errorf("missing template %q: %w", carRowTemplate, ui.ErrMissingTemplate)
 </span>        }
@@ -344,7 +346,7 @@ func (row CarRow) JawsUpdate(elem *jaws.Element) {
         if err := row.execute(elem, &amp;sb); err == nil </span>{
                 <span class="cov0" title="0">elem.SetInner(template.HTML(sb.String())) // #nosec G203
 </span>        } else {
-                <span class="cov0" title="0">elem.Request.MustLog(err)
+                <span class="cov0" title="0">elem.MustLog(err)
 </span>        }
 }
 
@@ -359,36 +361,12 @@ func (row CarRow) JawsClick(elem *jaws.Element, click jaws.Click) error {
 		<pre class="file" id="file2" style="display: none">package main
 
 import (
-        "github.com/linkdata/jaws"
-        "github.com/linkdata/jaws/lib/ui"
-)
-
-type Client struct {
-        X float64
-        Y float64
-        B float64 // button state
-}
-
-const clientSessionKey = "client"
-
-var _ ui.SetPather = (*Client)(nil)
-
-func (c *Client) JawsPathSet(elem *jaws.Element, jspath string, value any) {
-        <span class="cov8" title="1">if sess := elem.Session(); sess.Get(clientSessionKey) == nil </span>{
-                <span class="cov8" title="1">sess.Set(clientSessionKey, c)
-</span>        }
-        <span class="cov8" title="1">elem.Dirty(uiClientPos{})</span>
-}
-</pre>
-		
-		<pre class="file" id="file3" style="display: none">package main
-
-import (
         "runtime/debug"
         "strings"
         "time"
 
         "github.com/linkdata/deadlock"
+        "github.com/linkdata/jaws"
         "github.com/linkdata/jaws/lib/bind"
         "github.com/linkdata/jaws/lib/named"
         "github.com/linkdata/jaws/lib/ui"
@@ -410,10 +388,11 @@ type Globals struct {
         carsLink         string
         CarsTable        *CarsTable
         runtime          string
+        runtimeStore     *ui.JsVarStore[string]
 }
 
 func NewGlobals() *Globals {
-        <span class="cov7" title="7">g := &amp;Globals{
+        <span class="cov7" title="8">g := &amp;Globals{
                 InputRadioGroup1: named.NewBoolArray(false).Add("1", "Radio 1.1").Add("2", "Radio 1.2"),
                 InputRadioGroup2: named.NewBoolArray(false).Add("1", "Radio 2.1").Add("2", "Radio 2.2"),
                 inputDate:        time.Now(),
@@ -444,7 +423,7 @@ func NewGlobals() *Globals {
                         },
                 },
 </span>        }
-        <span class="cov7" title="7">g.CarsTable = &amp;CarsTable{globals: g}
+        <span class="cov7" title="8">g.CarsTable = &amp;CarsTable{globals: g}
         g.inputTextArea = "The quick brown fox jumps over the lazy dog"
         return g
 </span>}
@@ -453,8 +432,14 @@ func (g *Globals) Clock() bind.HTMLGetter {
         <span class="cov3" title="2">return uiClock{}
 </span>}
 
-func (g *Globals) Runtime() any {
-        <span class="cov3" title="2">return ui.NewJsVar(&amp;g.mu, &amp;g.runtime)
+func (g *Globals) initStores(jw *jaws.Jaws) (err error) {
+        <span class="cov1" title="1">g.runtimeStore, err = ui.NewJsVarStore(jw, "runtime", &amp;g.mu, &amp;g.runtime)
+        return
+</span>}
+
+// RuntimeBinding renders the shared runtime value on a page.
+func (g *Globals) RuntimeBinding() *ui.JsVarBinding[string] {
+        <span class="cov3" title="2">return g.runtimeStore.Bind()
 </span>}
 
 func (g *Globals) JawsVersion() (v string) {
@@ -470,7 +455,7 @@ func (g *Globals) JawsVersion() (v string) {
 }
 </pre>
 		
-		<pre class="file" id="file4" style="display: none">package main
+		<pre class="file" id="file3" style="display: none">package main
 
 import (
         "context"
@@ -524,15 +509,17 @@ func maybeLogError(err error) {
 
 func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (err error) {
         <span class="cov1" title="1">var tmpl jaws.TemplateLookuper
-        if tmpl, err = templatereloader.New(assetsFS, "assets/ui/*.html", ""); err == nil </span>{
-                <span class="cov1" title="1">if err = jw.AddTemplateLookuper(tmpl); err == nil </span>{
-                        <span class="cov1" title="1">err = jw.Setup(mux.Handle, "/static", jawsboot.Setup,
-                                staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png", "mousetrack.js"))
-                        if err == nil </span>{
-                                <span class="cov1" title="1">mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
-                                mux.Handle("GET /{$}", ui.Handler(jw, "index.html", globals))
-                                mux.Handle("GET /cars", ui.Handler(jw, "cars.html", globals))
-</span>                        }
+        if err = globals.initStores(jw); err == nil </span>{
+                <span class="cov1" title="1">if tmpl, err = templatereloader.New(assetsFS, "assets/ui/*.html", ""); err == nil </span>{
+                        <span class="cov1" title="1">if err = jw.AddTemplateLookuper(tmpl); err == nil </span>{
+                                <span class="cov1" title="1">err = jw.Setup(mux.Handle, "/static", jawsboot.Setup,
+                                        staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png", "mousetrack.js"))
+                                if err == nil </span>{
+                                        <span class="cov1" title="1">mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
+                                        mux.Handle("GET /{$}", ui.Handler(jw, "index.html", globals))
+                                        mux.Handle("GET /cars", ui.Handler(jw, "cars.html", globals))
+</span>                                }
+                        }
                 }
         }
         <span class="cov1" title="1">return</span>
@@ -560,11 +547,11 @@ func backgroundUpdates(jw *jaws.Jaws) {
                         default:
                                 <span class="cov0" title="0">globals.carsLink = "This is a boring link to car info."</span>
                         }
-                        <span class="cov0" title="0">globals.runtime = time.Since(started).String()
-                        globals.mu.Unlock()
-                        jw.Dirty(globals.Runtime())
-                        jw.Dirty(globals.CarsLink())
-                        jw.Dirty(globals.Client())</span>
+                        <span class="cov0" title="0">globals.mu.Unlock()
+                        if _, err := globals.runtimeStore.SetPath("", time.Since(started).String()); err != nil </span>{
+                                <span class="cov0" title="0">maybeLogError(err)
+</span>                        }
+                        <span class="cov0" title="0">jw.Dirty(globals.CarsLink())</span>
                 }
         }
 }
@@ -575,8 +562,8 @@ func main() {
         <span class="cov0" title="0">if *flagCpuprofile != "" </span>{
                 <span class="cov0" title="0">f, err := os.Create(*flagCpuprofile)
                 if err == nil </span>{
-                        <span class="cov0" title="0">defer f.Close()
-                        if err = pprof.StartCPUProfile(f); err == nil </span>{
+                        <span class="cov0" title="0">defer func() </span>{ <span class="cov0" title="0">maybeLogError(f.Close()) }</span>()
+                        <span class="cov0" title="0">if err = pprof.StartCPUProfile(f); err == nil </span>{
                                 <span class="cov0" title="0">defer pprof.StopCPUProfile()
 </span>                        }
                 }
@@ -594,8 +581,8 @@ func main() {
 
         <span class="cov0" title="0">l, err := cfg.Listen()
         if err == nil </span>{
-                <span class="cov0" title="0">defer l.Close()
-</span>
+                <span class="cov0" title="0">defer func() </span>{ <span class="cov0" title="0">maybeLogError(l.Close()) }</span>()
+
                 <span class="cov0" title="0">var jw *jaws.Jaws
 </span>                // create a default JaWS instance
                 <span class="cov0" title="0">if jw, err = jaws.New(); err == nil </span>{
@@ -625,15 +612,15 @@ func main() {
         <span class="cov0" title="0">if *flagMemprofile != "" </span>{
                 <span class="cov0" title="0">f, err := os.Create(*flagMemprofile)
                 if err == nil </span>{
-                        <span class="cov0" title="0">defer f.Close()
-                        err = pprof.WriteHeapProfile(f)
-</span>                }
+                        <span class="cov0" title="0">defer func() </span>{ <span class="cov0" title="0">maybeLogError(f.Close()) }</span>()
+                        <span class="cov0" title="0">err = pprof.WriteHeapProfile(f)</span>
+                }
                 <span class="cov0" title="0">maybeLogError(err)</span>
         }
 }
 </pre>
 		
-		<pre class="file" id="file5" style="display: none">package main
+		<pre class="file" id="file4" style="display: none">package main
 
 import "github.com/linkdata/jaws/lib/bind"
 
@@ -642,39 +629,45 @@ func (g *Globals) CarsLink() any {
 </span>}
 </pre>
 		
-		<pre class="file" id="file6" style="display: none">package main
+		<pre class="file" id="file5" style="display: none">package main
 
 import (
         "github.com/linkdata/jaws"
         "github.com/linkdata/jaws/lib/ui"
 )
 
-type uiClient struct{ *Globals }
-
-func (uic uiClient) getClient(rq *jaws.Request) (c *Client) {
-        <span class="cov7" title="3">sess := rq.Session()
-        if c, _ = sess.Get(clientSessionKey).(*Client); c == nil </span>{
-                <span class="cov7" title="3">c = &amp;Client{
-                        X: -1,
-                        Y: -1,
-</span>                }
-                <span class="cov7" title="3">sess.Set(clientSessionKey, c)
-</span>        }
-        <span class="cov7" title="3">return</span>
+type clientState struct {
+        value Client
+        store *ui.JsVarStore[Client]
 }
 
-func (uic uiClient) JawsMakeJsVar(rq *jaws.Request) (v ui.IsJsVar, err error) {
-        <span class="cov7" title="3">return ui.NewJsVar(&amp;uic.mu, uic.getClient(rq)), nil
-</span>}
-
-var _ ui.JsVarMaker = uiClient{}
-
-func (g *Globals) Client() uiClient {
-        <span class="cov10" title="5">return uiClient{g}
-</span>}
+// ClientBinding renders the request's browser client state.
+func (g *Globals) ClientBinding(rq *jaws.Request) (binding *ui.JsVarBinding[Client], err error) {
+        <span class="cov10" title="5">g.mu.Lock()
+        defer g.mu.Unlock()
+        state, _ := rq.Get(clientSessionKey).(*clientState)
+        if state == nil </span>{
+                <span class="cov8" title="4">state = &amp;clientState{value: Client{X: -1, Y: -1}}
+                if state.store, err = ui.NewJsVarStore(rq.Jaws, "client", &amp;g.mu, &amp;state.value); err != nil </span>{
+                        <span class="cov0" title="0">return
+</span>                }
+                <span class="cov8" title="4">state.store.ClientCheck = func(*jaws.Element, *Client, string) error </span>{ <span class="cov1" title="1">return nil }</span>
+                <span class="cov8" title="4">state.store.ExtraTags = []any{uiClientPos{}}
+                if rq.Session() != nil </span>{
+                        <span class="cov1" title="1">rq.Set(clientSessionKey, state)
+</span>                } else {
+                        <span class="cov7" title="3">rq.SetConnectFn(func(rq *jaws.Request) error </span>{
+                                <span class="cov0" title="0">rq.Set(clientSessionKey, state)
+                                return nil
+</span>                        })
+                }
+        }
+        <span class="cov10" title="5">binding = state.store.Bind()
+        return</span>
+}
 </pre>
 		
-		<pre class="file" id="file7" style="display: none">package main
+		<pre class="file" id="file6" style="display: none">package main
 
 import (
         "fmt"
@@ -696,8 +689,9 @@ func (uic uiClientPos) JawsGetHTML(e *jaws.Element) (v template.HTML) {
         <span class="cov4" title="2">uic.mu.RLock()
         defer uic.mu.RUnlock()
         for _, sess := range sessions </span>{
-                <span class="cov0" title="0">if c, _ := sess.Get(clientSessionKey).(*Client); c != nil </span>{
-                        <span class="cov0" title="0">if c.X != -1 || c.Y != -1 </span>{
+                <span class="cov0" title="0">if state, _ := sess.Get(clientSessionKey).(*clientState); state != nil </span>{
+                        <span class="cov0" title="0">c := &amp;state.value
+                        if c.X != -1 || c.Y != -1 </span>{
                                 <span class="cov0" title="0">activeclients = append(activeclients, c)
 </span>                        }
                 }
@@ -720,7 +714,7 @@ func (g *Globals) ClientPos() bind.HTMLGetter {
 </span>}
 </pre>
 		
-		<pre class="file" id="file8" style="display: none">package main
+		<pre class="file" id="file7" style="display: none">package main
 
 import (
         "fmt"
@@ -736,13 +730,13 @@ func (uiClock) JawsGetHTML(e *jaws.Element) template.HTML {
         <span class="cov10" title="2">now := time.Now().UTC()
         flash := "&amp;nbsp;"
         if now.Second()%2 == 0 </span>{
-                <span class="cov0" title="0">flash = ":"
+                <span class="cov10" title="2">flash = ":"
 </span>        }
         <span class="cov10" title="2">return template.HTML(fmt.Sprintf("%02d%s%02d UTC", now.Hour(), flash, now.Minute()))</span> //#nosec G203
 }
 </pre>
 		
-		<pre class="file" id="file9" style="display: none">package main
+		<pre class="file" id="file8" style="display: none">package main
 
 import (
         "github.com/linkdata/jaws"
@@ -781,7 +775,7 @@ func (g *Globals) InputButton() bind.Binder[string] {
 }
 </pre>
 		
-		<pre class="file" id="file10" style="display: none">package main
+		<pre class="file" id="file9" style="display: none">package main
 
 import "github.com/linkdata/jaws/lib/bind"
 
@@ -790,7 +784,7 @@ func (g *Globals) InputCheckbox() any {
 </span>}
 </pre>
 		
-		<pre class="file" id="file11" style="display: none">package main
+		<pre class="file" id="file10" style="display: none">package main
 
 import "github.com/linkdata/jaws/lib/bind"
 
@@ -799,7 +793,7 @@ func (g *Globals) InputDate() any {
 </span>}
 </pre>
 		
-		<pre class="file" id="file12" style="display: none">package main
+		<pre class="file" id="file11" style="display: none">package main
 
 import (
         "fmt"
@@ -837,7 +831,7 @@ func (g *Globals) InputRange() any {
 }
 </pre>
 		
-		<pre class="file" id="file13" style="display: none">package main
+		<pre class="file" id="file12" style="display: none">package main
 
 import (
         "fmt"
@@ -870,7 +864,7 @@ func (g *Globals) InputText() any {
 }
 </pre>
 		
-		<pre class="file" id="file14" style="display: none">package main
+		<pre class="file" id="file13" style="display: none">package main
 
 import "github.com/linkdata/jaws/lib/bind"
 
@@ -879,14 +873,14 @@ func (g *Globals) InputTextArea() any {
 </span>}
 </pre>
 		
-		<pre class="file" id="file15" style="display: none">package main
+		<pre class="file" id="file14" style="display: none">package main
 
 import (
         "github.com/linkdata/jaws/lib/named"
 )
 
 func newUiSelectPet() *named.BoolArray {
-        <span class="cov10" title="7">nba := named.NewBoolArray(false)
+        <span class="cov10" title="8">nba := named.NewBoolArray(false)
         nba.Add("", "--Please choose an option--")
         nba.Add("dog", "Dog")
         nba.Add("cat", "Cat")
