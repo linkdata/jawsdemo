@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/linkdata/jaws"
+	"github.com/linkdata/jaws/lib/assets"
 	"github.com/linkdata/jaws/lib/ui"
 )
 
@@ -198,6 +199,9 @@ func TestClientBindingStoresClientInSession(t *testing.T) {
 }
 
 func TestRoutesRender(t *testing.T) {
+	if !strings.Contains(assets.JavascriptText, "[data-jaws-alerts]") {
+		t.Fatal("JaWS client does not select the demo alert container")
+	}
 	g := useTestGlobals(t)
 	jw, err := jaws.New()
 	if err != nil {
@@ -223,6 +227,9 @@ func TestRoutesRender(t *testing.T) {
 			}
 			if !strings.Contains(rr.Body.String(), "<!doctype html>") {
 				t.Fatalf("response for %q did not render an HTML document", path)
+			}
+			if !strings.Contains(rr.Body.String(), `data-jaws-alerts`) {
+				t.Fatalf("response for %q has no JaWS alert container", path)
 			}
 			if path == "/cars" {
 				body := rr.Body.String()
