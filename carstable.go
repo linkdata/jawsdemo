@@ -63,18 +63,20 @@ type CarRow struct {
 	Car *Car
 }
 
-var _ jaws.UI = CarRow{}
-var _ jaws.ClickHandler = CarRow{}
+var (
+	_ jaws.UI           = CarRow{}
+	_ jaws.ClickHandler = CarRow{}
+)
 
 func (row CarRow) auth(elem *jaws.Element) jaws.Auth {
-	if f := elem.Request.Jaws.MakeAuth; f != nil {
+	if f := elem.Jaws.MakeAuth; f != nil {
 		return f(elem.Request)
 	}
 	return &jaws.DefaultAuth{}
 }
 
 func (row CarRow) execute(elem *jaws.Element, w io.Writer) error {
-	tmpl := elem.Request.Jaws.LookupTemplate(carRowTemplate)
+	tmpl := elem.Jaws.LookupTemplate(carRowTemplate)
 	if tmpl == nil {
 		return fmt.Errorf("missing template %q: %w", carRowTemplate, ui.ErrMissingTemplate)
 	}
@@ -113,7 +115,7 @@ func (row CarRow) JawsUpdate(elem *jaws.Element) {
 	if err := row.execute(elem, &sb); err == nil {
 		elem.SetInner(template.HTML(sb.String())) // #nosec G203
 	} else {
-		elem.Request.MustLog(err)
+		elem.MustLog(err)
 	}
 }
 

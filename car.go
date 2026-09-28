@@ -19,8 +19,10 @@ type Car struct {
 	condition float64
 }
 
-var carMakes = []string{"Dodge", "Hyundai", "Acura", "Volvo", "Saab", "Lada", "Mazda"}
-var carModels = []string{"Sedan", "Coupe", "SUV", "Truck", "Cabriolet"}
+var (
+	carMakes  = []string{"Dodge", "Hyundai", "Acura", "Volvo", "Saab", "Lada", "Mazda"}
+	carModels = []string{"Sedan", "Coupe", "SUV", "Truck", "Cabriolet"}
+)
 
 func intN(n int) int {
 	x := rand.Intn(n) //#nosec G404

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -152,29 +153,47 @@ func TestClientJsVarDoesNotRequireInitialSession(t *testing.T) {
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rq := jw.NewRequest(httptest.NewRecorder(), req)
-	jsvar, err := g.Client().JawsMakeJsVar(rq)
+	binding, err := g.ClientBinding(rq)
 	if err != nil {
+		t.Fatal(err)
+	}
+	elem := rq.NewElement(binding)
+	var out bytes.Buffer
+	if err = elem.JawsRender(&out, nil); err != nil {
 		t.Fatal(err)
 	}
 	if rq.Session() != nil {
 		t.Fatal("initial render created a session")
 	}
-	clientVar, ok := jsvar.(*ui.JsVar[Client])
-	if !ok {
-		t.Fatalf("JawsMakeJsVar returned %T, want *ui.JsVar[Client]", jsvar)
-	}
-	if got := clientVar.JawsGet(nil); got != (Client{X: -1, Y: -1}) {
-		t.Fatalf("initial client = %#v, want zero value", got)
+	if !strings.Contains(out.String(), `data-jawsstore="client"`) || !strings.Contains(out.String(), `&#34;X&#34;:-1`) {
+		t.Fatalf("initial client binding = %q", out.String())
 	}
 }
 
-func TestClientPathSetStoresClientInSession(t *testing.T) {
+func TestClientBindingStoresClientInSession(t *testing.T) {
+	g := useTestGlobals(t)
 	elem := newTestElement(t)
-	client := &Client{X: 12, Y: 34, B: 1}
-
-	client.JawsPathSet(elem, "X", client.X)
-	if got := elem.Session().Get(clientSessionKey); got != client {
-		t.Fatalf("client session value = %#v, want %p", got, client)
+	binding, err := g.ClientBinding(elem.Request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	state, ok := elem.Session().Get(clientSessionKey).(*clientState)
+	if !ok || state.store == nil {
+		t.Fatalf("client session state = %#v", elem.Session().Get(clientSessionKey))
+	}
+	bound := elem.NewElement(binding)
+	if err = bound.JawsRender(&bytes.Buffer{}, nil); err != nil {
+		t.Fatal(err)
+	}
+	if err = binding.JawsInput(bound, `={"X":12,"Y":34,"B":1}`); err != nil || state.value != (Client{X: 12, Y: 34, B: 1}) {
+		t.Fatalf("client proposal: state=%+v err=%v", state.value, err)
+	}
+	second := elem.Jaws.NewRequest(httptest.NewRecorder(), elem.Initial())
+	if _, err = g.ClientBinding(second); err != nil {
+		t.Fatal(err)
+	}
+	if got := second.Get(clientSessionKey); got != state {
+		t.Fatalf("second request state = %p, want %p", got, state)
 	}
 }
 

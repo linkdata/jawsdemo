@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/linkdata/deadlock"
+	"github.com/linkdata/jaws"
 	"github.com/linkdata/jaws/lib/bind"
 	"github.com/linkdata/jaws/lib/named"
 	"github.com/linkdata/jaws/lib/ui"
@@ -27,6 +28,7 @@ type Globals struct {
 	carsLink         string
 	CarsTable        *CarsTable
 	runtime          string
+	runtimeStore     *ui.JsVarStore[string]
 }
 
 func NewGlobals() *Globals {
@@ -70,8 +72,14 @@ func (g *Globals) Clock() bind.HTMLGetter {
 	return uiClock{}
 }
 
-func (g *Globals) Runtime() any {
-	return ui.NewJsVar(&g.mu, &g.runtime)
+func (g *Globals) initStores(jw *jaws.Jaws) (err error) {
+	g.runtimeStore, err = ui.NewJsVarStore(jw, "runtime", &g.mu, &g.runtime)
+	return
+}
+
+// RuntimeBinding renders the shared runtime value on a page.
+func (g *Globals) RuntimeBinding() *ui.JsVarBinding[string] {
+	return g.runtimeStore.Bind()
 }
 
 func (g *Globals) JawsVersion() (v string) {

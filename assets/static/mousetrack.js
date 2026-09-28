@@ -1,4 +1,4 @@
-var client = {X:0, Y:0, B:0};
+var client;
 var runtime;
 onmousemove = function(e) {
     if (typeof jawsVar !== 'undefined') {
