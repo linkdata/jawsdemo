@@ -34,9 +34,9 @@ jobs:
           staticcheck ./...
 
       - name: Run Gosec Security Scanner
-        uses: securego/gosec@v2.26.1
-        with:
-          args: ./...
+        run: |
+          go install github.com/securego/gosec/v2/cmd/gosec@v2.29.0
+          gosec ./...
 
   build:
     runs-on: ubuntu-latest
