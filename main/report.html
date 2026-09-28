@@ -69,7 +69,7 @@
 				
 				<option value="file6">github.com/linkdata/jawsdemo/uiclientpos.go (68.4%)</option>
 				
-				<option value="file7">github.com/linkdata/jawsdemo/uiclock.go (100.0%)</option>
+				<option value="file7">github.com/linkdata/jawsdemo/uiclock.go (80.0%)</option>
 				
 				<option value="file8">github.com/linkdata/jawsdemo/uiinputbutton.go (77.8%)</option>
 				
@@ -142,9 +142,9 @@ func (g *Globals) AddRandomCar() *Car {
         for range 17 </span>{
                 <span class="cov9" title="17">n := byte(intN(26 + 10)) // #nosec G115
                 if n &lt; 10 </span>{
-                        <span class="cov7" title="8">vin = append(vin, '0'+n)
+                        <span class="cov4" title="3">vin = append(vin, '0'+n)
 </span>                } else {
-                        <span class="cov7" title="9">vin = append(vin, 'A'+(n-10))
+                        <span class="cov8" title="14">vin = append(vin, 'A'+(n-10))
 </span>                }
         }
         <span class="cov1" title="1">car := &amp;Car{
@@ -730,7 +730,7 @@ func (uiClock) JawsGetHTML(e *jaws.Element) template.HTML {
         <span class="cov10" title="2">now := time.Now().UTC()
         flash := "&amp;nbsp;"
         if now.Second()%2 == 0 </span>{
-                <span class="cov10" title="2">flash = ":"
+                <span class="cov0" title="0">flash = ":"
 </span>        }
         <span class="cov10" title="2">return template.HTML(fmt.Sprintf("%02d%s%02d UTC", now.Hour(), flash, now.Minute()))</span> //#nosec G203
 }
