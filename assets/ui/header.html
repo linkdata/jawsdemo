@@ -5,26 +5,19 @@
 			<img src="{{.FaviconURI}}" height="16px" class="mb-1">
 			jawsdemo
 			<span class="text-secondary">{{.JawsVersion}}</span>
-			{{$.Span .ClientPos `class="text-info"` .Client}}
+			{{$.Span .ClientPos `class="text-info"`}}
 		</a>
 	</div>
 	{{$.Div .Clock `class="col col-2 text-body text-end"`}}
 </div>
 
 <!--
-	Interacting with Javascript variables on the page uses
-	the generic type jaws.JsVar. Values will be sent to and from
-	the Javascript as JSON.
-	
-	You bind them to a setter of the appropriate type and give them the
-	name which the Javascript uses. The name may be a series of dot-separated
-	names, in which case we follow the chain.
-
-	To send an updated value back to the server from the script, use
-	jawsVar('varname'). You can set a value and send it using 
-	jawsVar('varname', value).
+	JsVarStore binds the live window.runtime and window.client variables.
+	The bindings render once in the page, outside updated UI regions.
+	jawsVar('client') sends the current browser value after direct mutations;
+	jawsVar('client.X', value) sends and applies one field change.
 -->
-{{$.JsVar "runtime" .Runtime}}
-{{$.JsVar "client" .Client}}
+{{$.NewUI (.RuntimeBinding)}}
+{{$.NewUI (.ClientBinding $.Element.Request)}}
 
 {{end}}

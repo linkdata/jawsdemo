@@ -5,26 +5,32 @@ import (
 	"github.com/linkdata/jaws/lib/ui"
 )
 
-type uiClient struct{ *Globals }
+type clientState struct {
+	value Client
+	store *ui.JsVarStore[Client]
+}
 
-func (uic uiClient) getClient(rq *jaws.Request) (c *Client) {
-	sess := rq.Session()
-	if c, _ = sess.Get(clientSessionKey).(*Client); c == nil {
-		c = &Client{
-			X: -1,
-			Y: -1,
+// ClientBinding renders the request's browser client state.
+func (g *Globals) ClientBinding(rq *jaws.Request) (binding *ui.JsVarBinding[Client], err error) {
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	state, _ := rq.Get(clientSessionKey).(*clientState)
+	if state == nil {
+		state = &clientState{value: Client{X: -1, Y: -1}}
+		if state.store, err = ui.NewJsVarStore(rq.Jaws, "client", &g.mu, &state.value); err != nil {
+			return
 		}
-		sess.Set(clientSessionKey, c)
+		state.store.ClientCheck = func(*jaws.Element, *Client, string) error { return nil }
+		state.store.ExtraTags = []any{uiClientPos{}}
+		if rq.Session() != nil {
+			rq.Set(clientSessionKey, state)
+		} else {
+			rq.SetConnectFn(func(rq *jaws.Request) error {
+				rq.Set(clientSessionKey, state)
+				return nil
+			})
+		}
 	}
+	binding = state.store.Bind()
 	return
-}
-
-func (uic uiClient) JawsMakeJsVar(rq *jaws.Request) (v ui.IsJsVar, err error) {
-	return ui.NewJsVar(&uic.mu, uic.getClient(rq)), nil
-}
-
-var _ ui.JsVarMaker = uiClient{}
-
-func (g *Globals) Client() uiClient {
-	return uiClient{g}
 }

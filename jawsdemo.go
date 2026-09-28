@@ -52,14 +52,16 @@ func maybeLogError(err error) {
 
 func setupRoutes(jw *jaws.Jaws, mux *http.ServeMux) (err error) {
 	var tmpl jaws.TemplateLookuper
-	if tmpl, err = templatereloader.New(assetsFS, "assets/ui/*.html", ""); err == nil {
-		if err = jw.AddTemplateLookuper(tmpl); err == nil {
-			err = jw.Setup(mux.Handle, "/static", jawsboot.Setup,
-				staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png", "mousetrack.js"))
-			if err == nil {
-				mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
-				mux.Handle("GET /{$}", ui.Handler(jw, "index.html", globals))
-				mux.Handle("GET /cars", ui.Handler(jw, "cars.html", globals))
+	if err = globals.initStores(jw); err == nil {
+		if tmpl, err = templatereloader.New(assetsFS, "assets/ui/*.html", ""); err == nil {
+			if err = jw.AddTemplateLookuper(tmpl); err == nil {
+				err = jw.Setup(mux.Handle, "/static", jawsboot.Setup,
+					staticserve.MustNewFS(assetsFS, "assets/static", "images/favicon.png", "mousetrack.js"))
+				if err == nil {
+					mux.Handle("/jaws/", jw) // ensure the JaWS routes are handled
+					mux.Handle("GET /{$}", ui.Handler(jw, "index.html", globals))
+					mux.Handle("GET /cars", ui.Handler(jw, "cars.html", globals))
+				}
 			}
 		}
 	}
@@ -88,11 +90,11 @@ func backgroundUpdates(jw *jaws.Jaws) {
 			default:
 				globals.carsLink = "This is a boring link to car info."
 			}
-			globals.runtime = time.Since(started).String()
 			globals.mu.Unlock()
-			jw.Dirty(globals.Runtime())
+			if _, err := globals.runtimeStore.SetPath("", time.Since(started).String()); err != nil {
+				maybeLogError(err)
+			}
 			jw.Dirty(globals.CarsLink())
-			jw.Dirty(globals.Client())
 		}
 	}
 }
@@ -103,7 +105,7 @@ func main() {
 	if *flagCpuprofile != "" {
 		f, err := os.Create(*flagCpuprofile)
 		if err == nil {
-			defer f.Close()
+			defer func() { maybeLogError(f.Close()) }()
 			if err = pprof.StartCPUProfile(f); err == nil {
 				defer pprof.StopCPUProfile()
 			}
@@ -122,7 +124,7 @@ func main() {
 
 	l, err := cfg.Listen()
 	if err == nil {
-		defer l.Close()
+		defer func() { maybeLogError(l.Close()) }()
 
 		var jw *jaws.Jaws
 		// create a default JaWS instance
@@ -153,7 +155,7 @@ func main() {
 	if *flagMemprofile != "" {
 		f, err := os.Create(*flagMemprofile)
 		if err == nil {
-			defer f.Close()
+			defer func() { maybeLogError(f.Close()) }()
 			err = pprof.WriteHeapProfile(f)
 		}
 		maybeLogError(err)
